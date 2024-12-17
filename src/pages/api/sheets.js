@@ -33,6 +33,10 @@ export default async function handler(req, res) {
         range,
       });
 
+      if (response.status !== 200) {
+        throw new Error(`Error fetching data: ${response.statusText}`);
+      }
+
       const rows = response.data.values;
       if (rows.length) {
         data[key] = rows[0]; // Asignar la primera fila de datos al objeto
