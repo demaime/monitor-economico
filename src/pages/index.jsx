@@ -27,16 +27,21 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // if (loading) return <div>Loading...</div>;
-  // if (error) return <div>Error: {error}</div>;
+  if (loading)
+    return <div className="full-containter center-flex-col">Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
-  // console.log(data);
+  console.log(data.meses);
 
   return (
     <div className="full-container">
-      <Inflacion data={data} />
-      <CanastaSalario data={data} />
-      <AsistenciaSocial data={data} />
+      {data.meses && (
+        <>
+          <Inflacion data={data.inflacion} months={data.meses} />
+          <CanastaSalario data={data} />
+          <AsistenciaSocial data={data} />
+        </>
+      )}
     </div>
   );
 }
