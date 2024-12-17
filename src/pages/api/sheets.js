@@ -47,6 +47,7 @@ export default async function handler(req, res) {
       res.status(404).json({ message: "No data found." });
     }
   } catch (error) {
+    console.error("Error fetching data from Google Sheets:", error);
     res.status(500).json({ error: error.message });
   }
 }
