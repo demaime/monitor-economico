@@ -21,6 +21,23 @@ export default function Inflacion({ data, months }) {
     IPC: Number(data[index]) || 0, // Convertir a número y manejar valores no numéricos
   }));
 
+  const CustomizedLabel = ({ x, y,  value }) => {
+    return (
+      <text
+        x={x}
+        y={y}
+        dy={-8}
+        dx={5}
+        fontSize={10}
+        className="font-semibold"
+        textAnchor="middle"
+        fill="#FFB3B3"
+      >
+        {`% ${value}`}
+      </text>
+    );
+  };
+
   return (
     <section>
       <SlideHeader
@@ -35,9 +52,9 @@ export default function Inflacion({ data, months }) {
       <MonthSelector months={months} />
       <div className="w-full h-1/2 center-flex bg-gray-200 center-flex">
         <div className="wh90 rounded bg-gray-700 center-flex">
-          <ResponsiveContainer width={"90%"} height={"90%"}>
+          <ResponsiveContainer width={"95%"} height={"90%"}>
             <AreaChart
-              margin={{ top: 0, right: 0, left: -40, bottom: 0 }}
+              margin={{ top: 0, right: 25, left: -40, bottom: 0 }}
               data={chartData}
             >
               <XAxis
@@ -69,6 +86,7 @@ export default function Inflacion({ data, months }) {
                 dataKey="IPC"
                 stroke="#FF5733"
                 fill="#FFB3B3"
+                label={<CustomizedLabel />}
               />
               <Brush
                 dataKey="name"
