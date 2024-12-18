@@ -3,10 +3,11 @@ import { readFileSync } from "fs";
 import path from "path";
 
 export default async function handler(req, res) {
-  // Cargar las credenciales del archivo JSON
-  const credentials = JSON.parse(
-    readFileSync(path.join(process.cwd(), "public", "credentials.json"))
-  );
+  // Cargar las credenciales del archivo JSON desde la variable de entorno
+  const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+
+  // Reemplaza las secuencias `\n` en `private_key` por saltos de línea reales
+  credentials.private_key = credentials.private_key.replace(/\\n/g, "\n");
 
   // Autenticación
   const auth = new google.auth.GoogleAuth({
@@ -22,7 +23,7 @@ export default async function handler(req, res) {
     meses: "datos!C2:L2",
     inflacion: "datos!C3:L3",
     // cba: "datos!C4:H4",
-  }; // Cambia el rango según tus necesidades
+  };
 
   try {
     // Obtener datos de la hoja de cálculo para cada rango
