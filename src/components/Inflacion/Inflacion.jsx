@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Brush,
+  LabelList,
 } from "recharts";
 
 export default function Inflacion({ data, months }) {
@@ -36,7 +37,7 @@ export default function Inflacion({ data, months }) {
         <div className="wh90 rounded bg-gray-700 center-flex">
           <ResponsiveContainer width={"90%"} height={"90%"}>
             <AreaChart
-              margin={{ top: 0, right: 0, left: -40, bottom: -2 }}
+              margin={{ top: 0, right: 0, left: -40, bottom: 0 }}
               data={chartData}
             >
               <XAxis
@@ -61,14 +62,16 @@ export default function Inflacion({ data, months }) {
                   borderRadius: "15px",
                   color: "white",
                 }}
+                cursor={false}
               />
               <Area
                 type="monotone"
                 dataKey="IPC"
-                stroke="#8884d8"
-                fill="#8884d8"
+                stroke="#FF5733"
+                fill="#FFB3B3"
               />
-              <Brush height={12} stroke="#8884d8" />
+              <Brush height={15} stroke="#FF5733" fill="#FF5733" />
+              <LabelList dataKey="IPC" position="top" fill="#FF5733" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
