@@ -70,7 +70,16 @@ export default function Inflacion({ data, months }) {
                 stroke="#FF5733"
                 fill="#FFB3B3"
               />
-              <Brush height={15} stroke="#FF5733" fill="#FF5733" />
+              <Brush
+                dataKey="name"
+                tickFormatter={() => ""}
+                height={15}
+                fill="#FFB3B3"
+                stroke="#FF5733"
+                travellerWidth={20}
+                fontSize={2}
+              />
+
               <LabelList dataKey="IPC" position="top" fill="#FF5733" />
             </AreaChart>
           </ResponsiveContainer>
