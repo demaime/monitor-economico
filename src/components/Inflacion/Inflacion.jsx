@@ -28,8 +28,8 @@ export default function Inflacion({ data, months }) {
         y={y}
         dy={-8}
         dx={5}
-        fontSize={10}
-        className="font-semibold"
+        fontSize={5}
+        className="font-bold"
         textAnchor="middle"
         fill="#FFB3B3"
       >
@@ -59,9 +59,12 @@ export default function Inflacion({ data, months }) {
             >
               <XAxis
                 dataKey="name"
+                angle={-45}
+                textAnchor="end"
+                height={60}
                 tick={{
                   fill: "#e5e7eb",
-                  fontSize: "10px",
+                  fontSize: "8px",
                   fontWeight: "600",
                 }}
               />
