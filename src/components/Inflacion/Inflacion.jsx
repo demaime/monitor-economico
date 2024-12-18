@@ -36,7 +36,7 @@ export default function Inflacion({ data, months }) {
         <div className="wh90 rounded bg-gray-700 center-flex">
           <ResponsiveContainer width={"90%"} height={"90%"}>
             <AreaChart
-              margin={{ top: 0, right: 0, left: -40, bottom: 0 }}
+              margin={{ top: 0, right: 0, left: -40, bottom: -2 }}
               data={chartData}
             >
               <XAxis
@@ -68,7 +68,7 @@ export default function Inflacion({ data, months }) {
                 stroke="#8884d8"
                 fill="#8884d8"
               />
-              <Brush height={10} stroke="#8884d8" />
+              <Brush height={12} stroke="#8884d8" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
