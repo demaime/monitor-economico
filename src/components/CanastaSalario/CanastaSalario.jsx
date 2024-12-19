@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import SlideHeader from "../SlideHeader";
 import MonthSelector from "../MonthSelector";
 
-export default function CanastaSalario() {
+export default function CanastaSalario(data, months) {
+  // const [selectedMonth, setSelectedMonth] = useState(months[months.length - 1]); // Por defecto el último mes
+  // console.log(data);
+  // console.log(months)
+
   return (
     <section>
       <SlideHeader
@@ -15,8 +19,11 @@ export default function CanastaSalario() {
           </div>
         }
       />
-
-      <MonthSelector months={["ABRIL", "MAYO", "JUNIO", "AGOSTO"]} />
+      {/* <MonthSelector
+        months={months}
+        selectedMonth={selectedMonth} // Pasamos el mes seleccionado
+        onMonthChange={setSelectedMonth} // Actualizamos desde aquí
+      />{" "} */}
       <div className="w-full h-1/2 center-flex bg-gray-200">TODO PIOLI</div>
       <div className="w-full h-1/2 center-flex bg-gray-300">BOINA?</div>
     </section>

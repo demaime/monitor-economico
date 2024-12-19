@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   const ranges = {
     meses: "datos!C2:L2",
     inflacion: "datos!C3:L3",
-    // cba: "datos!C4:H4",
+    cba: "datos!C4:L4",
   };
 
   try {
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       }
 
       const rows = response.data.values;
-      if (rows.length) {
+      if (Array.isArray(rows) && rows.length) {
         data[key] = rows[0]; // Asignar la primera fila de datos al objeto
       } else {
         data[key] = []; // Asignar un array vacío si no hay datos

@@ -31,14 +31,13 @@ export default function Home() {
     return <div className="full-containter center-flex-col">Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  console.log(data.meses);
-
+  console.log(data.cba);
   return (
     <div className="full-container">
       {data.meses && (
         <>
           <Inflacion data={data.inflacion} months={data.meses} />
-          <CanastaSalario data={data} />
+          <CanastaSalario data={data.cba} months={data.meses} />
           <AsistenciaSocial data={data} />
         </>
       )}
