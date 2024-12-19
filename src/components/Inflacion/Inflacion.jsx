@@ -64,7 +64,7 @@ export default function Inflacion({ data, months }) {
       />
 
       <div className="w-full h-1/2 center-flex bg-gray-200 center-flex">
-        <div className="wh90 rounded bg-gray-700 center-flex">
+        <div className="wh90 rounded bg-gray-700 center-flex shadow shadow-black">
           <ResponsiveContainer width={"95%"} height={"90%"}>
             <AreaChart
               margin={{ top: 0, right: 25, left: -40, bottom: 0 }}
@@ -123,7 +123,7 @@ export default function Inflacion({ data, months }) {
       <div className="w-full h-1/2 bg-gray-300">
         <div className="w-full h-1/2 flex items-center justify-evenly">
           {/* Mostrar datos del mes seleccionado */}
-          <div className="w-[30%] h-3/5 bg-gray-700 rounded flex flex-col justify-evenly">
+          <div className="w-[30%] h-3/5 bg-gray-700 rounded flex flex-col justify-evenly shadow shadow-orange-800">
             <div className="w-full h-2/5 mt-1 text-lg text-[#FFB3B3] center-flex text-center">
               IPC
             </div>
@@ -132,7 +132,7 @@ export default function Inflacion({ data, months }) {
             </div>
           </div>
 
-          <div className="w-[30%] h-3/5 bg-gray-700 rounded flex flex-col justify-evenly">
+          <div className="w-[30%] h-3/5 bg-gray-700 rounded flex flex-col justify-evenly shadow shadow-orange-800">
             <div className="w-full h-2/5 mt-1 text-[10px] text-[#FFB3B3] center-flex text-center">
               VARIACIÓN ACUMULADA
             </div>
@@ -144,7 +144,7 @@ export default function Inflacion({ data, months }) {
             </div>
           </div>
 
-          <div className="w-[30%] h-3/5 bg-gray-700 rounded flex flex-col justify-evenly">
+          <div className="w-[30%] h-3/5 bg-gray-700 rounded flex flex-col justify-evenly shadow shadow-orange-800">
             <div className="w-full h-2/5 mt-1 text-[10px] text-[#FFB3B3] center-flex text-center">
               VARIACIÓN INTERMENSUAL
             </div>
