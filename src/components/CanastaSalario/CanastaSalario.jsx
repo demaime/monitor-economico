@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import SlideHeader from "../SlideHeader";
-import MonthSelector from "../MonthSelector";
+import SlideHeader from "../SlideHeader/SlideHeader";
+import MonthSelector from "../MonthSelector/MonthSelector";
 
 export default function CanastaSalario(data, months) {
   // const [selectedMonth, setSelectedMonth] = useState(months[months.length - 1]); // Por defecto el último mes

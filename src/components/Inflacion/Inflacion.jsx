@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import SlideHeader from "../SlideHeader";
-import MonthSelector from "../MonthSelector";
+import SlideHeader from "../SlideHeader/SlideHeader";
+import MonthSelector from "../MonthSelector/MonthSelector";
 import {
   AreaChart,
   Area,

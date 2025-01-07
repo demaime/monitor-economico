@@ -1,5 +1,5 @@
 import React from "react";
-import SlideHeader from "../SlideHeader";
+import SlideHeader from "../SlideHeader/SlideHeader";
 
 export default function AsistenciaSocial() {
   return (

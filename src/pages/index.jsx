@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import AsistenciaSocial from "@/components/AsistenciaSocial/AsistenciaSocial";
 import CanastaSalario from "@/components/CanastaSalario/CanastaSalario";
 import Inflacion from "@/components/Inflacion/Inflacion";
+import Loader from "@/components/Loader/Loader";
+import { Fade, Zoom, JackInTheBox, Roll } from "react-awesome-reveal";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -28,10 +30,33 @@ export default function Home() {
   }, []);
 
   if (loading)
-    return <div className="full-containter center-flex-col">Loading...</div>;
+    return (
+      <section className="center-flex-col bg-gray-700">
+       
+          <Fade>
+            <h1 className="text-5xl text-[#FF5733] w-full mb-12 font-semibold">
+              <span className="text-white font-black">M</span>ONITOR <br />
+              <span className="text-white font-black">I</span>NDICADORES <br />
+              <span className="text-white font-black">E</span>CONOMICOS
+            </h1>
+          </Fade>
+  
+        <Zoom>
+          <Fade>
+            <h1 className="text-lg font-semibold mb-8 text-gray-500">
+              CARGANDO...
+            </h1>
+          </Fade>
+        </Zoom>
+        <Zoom>
+          <Fade>
+            <Loader />
+          </Fade>
+        </Zoom>
+      </section>
+    );
   if (error) return <div>Error: {error}</div>;
 
-  console.log(data.cba);
   return (
     <div className="full-container">
       {data.meses && (
