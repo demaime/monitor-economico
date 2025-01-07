@@ -3,7 +3,8 @@ import AsistenciaSocial from "@/components/AsistenciaSocial/AsistenciaSocial";
 import CanastaSalario from "@/components/CanastaSalario/CanastaSalario";
 import Inflacion from "@/components/Inflacion/Inflacion";
 import Loader from "@/components/Loader/Loader";
-import { Fade, Zoom, JackInTheBox, Roll } from "react-awesome-reveal";
+import { Fade, Zoom } from "react-awesome-reveal";
+import Portada from "@/components/Portada/Portada";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -73,6 +74,7 @@ export default function Home() {
     <div className="full-container">
       {data.meses && (
         <>
+          <Portada />
           <Inflacion data={data.inflacion} months={data.meses} />
           <CanastaSalario data={data.cba} months={data.meses} />
           <AsistenciaSocial data={data} />
