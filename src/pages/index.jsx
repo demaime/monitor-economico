@@ -44,7 +44,7 @@ export default function Home() {
 
   if (loading)
     return (
-      <section className="center-flex-col bg-gray-700">
+      <section className="center-flex-col bg-gradient">
         <Fade>
           <h1 className="text-5xl text-[#FF5733] w-full mb-12 font-semibold">
             <span className="text-white font-black">M</span>ONITOR <br />

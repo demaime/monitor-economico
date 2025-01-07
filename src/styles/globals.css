@@ -69,4 +69,11 @@ section {
   height: 90%;
 }
 
-
+.bg-gradient {
+  background: rgb(255, 87, 51);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 87, 51, 1) 2%,
+    rgba(55, 65, 81, 1) 5%
+  );
+}
