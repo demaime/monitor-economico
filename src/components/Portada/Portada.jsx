@@ -20,7 +20,7 @@ export default function Portada() {
             </div>
           </div>
         </div>
-        <div className="border-y-2 border-[#FF5733] w-[90%] h-[80%] flex flex-col items-center overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-[#FF5733] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-700">
+        <div className="border-y-4 border-[#FF5733] w-[90%] h-[80%] flex flex-col items-center overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-[#FF5733] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-700">
           <div className="w-full min-h-min flex flex-col items-center gap-2 py-2 relative">
             <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Canasta básica</div>
@@ -108,7 +108,7 @@ export default function Portada() {
             ></div>
           </div>
         </div>
-        <div className="w-full h-[10%] center-flex">
+        <div className="w-full h-[10%] flex items-end justify-center">
           <FaAnglesUp className="h-8 w-32 animate-bounce duration-500 text-[#FF5733]" />
         </div>
       </div>
