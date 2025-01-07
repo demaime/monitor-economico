@@ -1,12 +1,12 @@
-import "./style.css"; // Asegúrate de que el archivo CSS esté correctamente importado
+import styles from "./style.module.css"; // Cambiar el nombre del archivo y la importación
 
 export default () => {
   return (
-    <div className="content">
+    <div className={styles.content}>
       {[...Array(2)].map((_, i) => (
-        <div className="bars" key={i}>
+        <div className={styles.bars} key={i}>
           {[...Array(7)].map((_, b) => (
-            <div className="bar" key={b}></div>
+            <div className={styles.bar} key={b}></div>
           ))}
         </div>
       ))}
