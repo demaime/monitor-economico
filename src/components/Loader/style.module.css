@@ -1,18 +1,3 @@
-:root {
-  --b: #262626;
-  --w: #FF5733;
-  --s: 2s; /* change speed */
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-  transform-style: preserve-3d;
-}
-
-
-
 .content {
   width: 50vmin;
   height: 50vmin;
@@ -50,47 +35,6 @@
   animation: grow var(--s) ease-in-out 0s infinite alternate;
   background-size: 300%;
   background-position-x: -203%;
-}
-
-@keyframes mirror1 {
-  0%,
-  47%,
-  99.99%,
-  100% {
-    transform: rotate(180deg) rotateX(0deg);
-  }
-  47.01%,
-  99.98% {
-    transform: rotate(180deg) rotateX(180deg);
-  }
-}
-
-@keyframes mirror2 {
-  0%,
-  47%,
-  99.99%,
-  100% {
-    transform: rotate(90deg) rotateX(180deg);
-  }
-  47.01%,
-  99.98% {
-    transform: rotate(90deg) rotateX(0deg);
-  }
-}
-
-@keyframes grow {
-  0%,
-  25% {
-    background-position-x: -297%;
-  }
-  45%,
-  55% {
-    background-position-x: -250%;
-  }
-  75%,
-  100% {
-    background-position-x: -203%;
-  }
 }
 
 .bar:nth-child(2) {

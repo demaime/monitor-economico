@@ -1,4 +1,4 @@
-import styles from "./style.module.css"; // Cambiar el nombre del archivo y la importación
+import styles from "./style.module.css";
 
 export default () => {
   return (
