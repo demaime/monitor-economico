@@ -50,77 +50,77 @@ export default function Portada() {
             )}
 
             {/* Items */}
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Canasta básica</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
                 <div className="center-flex">235%</div>
               </div>
             </div>
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Ayuda Social</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
                 <div className="center-flex">235%</div>
               </div>
             </div>
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Dolar</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
                 <div className="center-flex">235%</div>
               </div>
             </div>
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Transporte</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
                 <div className="center-flex">235%</div>
               </div>
             </div>
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Alquiler</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
                 <div className="center-flex">235%</div>
               </div>
             </div>
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Servicios</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
                 <div className="center-flex">235%</div>
               </div>
             </div>
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Alimentos</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
                 <div className="center-flex">235%</div>
               </div>
             </div>
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Ocio</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
                 <div className="center-flex">235%</div>
               </div>
             </div>
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Actividad Económica</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
                 <div className="center-flex">235%</div>
               </div>
             </div>
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Capacidad instalada</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
                 <div className="center-flex">235%</div>
               </div>
             </div>
-            <div className="w-[98%] rounded border border-white h-12 flex px-2 mb-2 text-xs justify-between">
+            <div className="w-[98%] rounded bg-gray-200 text-gray-800 h-12 flex px-2 mb-2 text-xs justify-between">
               <div className="w-2/5 flex items-center">Construcción</div>
               <div className="w-2/5 flex justify-between">
                 <div className="center-flex">4.5%</div>
