@@ -15,6 +15,7 @@ import { usePercentageVariation } from "../../hooks/usePercentageVariation";
 
 export default function Inflacion({ data, months }) {
   const [selectedMonth, setSelectedMonth] = useState(months[months.length - 1]);
+  const [activeCard, setActiveCard] = useState(0);
 
   const organizedData = months.map((month, index) => ({
     name: month,
@@ -81,6 +82,14 @@ export default function Inflacion({ data, months }) {
     );
   };
 
+  // Agregar esta función para manejar el scroll
+  const handleScroll = (e) => {
+    const scrollPosition = e.target.scrollLeft;
+    const cardWidth = 280; // Ancho de cada tarjeta
+    const activeIndex = Math.round(scrollPosition / cardWidth);
+    setActiveCard(activeIndex);
+  };
+
   return (
     <section className="min-h-screen bg-gray-900 p-4 space-y-6">
       <div className="space-y-2">
@@ -143,8 +152,11 @@ export default function Inflacion({ data, months }) {
         </ResponsiveContainer>
       </div>
 
-      {/* Cards container with horizontal scroll on mobile */}
-      <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 snap-x md:grid md:grid-cols-3 md:overflow-x-visible md:px-0 md:mx-0">
+      {/* Actualizar el contenedor de tarjetas para incluir onScroll */}
+      <div 
+        className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 snap-x md:grid md:grid-cols-3 md:overflow-x-visible md:px-0 md:mx-0"
+        onScroll={handleScroll}
+      >
         {/* IPC Card */}
         <div className="flex-shrink-0 w-[280px] md:w-auto relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
           <div className="relative z-10 flex h-full flex-col justify-between gap-4">
@@ -200,11 +212,16 @@ export default function Inflacion({ data, months }) {
         </div>
       </div>
 
-      {/* Scroll indicator for mobile */}
+      {/* Actualizar los indicadores de scroll */}
       <div className="flex gap-1 justify-center md:hidden">
-        <div className="w-2 h-2 rounded-full bg-gray-700" />
-        <div className="w-2 h-2 rounded-full bg-gray-700" />
-        <div className="w-2 h-2 rounded-full bg-gray-700" />
+        {[0, 1, 2].map((index) => (
+          <div
+            key={index}
+            className={`w-2 h-2 rounded-full transition-colors ${
+              activeCard === index ? 'bg-orange-500' : 'bg-gray-700'
+            }`}
+          />
+        ))}
       </div>
     </section>
   );
