@@ -1,39 +1,48 @@
 import React from "react";
-import PropTypes from "prop-types";
-import {
-  FaRegArrowAltCircleRight,
-  FaRegArrowAltCircleLeft,
-} from "react-icons/fa";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-function MonthSelector({ months, selectedMonth, onMonthChange }) {
-  const currentMonthIndex = months.indexOf(selectedMonth);
+export default function MonthSelector({
+  months,
+  selectedMonth,
+  onMonthChange,
+}) {
+  const currentIndex = months.indexOf(selectedMonth);
 
-  const handlePreviousMonth = () => {
-    const previousIndex =
-      currentMonthIndex === 0 ? months.length - 1 : currentMonthIndex - 1;
-    onMonthChange(months[previousIndex]); // Notificar al padre
+  const handlePrevMonth = () => {
+    if (currentIndex > 0) {
+      onMonthChange(months[currentIndex - 1]);
+    }
   };
 
   const handleNextMonth = () => {
-    const nextIndex =
-      currentMonthIndex === months.length - 1 ? 0 : currentMonthIndex + 1;
-    onMonthChange(months[nextIndex]); // Notificar al padre
+    if (currentIndex < months.length - 1) {
+      onMonthChange(months[currentIndex + 1]);
+    }
   };
 
   return (
-    <div className="w-full bg-gray-800 text-white h-12 flex items-center justify-between px-4 rounded-lg">
-      <FaRegArrowAltCircleLeft onClick={handlePreviousMonth} />
-      <span>{selectedMonth}</span>
-      <FaRegArrowAltCircleRight onClick={handleNextMonth} />
+    <div className="w-full px-4 py-2 bg-gray-800 flex items-center justify-between rounded-xl">
+      <button
+        onClick={handlePrevMonth}
+        disabled={currentIndex === 0}
+        className="p-2 rounded-full hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-gray-300"
+      >
+        <ChevronLeft className="w-5 h-5" />
+      </button>
+
+      <div className="flex-1 text-center">
+        <span className="text-lg font-semibold text-gray-200">
+          {selectedMonth}
+        </span>
+      </div>
+
+      <button
+        onClick={handleNextMonth}
+        disabled={currentIndex === months.length - 1}
+        className="p-2 rounded-full hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-gray-300"
+      >
+        <ChevronRight className="w-5 h-5" />
+      </button>
     </div>
   );
 }
-
-MonthSelector.propTypes = {
-  months: PropTypes.arrayOf(PropTypes.string).isRequired,
-  selectedMonth: PropTypes.string.isRequired, // Mes actual
-  onMonthChange: PropTypes.func.isRequired, // Función para actualizar el mes
-};
-
-export default MonthSelector;
-  
