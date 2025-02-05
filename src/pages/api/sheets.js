@@ -20,9 +20,9 @@ export default async function handler(req, res) {
   // ID de la hoja de cálculo y rango
   const spreadsheetId = "1CVnPUD9jj9nYFp3-uJOyv_uwBmm-GRNmaJxpQG0kMw8";
   const ranges = {
-    meses: "datos!C2:L2",
-    inflacion: "datos!C3:L3",
-    cba: "datos!C4:L4",
+    meses: "datos!C2:2",
+    inflacion: "datos!C3:3",
+    cba: "datos!C4:4",
   };
 
   try {
@@ -32,6 +32,8 @@ export default async function handler(req, res) {
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId,
         range,
+        majorDimension: "ROWS",
+        valueRenderOption: "UNFORMATTED_VALUE",
       });
 
       if (response.status !== 200) {
@@ -40,9 +42,14 @@ export default async function handler(req, res) {
 
       const rows = response.data.values;
       if (Array.isArray(rows) && rows.length) {
-        data[key] = rows[0]; // Asignar la primera fila de datos al objeto
+        // Filtramos celdas vacías, undefined, null o que solo contengan espacios en blanco
+        data[key] = rows[0].filter((cell) => {
+          if (typeof cell === "number") return true;
+          if (typeof cell === "string") return cell.trim() !== "";
+          return cell !== null && cell !== undefined;
+        });
       } else {
-        data[key] = []; // Asignar un array vacío si no hay datos
+        data[key] = [];
       }
     }
 

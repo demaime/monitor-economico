@@ -21,7 +21,7 @@ function MonthSelector({ months, selectedMonth, onMonthChange }) {
   };
 
   return (
-    <div className="w-full bg-gray-800 text-white h-12 flex items-center justify-between px-2">
+    <div className="w-full bg-gray-800 text-white h-12 flex items-center justify-between px-4 rounded-lg">
       <FaRegArrowAltCircleLeft onClick={handlePreviousMonth} />
       <span>{selectedMonth}</span>
       <FaRegArrowAltCircleRight onClick={handleNextMonth} />

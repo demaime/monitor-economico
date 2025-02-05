@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import SlideHeader from "../SlideHeader/SlideHeader";
-import MonthSelector from "../MonthSelector/MonthSelector";
+import { TrendingUp, ArrowUpRight, Percent } from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -9,22 +8,60 @@ import {
   Tooltip,
   ResponsiveContainer,
   Brush,
-  LabelList,
+  ReferenceLine,
 } from "recharts";
+import MonthSelector from "../MonthSelector/MonthSelector";
+import { usePercentageVariation } from "../../hooks/usePercentageVariation";
 
 export default function Inflacion({ data, months }) {
-  // Estado para manejar el mes seleccionado
-  const [selectedMonth, setSelectedMonth] = useState(months[months.length - 1]); // Por defecto el último mes
+  const [selectedMonth, setSelectedMonth] = useState(months[months.length - 1]);
 
-  // Organizar los datos para el gráfico
   const organizedData = months.map((month, index) => ({
     name: month,
     IPC: Number(data[index]) || 0,
   }));
 
-  // Filtrar los datos específicos del mes seleccionado
   const selectedData = organizedData.find(
     (item) => item.name === selectedMonth
+  );
+  const currentIndex = months.indexOf(selectedMonth);
+
+  // Calculate variations
+  const calculateAccumulated = () => {
+    if (!selectedData) return 0;
+    return organizedData
+      .slice(0, currentIndex + 1)
+      .reduce((acc, curr) => acc + curr.IPC, 0);
+  };
+
+  const calculateMoM = () => {
+    if (currentIndex <= 0 || !selectedData) return 0;
+    const prevMonth = organizedData[currentIndex - 1].IPC;
+    return ((selectedData.IPC - prevMonth) / prevMonth) * 100;
+  };
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-gray-900 p-3 rounded-lg border border-gray-700 shadow-xl">
+          <p className="text-gray-200 text-sm font-medium">
+            {payload[0].payload.name}
+          </p>
+          <p className="text-orange-400 font-bold">{`${payload[0].value}%`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Obtener el índice del mes seleccionado y el mes anterior
+  const currentMonthIndex = months.indexOf(selectedMonth);
+  const previousMonthIndex = currentMonthIndex - 1;
+
+  // Calcular la variación intermensual usando el hook
+  const intermensualVariation = usePercentageVariation(
+    data[currentMonthIndex],
+    data[previousMonthIndex]
   );
 
   const CustomizedLabel = ({ x, y, value }) => {
@@ -37,126 +74,137 @@ export default function Inflacion({ data, months }) {
         fontSize={8}
         className="font-bold"
         textAnchor="middle"
-        fill="#FFB3B3"
+        fill="#f97316"
       >
-        {`${value} %`}
+        {`${value}%`}
       </text>
     );
   };
 
   return (
-    <section>
-      <SlideHeader
-        title={"INFLACIÓN"}
-        description={
-          <div className="center-flex-col">
-            <p>Nacional: INDEC</p>
-            <p>CABA: INDECBA</p>
-          </div>
-        }
-      />
+    <section className="min-h-screen bg-gray-900 p-4 space-y-6">
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold text-gray-100">Inflación</h1>
+        <p className="text-sm text-gray-400">Nacional: INDEC | CABA: INDECBA</p>
+      </div>
 
-      {/* MonthSelector controlado */}
       <MonthSelector
         months={months}
-        selectedMonth={selectedMonth} // Pasamos el mes seleccionado
-        onMonthChange={setSelectedMonth} // Actualizamos desde aquí
+        selectedMonth={selectedMonth}
+        onMonthChange={setSelectedMonth}
       />
 
-      <div className="w-full h-1/2 center-flex bg-gray-200 center-flex">
-        <div className="wh90 rounded bg-gray-700 center-flex shadow shadow-black">
-          <ResponsiveContainer width={"95%"} height={"90%"}>
-            <AreaChart
-              margin={{ top: 0, right: 25, left: -40, bottom: 0 }}
-              data={organizedData} // Gráfico con todos los datos
-            >
-              <XAxis
-                dataKey="name"
-                angle={-45}
-                textAnchor="end"
-                height={60}
-                tick={{
-                  fill: "#e5e7eb",
-                  fontSize: "8px",
-                  fontWeight: "600",
-                }}
-              />
-              <YAxis
-                tick={{
-                  fill: "#e5e7eb",
-                  fontSize: "10px",
-                  fontWeight: "600",
-                }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#111111",
-                  border: "none",
-                  borderRadius: "15px",
-                  color: "white",
-                }}
-                cursor={false}
-              />
-              <Area
-                type="monotone"
-                dataKey="IPC"
-                stroke="#FF5733"
-                fill="#FFB3B3"
-                label={<CustomizedLabel />}
-              />
-              <Brush
-                dataKey="name"
-                tickFormatter={() => ""}
-                height={15}
-                fill="#FFB3B3"
-                stroke="#FF5733"
-                travellerWidth={20}
-                fontSize={2}
-                borderRadius={50}
-              />
-              <LabelList dataKey="IPC" position="top" fill="#FF5733" />
-            </AreaChart>
-          </ResponsiveContainer>
+      <div className="h-[300px] w-full bg-gray-800 rounded-xl p-4">
+        <ResponsiveContainer>
+          <AreaChart
+            data={organizedData}
+            margin={{ top: 0, right: 15, left: -30, bottom: 0 }}
+          >
+            <defs>
+              <linearGradient id="colorIPC" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <XAxis
+              dataKey="name"
+              angle={-45}
+              textAnchor="end"
+              height={60}
+              tick={{ fill: "#9ca3af", fontSize: 12 }}
+            />
+            <YAxis
+              tick={{ fill: "#9ca3af", fontSize: 12 }}
+              axisLine={{ stroke: "#374151" }}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Area
+              type="monotone"
+              dataKey="IPC"
+              stroke="#f97316"
+              fill="url(#colorIPC)"
+              strokeWidth={2}
+              label={<CustomizedLabel />}
+            />
+            <Brush
+              dataKey="name"
+              height={30}
+              stroke="#f97316"
+              fill="#1f2937"
+              travellerWidth={10}
+            />
+            <ReferenceLine
+              x={selectedMonth}
+              stroke="#56595e" // Color del trazo
+              strokeWidth={1}
+              strokeDasharray="3 3"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Cards container with horizontal scroll on mobile */}
+      <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 snap-x md:grid md:grid-cols-3 md:overflow-x-visible md:px-0 md:mx-0">
+        {/* IPC Card */}
+        <div className="flex-shrink-0 w-[280px] md:w-auto relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
+          <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-orange-200">IPC</h3>
+              <div className="text-2xl font-bold text-orange-400">
+                {selectedData ? `${selectedData.IPC.toFixed(1)}%` : "N/A"}
+              </div>
+            </div>
+            <div className="text-xs text-gray-400 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              <span>Índice de Precios al Consumidor</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Accumulated Variation Card */}
+        <div className="flex-shrink-0 w-[280px] md:w-auto relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
+          <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-red-200">
+                Variación Acumulada
+              </h3>
+              <div className="text-2xl font-bold text-red-400">
+                {`${calculateAccumulated().toFixed(1)}%`}
+              </div>
+            </div>
+            <div className="text-xs text-gray-400 flex items-center gap-2">
+              <ArrowUpRight className="w-4 h-4" />
+              <span>Total acumulado en el período</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Monthly Variation Card */}
+        <div className="flex-shrink-0 w-[280px] md:w-auto relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
+          <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-yellow-200">
+                Variación Intermensual
+              </h3>
+              <div className="text-2xl font-bold text-yellow-400">
+                {intermensualVariation !== null
+                  ? `${intermensualVariation} %`
+                  : "N/A"}
+              </div>
+            </div>
+            <div className="text-xs text-gray-400 flex items-center gap-2">
+              <Percent className="w-4 h-4" />
+              <span>Cambio respecto al mes anterior</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="w-full h-1/2 bg-gray-300">
-        <div className="w-full h-1/2 flex items-center justify-evenly">
-          {/* Mostrar datos del mes seleccionado */}
-          <div className="w-[30%] h-3/5 bg-gray-700 rounded flex flex-col justify-evenly shadow shadow-orange-800">
-            <div className="w-full h-2/5 mt-1 text-lg text-[#FFB3B3] center-flex text-center">
-              IPC
-            </div>
-            <div className="w-full h-3/5 text-xl font-semibold text-[#FF5733] center-flex">
-              {selectedData ? `${selectedData.IPC} %` : "N/A"}
-            </div>
-          </div>
-
-          <div className="w-[30%] h-3/5 bg-gray-700 rounded flex flex-col justify-evenly shadow shadow-orange-800">
-            <div className="w-full h-2/5 mt-1 text-[10px] text-[#FFB3B3] center-flex text-center">
-              VARIACIÓN ACUMULADA
-            </div>
-            <div className="w-full h-3/5 text-xl font-semibold text-[#FF5733] center-flex">
-              {/* Ejemplo de cálculo de variación acumulada */}
-              {selectedData
-                ? `${(selectedData.IPC * 2).toFixed(1)} %` // Aquí pones tu lógica real
-                : "N/A"}
-            </div>
-          </div>
-
-          <div className="w-[30%] h-3/5 bg-gray-700 rounded flex flex-col justify-evenly shadow shadow-orange-800">
-            <div className="w-full h-2/5 mt-1 text-[10px] text-[#FFB3B3] center-flex text-center">
-              VARIACIÓN INTERMENSUAL
-            </div>
-            <div className="w-full h-3/5 text-xl font-semibold text-[#FF5733] center-flex">
-              {/* Ejemplo de cálculo de variación intermensual */}
-              {selectedData
-                ? `${(selectedData.IPC * 3).toFixed(1)} %` // Aquí pones tu lógica real
-                : "N/A"}
-            </div>
-          </div>
-        </div>
-        <div className="w-full h-1/2 bg-gray-200"></div>
+      {/* Scroll indicator for mobile */}
+      <div className="flex gap-1 justify-center md:hidden">
+        <div className="w-2 h-2 rounded-full bg-gray-700" />
+        <div className="w-2 h-2 rounded-full bg-gray-700" />
+        <div className="w-2 h-2 rounded-full bg-gray-700" />
       </div>
     </section>
   );
