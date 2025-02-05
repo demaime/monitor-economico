@@ -163,7 +163,7 @@ export default function Inflacion({ data, months }) {
       <div className="w-full">
         {/* Carousel container */}
         <div
-          className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory md:grid md:grid-cols-3 md:overflow-x-visible scroll-smooth"
+          className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory snap-always md:grid md:grid-cols-3 md:overflow-x-visible scroll-smooth overscroll-contain"
           onScroll={handleScroll}
         >
           {/* Cards - ajustamos las clases de snap */}
