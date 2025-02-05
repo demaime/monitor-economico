@@ -55,14 +55,21 @@ export default function Inflacion({ data, months }) {
     return null;
   };
 
-  // Obtener el índice del mes seleccionado y el mes anterior
+  // Obtener índices para los diferentes cálculos
   const currentMonthIndex = months.indexOf(selectedMonth);
   const previousMonthIndex = currentMonthIndex - 1;
+  const previousYearIndex = currentMonthIndex - 12;
 
-  // Calcular la variación intermensual usando el hook
+  // Calcular variación intermensual
   const intermensualVariation = usePercentageVariation(
     data[currentMonthIndex],
     data[previousMonthIndex]
+  );
+
+  // Calcular variación interanual
+  const interanualVariation = usePercentageVariation(
+    data[currentMonthIndex],
+    data[previousYearIndex]
   );
 
   const CustomizedLabel = ({ x, y, value }) => {
@@ -82,10 +89,10 @@ export default function Inflacion({ data, months }) {
     );
   };
 
-  // Agregar esta función para manejar el scroll
+  // Agregar la función handleScroll
   const handleScroll = (e) => {
     const scrollPosition = e.target.scrollLeft;
-    const cardWidth = 280; // Ancho de cada tarjeta
+    const cardWidth = window.innerWidth * 0.85; // 85vw
     const activeIndex = Math.round(scrollPosition / cardWidth);
     setActiveCard(activeIndex);
   };
@@ -152,76 +159,79 @@ export default function Inflacion({ data, months }) {
         </ResponsiveContainer>
       </div>
 
-      {/* Actualizar el contenedor de tarjetas para incluir onScroll */}
-      <div 
-        className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 snap-x md:grid md:grid-cols-3 md:overflow-x-visible md:px-0 md:mx-0"
-        onScroll={handleScroll}
-      >
-        {/* IPC Card */}
-        <div className="flex-shrink-0 w-[280px] md:w-auto relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
-          <div className="relative z-10 flex h-full flex-col justify-between gap-4">
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-orange-200">IPC</h3>
-              <div className="text-2xl font-bold text-orange-400">
-                {selectedData ? `${selectedData.IPC.toFixed(1)}%` : "N/A"}
+      {/* Cards container */}
+      <div className="w-full">
+        {/* Carousel container */}
+        <div
+          className="flex gap-2 overflow-x-auto pb-2 snap-x md:grid md:grid-cols-3 md:overflow-x-visible"
+          onScroll={handleScroll}
+        >
+          {/* Cards - ajustamos el ancho para que sea relativo al contenedor */}
+          <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
+            <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-orange-200">IPC</h3>
+                <div className="text-2xl font-bold text-orange-400">
+                  {selectedData ? `${selectedData.IPC.toFixed(1)}%` : "N/A"}
+                </div>
+              </div>
+              <div className="text-xs text-gray-400 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4" />
+                <span>Índice de Precios al Consumidor</span>
               </div>
             </div>
-            <div className="text-xs text-gray-400 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              <span>Índice de Precios al Consumidor</span>
+          </div>
+
+          <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
+            <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-red-200">
+                  Variación Acumulada
+                </h3>
+                <div className="text-2xl font-bold text-red-400">
+                  {`${calculateAccumulated().toFixed(1)}%`}
+                </div>
+              </div>
+              <div className="text-xs text-gray-400 flex items-center gap-2">
+                <ArrowUpRight className="w-4 h-4" />
+                <span>Total acumulado en el período</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
+            <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-yellow-200">
+                  Variación Intermensual
+                </h3>
+                <div className="text-2xl font-bold text-yellow-400">
+                  {currentIndex > 0
+                    ? `${(
+                        selectedData.IPC - organizedData[currentIndex - 1].IPC
+                      ).toFixed(1)} pp.`
+                    : "N/A"}
+                </div>
+              </div>
+              <div className="text-xs text-gray-400 flex items-center gap-2">
+                <Percent className="w-4 h-4" />
+                <span>Cambio respecto al mes anterior</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Accumulated Variation Card */}
-        <div className="flex-shrink-0 w-[280px] md:w-auto relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
-          <div className="relative z-10 flex h-full flex-col justify-between gap-4">
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-red-200">
-                Variación Acumulada
-              </h3>
-              <div className="text-2xl font-bold text-red-400">
-                {`${calculateAccumulated().toFixed(1)}%`}
-              </div>
-            </div>
-            <div className="text-xs text-gray-400 flex items-center gap-2">
-              <ArrowUpRight className="w-4 h-4" />
-              <span>Total acumulado en el período</span>
-            </div>
-          </div>
+        {/* Scroll indicators */}
+        <div className="flex gap-1 justify-center mt-2 md:hidden">
+          {[0, 1, 2, 3].map((index) => (
+            <div
+              key={index}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                activeCard === index ? "bg-orange-500" : "bg-gray-700"
+              }`}
+            />
+          ))}
         </div>
-
-        {/* Monthly Variation Card */}
-        <div className="flex-shrink-0 w-[280px] md:w-auto relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
-          <div className="relative z-10 flex h-full flex-col justify-between gap-4">
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-yellow-200">
-                Variación Intermensual
-              </h3>
-              <div className="text-2xl font-bold text-yellow-400">
-                {intermensualVariation !== null
-                  ? `${intermensualVariation} %`
-                  : "N/A"}
-              </div>
-            </div>
-            <div className="text-xs text-gray-400 flex items-center gap-2">
-              <Percent className="w-4 h-4" />
-              <span>Cambio respecto al mes anterior</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Actualizar los indicadores de scroll */}
-      <div className="flex gap-1 justify-center md:hidden">
-        {[0, 1, 2].map((index) => (
-          <div
-            key={index}
-            className={`w-2 h-2 rounded-full transition-colors ${
-              activeCard === index ? 'bg-orange-500' : 'bg-gray-700'
-            }`}
-          />
-        ))}
       </div>
     </section>
   );
