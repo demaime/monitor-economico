@@ -163,11 +163,11 @@ export default function Inflacion({ data, months }) {
       <div className="w-full">
         {/* Carousel container */}
         <div
-          className="flex gap-2 overflow-x-auto pb-2 snap-x md:grid md:grid-cols-3 md:overflow-x-visible"
+          className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory md:grid md:grid-cols-3 md:overflow-x-visible scroll-smooth"
           onScroll={handleScroll}
         >
-          {/* Cards - ajustamos el ancho para que sea relativo al contenedor */}
-          <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
+          {/* Cards - ajustamos las clases de snap */}
+          <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
             <div className="relative z-10 flex h-full flex-col justify-between gap-4">
               <div className="space-y-2">
                 <h3 className="text-sm font-medium text-orange-200">IPC</h3>
@@ -182,7 +182,7 @@ export default function Inflacion({ data, months }) {
             </div>
           </div>
 
-          <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
+          <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
             <div className="relative z-10 flex h-full flex-col justify-between gap-4">
               <div className="space-y-2">
                 <h3 className="text-sm font-medium text-red-200">
@@ -199,7 +199,7 @@ export default function Inflacion({ data, months }) {
             </div>
           </div>
 
-          <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-start">
+          <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
             <div className="relative z-10 flex h-full flex-col justify-between gap-4">
               <div className="space-y-2">
                 <h3 className="text-sm font-medium text-yellow-200">
@@ -223,7 +223,7 @@ export default function Inflacion({ data, months }) {
 
         {/* Scroll indicators */}
         <div className="flex gap-1 justify-center mt-2 md:hidden">
-          {[0, 1, 2, 3].map((index) => (
+          {[0, 1, 2].map((index) => (
             <div
               key={index}
               className={`w-2 h-2 rounded-full transition-colors ${
