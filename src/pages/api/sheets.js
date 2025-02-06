@@ -21,8 +21,16 @@ export default async function handler(req, res) {
   const spreadsheetId = "1CVnPUD9jj9nYFp3-uJOyv_uwBmm-GRNmaJxpQG0kMw8";
   const ranges = {
     meses: "datos!C2:2",
-    inflacion: "datos!C3:3",
-    cba: "datos!C4:4",
+    inflacionNacional: "datos!C3:3",
+    inflacionCaba: "datos!C4:4",
+    cbaIndividualNacional: "datos!C5:5",
+    cbtIndividualNacional: "datos!C6:6",
+    cbaFamiliarNacional: "datos!C7:7",
+    cbtFamiliarNacional: "datos!C8:8",
+    cbaIndividualCaba: "datos!C9:9",
+    cbtIndividualCaba: "datos!C10:10",
+    cbaFamiliarCaba: "datos!C11:11",
+    cbtFamiliarCaba: "datos!C12:12",
   };
 
   try {

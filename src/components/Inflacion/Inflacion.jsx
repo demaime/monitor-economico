@@ -16,10 +16,13 @@ import { usePercentageVariation } from "../../hooks/usePercentageVariation";
 export default function Inflacion({ data, months }) {
   const [selectedMonth, setSelectedMonth] = useState(months[months.length - 1]);
   const [activeCard, setActiveCard] = useState(0);
+  const [selectedRegion, setSelectedRegion] = useState("nacional");
+
+  const currentData = data[selectedRegion];
 
   const organizedData = months.map((month, index) => ({
     name: month,
-    IPC: Number(data[index]) || 0,
+    IPC: Number(currentData[index]) || 0,
   }));
 
   const selectedData = organizedData.find(
@@ -48,7 +51,7 @@ export default function Inflacion({ data, months }) {
           <p className="text-gray-200 text-sm font-medium">
             {payload[0].payload.name}
           </p>
-          <p className="text-orange-400 font-bold">{`${payload[0].value}%`}</p>
+          <p className="text-orange-custom font-bold">{`${payload[0].value}%`}</p>
         </div>
       );
     }
@@ -62,14 +65,14 @@ export default function Inflacion({ data, months }) {
 
   // Calcular variación intermensual
   const intermensualVariation = usePercentageVariation(
-    data[currentMonthIndex],
-    data[previousMonthIndex]
+    currentData[currentMonthIndex],
+    currentData[previousMonthIndex]
   );
 
   // Calcular variación interanual
   const interanualVariation = usePercentageVariation(
-    data[currentMonthIndex],
-    data[previousYearIndex]
+    currentData[currentMonthIndex],
+    currentData[previousYearIndex]
   );
 
   const CustomizedLabel = ({ x, y, value }) => {
@@ -82,7 +85,7 @@ export default function Inflacion({ data, months }) {
         fontSize={8}
         className="font-bold"
         textAnchor="middle"
-        fill="#f97316"
+        fill="#ff5733"
       >
         {`${value}%`}
       </text>
@@ -102,6 +105,29 @@ export default function Inflacion({ data, months }) {
       <div className="space-y-2">
         <h1 className="text-2xl font-bold text-gray-100">Inflación</h1>
         <p className="text-sm text-gray-400">Nacional: INDEC | CABA: INDECBA</p>
+      </div>
+
+      <div className="flex gap-2">
+        <button
+          onClick={() => setSelectedRegion("nacional")}
+          className={`px-4 py-2 rounded-lg ${
+            selectedRegion === "nacional"
+              ? "bg-orange-custom text-white"
+              : "bg-gray-800 text-gray-300"
+          }`}
+        >
+          Nacional
+        </button>
+        <button
+          onClick={() => setSelectedRegion("caba")}
+          className={`px-4 py-2 rounded-lg ${
+            selectedRegion === "caba"
+              ? "bg-orange-custom text-white"
+              : "bg-gray-800 text-gray-300"
+          }`}
+        >
+          CABA
+        </button>
       </div>
 
       <MonthSelector
@@ -137,21 +163,14 @@ export default function Inflacion({ data, months }) {
             <Area
               type="monotone"
               dataKey="IPC"
-              stroke="#f97316"
+              stroke="#ff5733"
               fill="url(#colorIPC)"
               strokeWidth={2}
               label={<CustomizedLabel />}
             />
-            <Brush
-              dataKey="name"
-              height={30}
-              stroke="#f97316"
-              fill="#1f2937"
-              travellerWidth={10}
-            />
             <ReferenceLine
               x={selectedMonth}
-              stroke="#56595e" // Color del trazo
+              stroke="#56595e"
               strokeWidth={1}
               strokeDasharray="3 3"
             />
@@ -171,7 +190,7 @@ export default function Inflacion({ data, months }) {
             <div className="relative z-10 flex h-full flex-col justify-between gap-4">
               <div className="space-y-2">
                 <h3 className="text-sm font-medium text-orange-200">IPC</h3>
-                <div className="text-2xl font-bold text-orange-400">
+                <div className="text-2xl font-bold text-orange-custom">
                   {selectedData ? `${selectedData.IPC.toFixed(1)}%` : "N/A"}
                 </div>
               </div>
@@ -227,7 +246,7 @@ export default function Inflacion({ data, months }) {
             <div
               key={index}
               className={`w-2 h-2 rounded-full transition-colors ${
-                activeCard === index ? "bg-orange-500" : "bg-gray-700"
+                activeCard === index ? "bg-orange-custom" : "bg-gray-700"
               }`}
             />
           ))}

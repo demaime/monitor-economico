@@ -75,7 +75,13 @@ export default function Home() {
       {data.meses && (
         <>
           <Portada />
-          <Inflacion data={data.inflacion} months={data.meses} />
+          <Inflacion
+            data={{
+              nacional: data.inflacionNacional, // Primera fila (fila 3)
+              caba: data.inflacionCaba, // Segunda fila (fila 4)
+            }}
+            months={data.meses}
+          />
           <CanastaSalario data={data.cba} months={data.meses} />
           <AsistenciaSocial data={data} />
         </>

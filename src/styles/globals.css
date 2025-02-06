@@ -77,3 +77,11 @@ section {
     rgba(55, 65, 81, 1) 5%
   );
 }
+
+.text-orange-custom {
+  color: #ff5733;
+}
+
+.bg-orange-custom {
+  background-color: #ff5733;
+}
