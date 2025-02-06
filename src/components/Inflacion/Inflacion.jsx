@@ -101,7 +101,7 @@ export default function Inflacion({ data, months }) {
   };
 
   return (
-    <section className="bg-gray-900">
+    <section className="bg-gray-900 overflow-hidden">
       <div className="w-[90%] h-[90%] flex flex-col gap-4">
         <div className="space-y-2">
           <h1 className="text-2xl font-bold text-gray-100">Inflación</h1>
@@ -211,7 +211,7 @@ export default function Inflacion({ data, months }) {
         <div className="flex-1 flex flex-col">
           {/* Carousel container */}
           <div
-            className="flex-1 flex gap-4 overflow-x-auto snap-x snap-mandatory snap-always md:grid md:grid-cols-3 md:overflow-x-visible scroll-smooth overscroll-contain"
+            className="flex gap-4 md:grid md:grid-cols-3 snap-x snap-mandatory md:overflow-visible scroll-smooth"
             onScroll={handleScroll}
           >
             {/* Cards - ajustamos las clases de snap */}
