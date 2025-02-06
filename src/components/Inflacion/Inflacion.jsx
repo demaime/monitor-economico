@@ -85,7 +85,7 @@ export default function Inflacion({ data, months }) {
         fontSize={8}
         className="font-bold"
         textAnchor="middle"
-        fill="#ff5733"
+        fill={selectedRegion === "nacional" ? "#f97316" : "#f6ff00"}
       >
         {`${value}%`}
       </text>
@@ -122,7 +122,7 @@ export default function Inflacion({ data, months }) {
           onClick={() => setSelectedRegion("caba")}
           className={`px-4 py-2 rounded-lg ${
             selectedRegion === "caba"
-              ? "bg-orange-custom text-white"
+              ? "bg-yellow-custom text-gray-800"
               : "bg-gray-800 text-gray-300"
           }`}
         >
@@ -144,8 +144,20 @@ export default function Inflacion({ data, months }) {
           >
             <defs>
               <linearGradient id="colorIPC" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+                <stop
+                  offset="45%"
+                  stopColor={
+                    selectedRegion === "nacional" ? "#f97316" : "#f6ff00"
+                  }
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="99%"
+                  stopColor={
+                    selectedRegion === "nacional" ? "#f97316" : "#f6ff00"
+                  }
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <XAxis
@@ -153,17 +165,17 @@ export default function Inflacion({ data, months }) {
               angle={-45}
               textAnchor="end"
               height={60}
-              tick={{ fill: "#9ca3af", fontSize: 12 }}
+              tick={{ fill: "#9ca3af", fontSize: 8 }}
             />
             <YAxis
-              tick={{ fill: "#9ca3af", fontSize: 12 }}
+              tick={{ fill: "#9ca3af", fontSize: 8 }}
               axisLine={{ stroke: "#374151" }}
             />
             <Tooltip content={<CustomTooltip />} />
             <Area
               type="monotone"
               dataKey="IPC"
-              stroke="#ff5733"
+              stroke={selectedRegion === "nacional" ? "#f97316" : "#f6ff00"}
               fill="url(#colorIPC)"
               strokeWidth={2}
               label={<CustomizedLabel />}
@@ -173,6 +185,19 @@ export default function Inflacion({ data, months }) {
               stroke="#56595e"
               strokeWidth={1}
               strokeDasharray="3 3"
+            />
+            <Brush
+              dataKey="name"
+              height={15}
+              stroke={selectedRegion === "nacional" ? "#f97316" : "#f6ff00"}
+              fill="#1f2937"
+              travellerWidth={10}
+              style={{
+                fontSize: "8px",
+                marginTop: "2px",
+                stroke: selectedRegion === "nacional" ? "#f97316" : "#f6ff00",
+                fill: selectedRegion === "nacional" ? "#f97316" : "#f6ff00",
+              }}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -189,8 +214,23 @@ export default function Inflacion({ data, months }) {
           <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
             <div className="relative z-10 flex h-full flex-col justify-between gap-4">
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-orange-200">IPC</h3>
-                <div className="text-2xl font-bold text-orange-custom">
+                <h3
+                  className={`text-sm font-medium text-orange-200 ${
+                    selectedRegion === "nacional"
+                      ? "text-orange-200"
+                      : "text-yellow-200"
+                  }`}
+                >
+                  IPC
+                </h3>
+
+                <div
+                  className={`text-2xl font-bold  ${
+                    selectedRegion === "nacional"
+                      ? "text-orange-custom"
+                      : "text-yellow-custom"
+                  }`}
+                >
                   {selectedData ? `${selectedData.IPC.toFixed(1)}%` : "N/A"}
                 </div>
               </div>
@@ -204,10 +244,22 @@ export default function Inflacion({ data, months }) {
           <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
             <div className="relative z-10 flex h-full flex-col justify-between gap-4">
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-red-200">
+                <h3
+                  className={`text-sm font-medium text-orange-200 ${
+                    selectedRegion === "nacional"
+                      ? "text-orange-200"
+                      : "text-yellow-200"
+                  }`}
+                >
                   Variación Acumulada
                 </h3>
-                <div className="text-2xl font-bold text-red-400">
+                <div
+                  className={`text-2xl font-bold  ${
+                    selectedRegion === "nacional"
+                      ? "text-orange-custom"
+                      : "text-yellow-custom"
+                  }`}
+                >
                   {`${calculateAccumulated().toFixed(1)}%`}
                 </div>
               </div>
@@ -221,10 +273,22 @@ export default function Inflacion({ data, months }) {
           <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
             <div className="relative z-10 flex h-full flex-col justify-between gap-4">
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-yellow-200">
+                <h3
+                  className={`"text-sm font-medium text-orange-200 ${
+                    selectedRegion === "nacional"
+                      ? "text-orange-200"
+                      : "text-yellow-200"
+                  }`}
+                >
                   Variación Intermensual
                 </h3>
-                <div className="text-2xl font-bold text-yellow-400">
+                <div
+                  className={`text-2xl font-bold  ${
+                    selectedRegion === "nacional"
+                      ? "text-orange-custom"
+                      : "text-yellow-custom"
+                  }`}
+                >
                   {currentIndex > 0
                     ? `${(
                         selectedData.IPC - organizedData[currentIndex - 1].IPC
@@ -246,7 +310,11 @@ export default function Inflacion({ data, months }) {
             <div
               key={index}
               className={`w-2 h-2 rounded-full transition-colors ${
-                activeCard === index ? "bg-orange-custom" : "bg-gray-700"
+                activeCard === index
+                  ? selectedRegion === "nacional"
+                    ? "bg-orange-custom"
+                    : "bg-yellow-custom"
+                  : "bg-gray-700"
               }`}
             />
           ))}
