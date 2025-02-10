@@ -151,14 +151,14 @@ export default function Inflacion({ data, months }) {
                   <stop
                     offset="45%"
                     stopColor={
-                      selectedRegion === "nacional" ? "#f97316" : "#f6ff00"
+                      selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"
                     }
                     stopOpacity={0.3}
                   />
                   <stop
                     offset="99%"
                     stopColor={
-                      selectedRegion === "nacional" ? "#f97316" : "#f6ff00"
+                      selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"
                     }
                     stopOpacity={0}
                   />
@@ -179,7 +179,7 @@ export default function Inflacion({ data, months }) {
               <Area
                 type="monotone"
                 dataKey="IPC"
-                stroke={selectedRegion === "nacional" ? "#f97316" : "#f6ff00"}
+                stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
                 fill="url(#colorIPC)"
                 strokeWidth={2}
                 label={<CustomizedLabel />}
@@ -193,14 +193,14 @@ export default function Inflacion({ data, months }) {
               <Brush
                 dataKey="name"
                 height={15}
-                stroke={selectedRegion === "nacional" ? "#f97316" : "#f6ff00"}
+                stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
                 fill="#1f2937"
                 travellerWidth={10}
                 style={{
                   fontSize: "8px",
                   marginTop: "2px",
-                  stroke: selectedRegion === "nacional" ? "#f97316" : "#f6ff00",
-                  fill: selectedRegion === "nacional" ? "#f97316" : "#f6ff00",
+                  stroke: selectedRegion === "nacional" ? "#ff5733" : "#f6ff00",
+                  fill: selectedRegion === "nacional" ? "#ff5733" : "#f6ff00",
                 }}
               />
             </AreaChart>
@@ -284,7 +284,7 @@ export default function Inflacion({ data, months }) {
                         : "text-yellow-200"
                     }`}
                   >
-                    Variación Intermensual
+                    Diferencia Intermensual
                   </h3>
                   <div
                     className={`text-2xl font-bold  ${

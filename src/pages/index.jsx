@@ -24,7 +24,7 @@ export default function Home() {
 
         // Calcular tiempo transcurrido y esperar si es necesario
         const elapsedTime = Date.now() - startTime;
-        const minimumWait = 3000; // 2 segundos en milisegundos
+        const minimumWait = 2000; // 2 segundos en milisegundos
 
         if (elapsedTime < minimumWait) {
           await new Promise((resolve) =>
@@ -82,7 +82,36 @@ export default function Home() {
             }}
             months={data.meses}
           />
-          <CanastaSalario data={data.cba} months={data.meses} />
+          <CanastaSalario
+            data={{
+              nacional: {
+                individual: {
+                  basica: data.cbaIndividualNacional,
+                  total: data.cbtIndividualNacional,
+                },
+                familiar: {
+                  basica: data.cbaFamiliarNacional,
+                  total: data.cbtFamiliarNacional,
+                },
+              },
+              caba: {
+                individual: {
+                  basica: data.cbaIndividualCaba,
+                  total: data.cbtIndividualCaba,
+                },
+                familiar: {
+                  basica: data.cbaFamiliarCaba,
+                  total: data.cbtFamiliarCaba,
+                },
+              },
+              smv: data.smv,
+              jubilaciones: {
+                conBono: data.jubConBono,
+                sinBono: data.jubSinBono,
+              },
+            }}
+            months={data.meses}
+          />
           <AsistenciaSocial data={data} />
         </>
       )}

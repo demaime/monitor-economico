@@ -31,6 +31,9 @@ export default async function handler(req, res) {
     cbtIndividualCaba: "datos!C10:10",
     cbaFamiliarCaba: "datos!C11:11",
     cbtFamiliarCaba: "datos!C12:12",
+    smv: "datos!C13:13",
+    jubConBono: "datos!C14:14",
+    jubSinBono: "datos!C15:15",
   };
 
   try {
