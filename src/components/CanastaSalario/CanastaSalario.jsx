@@ -258,10 +258,10 @@ export default function CanastaSalario({ data, months }) {
         <div className="flex-1 flex flex-col">
           {/* Carousel container */}
           <div
-            className="flex gap-4 overflow-x-auto md:grid md:grid-cols-3 snap-x snap-mandatory scroll-smooth"
+            className="flex gap-4 overflow-x-auto md:grid md:grid-cols-5 snap-x snap-mandatory scroll-smooth"
             onScroll={handleScroll}
           >
-            {/* Card 1 - Canasta Básica */}
+            {/* Card 1 - Canasta Básica Alimentaria */}
             <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
@@ -272,7 +272,43 @@ export default function CanastaSalario({ data, months }) {
                         : "text-yellow-200"
                     }`}
                   >
-                    {selectedType === "familiar" ? "CBF" : "CBI"}
+                    {selectedType === "familiar" ? "CBAF" : "CBAI"}
+                  </h3>
+                  <div
+                    className={`text-2xl font-bold ${
+                      selectedRegion === "nacional"
+                        ? "text-orange-custom"
+                        : "text-yellow-custom"
+                    }`}
+                  >
+                    $
+                    {new Intl.NumberFormat("es-AR").format(
+                      currentData.basica[months.indexOf(selectedMonth)]
+                    )}
+                  </div>
+                </div>
+                <div className="text-xs text-gray-400 flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4" />
+                  <span>
+                    Canasta Básica Alimentaria{" "}
+                    {selectedType === "familiar" ? "Familiar" : "Individual"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2 - Canasta Básica Total */}
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+                <div className="space-y-2">
+                  <h3
+                    className={`text-sm font-medium ${
+                      selectedRegion === "nacional"
+                        ? "text-orange-200"
+                        : "text-yellow-200"
+                    }`}
+                  >
+                    {selectedType === "familiar" ? "CBT" : "CBTI"}
                   </h3>
                   <div
                     className={`text-2xl font-bold ${
@@ -290,18 +326,18 @@ export default function CanastaSalario({ data, months }) {
                 <div className="text-xs text-gray-400 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4" />
                   <span>
-                    Canasta Básica{" "}
+                    Canasta Básica Total{" "}
                     {selectedType === "familiar" ? "Familiar" : "Individual"}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Card 2 - Salario Mínimo */}
+            {/* Card 3 - Salario Mínimo */}
             <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-green-200">SMV</h3>
+                  <h3 className="text-sm font-medium text-green-200">SMVM</h3>
                   <div className="text-2xl font-bold text-green-400">
                     $
                     {new Intl.NumberFormat("es-AR").format(
@@ -313,19 +349,19 @@ export default function CanastaSalario({ data, months }) {
                 <div className="text-xs text-gray-400 flex items-center gap-2">
                   <ArrowUpRight className="w-4 h-4" />
                   <span>
-                    Salario Mínimo Vital{" "}
+                    Salario Mínimo Vital y Móvil{" "}
                     {selectedType === "familiar" ? "(x2)" : ""}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Card 3 - Jubilación */}
+            {/* Card 4 - Jubilación con Bono */}
             <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-blue-200">
-                    Jubilación
+                    Jubilación c/Bono
                   </h3>
                   <div className="text-2xl font-bold text-blue-400">
                     $
@@ -344,11 +380,36 @@ export default function CanastaSalario({ data, months }) {
                 </div>
               </div>
             </div>
+
+            {/* Card 5 - Jubilación sin Bono */}
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-blue-200">
+                    Jubilación s/Bono
+                  </h3>
+                  <div className="text-2xl font-bold text-blue-300">
+                    $
+                    {new Intl.NumberFormat("es-AR").format(
+                      data.jubilaciones.sinBono[months.indexOf(selectedMonth)] *
+                        (selectedType === "familiar" ? 2 : 1)
+                    )}
+                  </div>
+                </div>
+                <div className="text-xs text-gray-400 flex items-center gap-2">
+                  <Percent className="w-4 h-4" />
+                  <span>
+                    Jubilación sin Bono{" "}
+                    {selectedType === "familiar" ? "(x2)" : ""}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Scroll indicators */}
           <div className="flex gap-1 justify-center py-2 md:hidden">
-            {[0, 1, 2].map((index) => (
+            {[0, 1, 2, 3, 4].map((index) => (
               <div
                 key={index}
                 className={`w-2 h-2 rounded-full transition-colors ${
