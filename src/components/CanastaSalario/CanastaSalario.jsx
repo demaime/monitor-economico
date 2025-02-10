@@ -178,7 +178,7 @@ export default function CanastaSalario({ data, months }) {
           onMonthChange={setSelectedMonth}
         />
 
-        <div className="h-[250px] w-full bg-gray-800 rounded-xl p-4">
+        <div className="h-[300px] w-full bg-gray-800 rounded-xl p-4">
           <ResponsiveContainer>
             <LineChart
               data={chartData}
@@ -258,11 +258,11 @@ export default function CanastaSalario({ data, months }) {
         <div className="flex-1 flex flex-col">
           {/* Carousel container */}
           <div
-            className="flex gap-4 md:grid md:grid-cols-3 snap-x snap-mandatory md:overflow-visible scroll-smooth"
+            className="flex gap-4 overflow-x-auto md:grid md:grid-cols-3 snap-x snap-mandatory scroll-smooth"
             onScroll={handleScroll}
           >
             {/* Card 1 - Canasta Básica */}
-            <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3
@@ -298,7 +298,7 @@ export default function CanastaSalario({ data, months }) {
             </div>
 
             {/* Card 2 - Salario Mínimo */}
-            <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-green-200">SMV</h3>
@@ -321,7 +321,7 @@ export default function CanastaSalario({ data, months }) {
             </div>
 
             {/* Card 3 - Jubilación */}
-            <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-blue-200">

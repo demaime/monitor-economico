@@ -211,11 +211,11 @@ export default function Inflacion({ data, months }) {
         <div className="flex-1 flex flex-col">
           {/* Carousel container */}
           <div
-            className="flex gap-4 md:grid md:grid-cols-3 snap-x snap-mandatory md:overflow-visible scroll-smooth"
+            className="flex gap-4 overflow-x-auto md:grid md:grid-cols-3 snap-x snap-mandatory scroll-smooth"
             onScroll={handleScroll}
           >
-            {/* Cards - ajustamos las clases de snap */}
-            <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+            {/* Card 1 - IPC */}
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3
@@ -245,7 +245,8 @@ export default function Inflacion({ data, months }) {
               </div>
             </div>
 
-            <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+            {/* Card 2 - Variación Acumulada */}
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3
@@ -274,7 +275,8 @@ export default function Inflacion({ data, months }) {
               </div>
             </div>
 
-            <div className="min-w-[85vw] md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+            {/* Card 3 - Diferencia Intermensual */}
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3
