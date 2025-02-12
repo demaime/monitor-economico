@@ -22,7 +22,9 @@ import MonthSelector from "../MonthSelector/MonthSelector";
 import { usePercentageVariation } from "../../hooks/usePercentageVariation";
 
 export default function CanastaSalario({ data, months }) {
-  const [selectedMonth, setSelectedMonth] = useState(months[months.length - 1]);
+  const [selectedMonth, setSelectedMonth] = useState(
+    months[months.length - 1].mes
+  );
   const [activeCard, setActiveCard] = useState(0);
   const [selectedRegion, setSelectedRegion] = useState("nacional");
   const [selectedType, setSelectedType] = useState("individual");
@@ -30,13 +32,14 @@ export default function CanastaSalario({ data, months }) {
   const [selectedCard, setSelectedCard] = useState(null);
 
   const currentData = data[selectedRegion][selectedType];
+  const selectedMonthIndex = months.findIndex((m) => m.mes === selectedMonth);
 
   const chartData = months.map((month, index) => {
     // Factor de multiplicación basado en el tipo seleccionado
     const multiplier = selectedType === "familiar" ? 2 : 1;
 
     return {
-      name: month,
+      name: month.mes,
       CBA: currentData.basica[index],
       CBT: currentData.total[index],
       SMV: data.smv[index] * multiplier,
@@ -304,7 +307,7 @@ export default function CanastaSalario({ data, months }) {
                   >
                     $
                     {new Intl.NumberFormat("es-AR").format(
-                      currentData.basica[months.indexOf(selectedMonth)]
+                      currentData.basica[selectedMonthIndex]
                     )}
                   </div>
                 </div>
@@ -346,7 +349,7 @@ export default function CanastaSalario({ data, months }) {
                   >
                     $
                     {new Intl.NumberFormat("es-AR").format(
-                      currentData.total[months.indexOf(selectedMonth)]
+                      currentData.total[selectedMonthIndex]
                     )}
                   </div>
                 </div>
@@ -374,7 +377,7 @@ export default function CanastaSalario({ data, months }) {
                   <div className="text-2xl font-bold text-green-400">
                     $
                     {new Intl.NumberFormat("es-AR").format(
-                      data.smv[months.indexOf(selectedMonth)] *
+                      data.smv[selectedMonthIndex] *
                         (selectedType === "familiar" ? 2 : 1)
                     )}
                   </div>
@@ -405,7 +408,7 @@ export default function CanastaSalario({ data, months }) {
                   <div className="text-2xl font-bold text-blue-400">
                     $
                     {new Intl.NumberFormat("es-AR").format(
-                      data.jubilaciones.conBono[months.indexOf(selectedMonth)] *
+                      data.jubilaciones.conBono[selectedMonthIndex] *
                         (selectedType === "familiar" ? 2 : 1)
                     )}
                   </div>
@@ -436,7 +439,7 @@ export default function CanastaSalario({ data, months }) {
                   <div className="text-2xl font-bold text-blue-300">
                     $
                     {new Intl.NumberFormat("es-AR").format(
-                      data.jubilaciones.sinBono[months.indexOf(selectedMonth)] *
+                      data.jubilaciones.sinBono[selectedMonthIndex] *
                         (selectedType === "familiar" ? 2 : 1)
                     )}
                   </div>

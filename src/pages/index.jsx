@@ -42,6 +42,7 @@ export default function Home() {
 
     fetchData();
   }, []);
+  
 
   if (loading)
     return (
@@ -70,7 +71,6 @@ export default function Home() {
     );
   if (error) return <div>Error: {error}</div>;
 
-  console.log(data);
 
   return (
     <div className="full-container">
@@ -79,8 +79,8 @@ export default function Home() {
           <Portada />
           <Inflacion
             data={{
-              nacional: data.inflacionNacional, // Primera fila (fila 3)
-              caba: data.inflacionCaba, // Segunda fila (fila 4)
+              nacional: data.inflacionNacional,
+              caba: data.inflacionCaba,
             }}
             months={data.meses}
           />

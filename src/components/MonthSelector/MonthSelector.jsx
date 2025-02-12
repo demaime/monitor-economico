@@ -6,17 +6,19 @@ export default function MonthSelector({
   selectedMonth,
   onMonthChange,
 }) {
-  const currentIndex = months.indexOf(selectedMonth);
+  // Asumimos que months es un array de objetos { id, mes, año }
+  const monthNames = months.map((m) => m.mes);
+  const currentIndex = monthNames.indexOf(selectedMonth);
 
   const handlePrevMonth = () => {
     if (currentIndex > 0) {
-      onMonthChange(months[currentIndex - 1]);
+      onMonthChange(monthNames[currentIndex - 1]);
     }
   };
 
   const handleNextMonth = () => {
-    if (currentIndex < months.length - 1) {
-      onMonthChange(months[currentIndex + 1]);
+    if (currentIndex < monthNames.length - 1) {
+      onMonthChange(monthNames[currentIndex + 1]);
     }
   };
 
@@ -38,7 +40,7 @@ export default function MonthSelector({
 
       <button
         onClick={handleNextMonth}
-        disabled={currentIndex === months.length - 1}
+        disabled={currentIndex === monthNames.length - 1}
         className="p-2 rounded-full hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-gray-300"
       >
         <ChevronRight className="w-5 h-5" />

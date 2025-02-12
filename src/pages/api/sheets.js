@@ -61,10 +61,23 @@ export default async function handler(req, res) {
           return cell !== null && cell !== undefined;
         });
         // Obtener solo los últimos 12 valores
-        data[key] = filteredData.slice(-12);
+        if (key === "meses" || key === "año") {
+          data[key] = filteredData.slice(-12);
+        } else {
+          data[key] = filteredData.slice(-12);
+        }
       } else {
         data[key] = [];
       }
+    }
+
+    // Crear el array de objetos mes+año
+    if (data.meses && data.año) {
+      data.meses = data.meses.map((mes, index) => ({
+        id: `${data.año[index]}${mes}`,
+        mes: mes,
+        año: data.año[index],
+      }));
     }
 
     if (Object.keys(data).length) {

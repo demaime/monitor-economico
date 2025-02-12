@@ -15,21 +15,23 @@ import CustomizedLabel from "./CustomizedLabel";
 import CustomTooltip from "./CustomTooltip";
 
 export default function Inflacion({ data, months }) {
-  const [selectedMonth, setSelectedMonth] = useState(months[months.length - 1]);
+  const [selectedMonth, setSelectedMonth] = useState(
+    months[months.length - 1].mes
+  );
   const [activeCard, setActiveCard] = useState(0);
   const [selectedRegion, setSelectedRegion] = useState("nacional");
 
   const currentData = data[selectedRegion];
 
   const organizedData = months.map((month, index) => ({
-    name: month,
+    name: month.mes,
     IPC: Number(currentData[index]) || 0,
   }));
 
   const selectedData = organizedData.find(
     (item) => item.name === selectedMonth
   );
-  const currentIndex = months.indexOf(selectedMonth);
+  const currentIndex = months.findIndex((m) => m.mes === selectedMonth);
 
   const calculateAccumulated = () => {
     if (!selectedData) return 0;
@@ -44,6 +46,7 @@ export default function Inflacion({ data, months }) {
     const activeIndex = Math.round(scrollPosition / cardWidth);
     setActiveCard(activeIndex);
   };
+
 
   return (
     <section className="bg-gray-900 overflow-hidden">
