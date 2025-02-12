@@ -70,6 +70,8 @@ export default function Home() {
     );
   if (error) return <div>Error: {error}</div>;
 
+  console.log(data);
+
   return (
     <div className="full-container">
       {data.meses && (

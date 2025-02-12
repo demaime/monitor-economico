@@ -20,6 +20,7 @@ export default async function handler(req, res) {
   // ID de la hoja de cálculo y rango
   const spreadsheetId = "1CVnPUD9jj9nYFp3-uJOyv_uwBmm-GRNmaJxpQG0kMw8";
   const ranges = {
+    año: "datos!C1:1",
     meses: "datos!C2:2",
     inflacionNacional: "datos!C3:3",
     inflacionCaba: "datos!C4:4",
@@ -53,12 +54,14 @@ export default async function handler(req, res) {
 
       const rows = response.data.values;
       if (Array.isArray(rows) && rows.length) {
-        // Filtramos celdas vacías, undefined, null o que solo contengan espacios en blanco
-        data[key] = rows[0].filter((cell) => {
+        // Filtramos celdas vacías y tomamos los últimos 12 valores
+        const filteredData = rows[0].filter((cell) => {
           if (typeof cell === "number") return true;
           if (typeof cell === "string") return cell.trim() !== "";
           return cell !== null && cell !== undefined;
         });
+        // Obtener solo los últimos 12 valores
+        data[key] = filteredData.slice(-12);
       } else {
         data[key] = [];
       }

@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { TrendingUp, ArrowUpRight, Percent, User, Users } from "lucide-react";
+import {
+  TrendingUp,
+  ArrowUpRight,
+  Percent,
+  User,
+  Users,
+  ExternalLink,
+  X,
+} from "lucide-react";
 import {
   LineChart,
   Line,
@@ -18,6 +26,8 @@ export default function CanastaSalario({ data, months }) {
   const [activeCard, setActiveCard] = useState(0);
   const [selectedRegion, setSelectedRegion] = useState("nacional");
   const [selectedType, setSelectedType] = useState("individual");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   const currentData = data[selectedRegion][selectedType];
 
@@ -102,6 +112,11 @@ export default function CanastaSalario({ data, months }) {
     const cardWidth = window.innerWidth * 0.85; // 85vw
     const activeIndex = Math.round(scrollPosition / cardWidth);
     setActiveCard(activeIndex);
+  };
+
+  const handleOpenModal = (index) => {
+    setSelectedCard(index);
+    setIsModalOpen(true);
   };
 
   return (
@@ -263,6 +278,12 @@ export default function CanastaSalario({ data, months }) {
           >
             {/* Card 1 - Canasta Básica Alimentaria */}
             <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+              <button
+                onClick={() => handleOpenModal(0)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors z-20"
+              >
+                <ExternalLink size={16} />
+              </button>
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3
@@ -299,6 +320,12 @@ export default function CanastaSalario({ data, months }) {
 
             {/* Card 2 - Canasta Básica Total */}
             <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+              <button
+                onClick={() => handleOpenModal(1)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors z-20"
+              >
+                <ExternalLink size={16} />
+              </button>
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3
@@ -335,6 +362,12 @@ export default function CanastaSalario({ data, months }) {
 
             {/* Card 3 - Salario Mínimo */}
             <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+              <button
+                onClick={() => handleOpenModal(2)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors z-20"
+              >
+                <ExternalLink size={16} />
+              </button>
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-green-200">SMVM</h3>
@@ -358,6 +391,12 @@ export default function CanastaSalario({ data, months }) {
 
             {/* Card 4 - Jubilación con Bono */}
             <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+              <button
+                onClick={() => handleOpenModal(3)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors z-20"
+              >
+                <ExternalLink size={16} />
+              </button>
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-blue-200">
@@ -383,6 +422,12 @@ export default function CanastaSalario({ data, months }) {
 
             {/* Card 5 - Jubilación sin Bono */}
             <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+              <button
+                onClick={() => handleOpenModal(4)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors z-20"
+              >
+                <ExternalLink size={16} />
+              </button>
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-blue-200">
@@ -424,6 +469,32 @@ export default function CanastaSalario({ data, months }) {
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-700">
+            <div className="p-4 flex justify-between items-center border-b border-gray-700">
+              <h2 className="text-xl font-bold text-gray-100">
+                Detalles{" "}
+                {/* Puedes personalizar el título según selectedCard */}
+              </h2>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-400 hover:text-gray-200 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-4">
+              {/* Aquí irá el contenido del modal según selectedCard */}
+              <p className="text-gray-400">
+                Contenido del modal para la tarjeta {selectedCard + 1}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

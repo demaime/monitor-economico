@@ -11,7 +11,8 @@ import {
   ReferenceLine,
 } from "recharts";
 import MonthSelector from "../MonthSelector/MonthSelector";
-import { usePercentageVariation } from "../../hooks/usePercentageVariation";
+import CustomizedLabel from "./CustomizedLabel";
+import CustomTooltip from "./CustomTooltip";
 
 export default function Inflacion({ data, months }) {
   const [selectedMonth, setSelectedMonth] = useState(months[months.length - 1]);
@@ -30,7 +31,6 @@ export default function Inflacion({ data, months }) {
   );
   const currentIndex = months.indexOf(selectedMonth);
 
-  // Calculate variations
   const calculateAccumulated = () => {
     if (!selectedData) return 0;
     return organizedData
@@ -38,64 +38,9 @@ export default function Inflacion({ data, months }) {
       .reduce((acc, curr) => acc + curr.IPC, 0);
   };
 
-  const calculateMoM = () => {
-    if (currentIndex <= 0 || !selectedData) return 0;
-    const prevMonth = organizedData[currentIndex - 1].IPC;
-    return ((selectedData.IPC - prevMonth) / prevMonth) * 100;
-  };
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-gray-900 p-3 rounded-lg border border-gray-700 shadow-xl">
-          <p className="text-gray-200 text-sm font-medium">
-            {payload[0].payload.name}
-          </p>
-          <p className="text-orange-custom font-bold">{`${payload[0].value}%`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  // Obtener índices para los diferentes cálculos
-  const currentMonthIndex = months.indexOf(selectedMonth);
-  const previousMonthIndex = currentMonthIndex - 1;
-  const previousYearIndex = currentMonthIndex - 12;
-
-  // Calcular variación intermensual
-  const intermensualVariation = usePercentageVariation(
-    currentData[currentMonthIndex],
-    currentData[previousMonthIndex]
-  );
-
-  // Calcular variación interanual
-  const interanualVariation = usePercentageVariation(
-    currentData[currentMonthIndex],
-    currentData[previousYearIndex]
-  );
-
-  const CustomizedLabel = ({ x, y, value }) => {
-    return (
-      <text
-        x={x}
-        y={y}
-        dy={-8}
-        dx={5}
-        fontSize={8}
-        className="font-bold"
-        textAnchor="middle"
-        fill={selectedRegion === "nacional" ? "#f97316" : "#f6ff00"}
-      >
-        {`${value}%`}
-      </text>
-    );
-  };
-
-  // Agregar la función handleScroll
   const handleScroll = (e) => {
     const scrollPosition = e.target.scrollLeft;
-    const cardWidth = window.innerWidth * 0.85; // 85vw
+    const cardWidth = window.innerWidth * 0.85;
     const activeIndex = Math.round(scrollPosition / cardWidth);
     setActiveCard(activeIndex);
   };
@@ -175,14 +120,16 @@ export default function Inflacion({ data, months }) {
                 tick={{ fill: "#9ca3af", fontSize: 8 }}
                 axisLine={{ stroke: "#374151" }}
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip
+                content={<CustomTooltip selectedRegion={selectedRegion} />}
+              />
               <Area
                 type="monotone"
                 dataKey="IPC"
                 stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
                 fill="url(#colorIPC)"
                 strokeWidth={2}
-                label={<CustomizedLabel />}
+                label={<CustomizedLabel selectedRegion={selectedRegion} />}
               />
               <ReferenceLine
                 x={selectedMonth}
