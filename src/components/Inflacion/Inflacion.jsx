@@ -201,7 +201,7 @@ export default function Inflacion({ data, months }) {
                         : "text-yellow-200"
                     }`}
                   >
-                    Variación Intermensual
+                    IPC
                   </h3>
 
                   <div
@@ -216,7 +216,7 @@ export default function Inflacion({ data, months }) {
                 </div>
                 <div className="text-xs text-gray-400 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4" />
-                  <span>Índice de Precios al Consumidor</span>
+                  <span>Variación Intermensual</span>
                 </div>
               </div>
             </div>
@@ -246,7 +246,7 @@ export default function Inflacion({ data, months }) {
                 </div>
                 <div className="text-xs text-gray-400 flex items-center gap-2">
                   <ArrowUpRight className="w-4 h-4" />
-                  <span>Total acumulado en el período</span>
+                  <span>Respecto del mismo mes del año anterior</span>
                 </div>
               </div>
             </div>
@@ -276,7 +276,7 @@ export default function Inflacion({ data, months }) {
                 </div>
                 <div className="text-xs text-gray-400 flex items-center gap-2">
                   <Percent className="w-4 h-4" />
-                  <span>Cambio respecto al mes anterior</span>
+                  <span>Total acumulado en el período</span>
                 </div>
               </div>
             </div>
