@@ -29,26 +29,41 @@ export default function Inflacion({ data, months }) {
     const valorAnualAnterior =
       index >= 12 ? Number(currentData[index - 12]) || 0 : 0;
 
+    // Find the last December value
+    let valorDiciembreAnterior = 0;
+    for (let i = index - 1; i >= 0; i--) {
+      if (months[i].mes === "DICIEMBRE") {
+        valorDiciembreAnterior = Number(currentData[i]) || 0;
+        break;
+      }
+    }
+
     const variacionMensual = valorAnterior
       ? ((valor - valorAnterior) / valorAnterior) * 100
       : 0;
     const variacionAnual = valorAnualAnterior
       ? ((valor - valorAnualAnterior) / valorAnualAnterior) * 100
       : 0;
+    const acumuladaAnual = valorDiciembreAnterior
+      ? ((valor - valorDiciembreAnterior) / valorDiciembreAnterior) * 100
+      : 0;
 
     return {
       mes: month.mes,
       año: month.año,
       valor,
-      variacionMensual: variacionMensual.toFixed(1),
-      variacionAnual: variacionAnual.toFixed(1),
+      variacionMensual: parseFloat(variacionMensual.toFixed(1)),
+      variacionAnual: parseFloat(variacionAnual.toFixed(1)),
+      acumuladaAnual: parseFloat(acumuladaAnual.toFixed(1)),
     };
   });
 
-  console.log(IPC);
+  // Filter IPC to only include the last 12 months for display
+  const IPCForDisplay = IPC.slice(-12);
 
-  const selectedData = IPC.find((item) => item.mes === selectedMonth);
-  const currentIndex = IPC.findIndex((m) => m.mes === selectedMonth);
+  // Find the selected data from the filtered IPC
+  const selectedData = IPCForDisplay.find((item) => item.mes === selectedMonth);
+  const currentIndex = IPCForDisplay.findIndex((m) => m.mes === selectedMonth);
 
   const handleScroll = (e) => {
     const scrollPosition = e.target.scrollLeft;
@@ -56,6 +71,8 @@ export default function Inflacion({ data, months }) {
     const activeIndex = Math.round(scrollPosition / cardWidth);
     setActiveCard(activeIndex);
   };
+
+  selectedData && console.log(selectedData);
 
   return (
     <section className="bg-gray-900 overflow-hidden">
@@ -100,7 +117,7 @@ export default function Inflacion({ data, months }) {
         <div className="h-[300px] w-full bg-gray-800 rounded-xl p-4">
           <ResponsiveContainer>
             <AreaChart
-              data={IPC}
+              data={IPCForDisplay}
               margin={{ top: 0, right: 15, left: -30, bottom: 0 }}
             >
               <defs>
@@ -137,7 +154,7 @@ export default function Inflacion({ data, months }) {
               />
               <Area
                 type="monotone"
-                dataKey="valor"
+                dataKey="variacionMensual"
                 stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
                 fill="url(#colorIPC)"
                 strokeWidth={2}
@@ -173,7 +190,7 @@ export default function Inflacion({ data, months }) {
             className="flex gap-4 overflow-x-auto md:grid md:grid-cols-3 snap-x snap-mandatory scroll-smooth"
             onScroll={handleScroll}
           >
-            {/* Card 1 - IPC */}
+            {/* Card 1 - Variación Intermensual */}
             <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
@@ -184,7 +201,7 @@ export default function Inflacion({ data, months }) {
                         : "text-yellow-200"
                     }`}
                   >
-                    IPC
+                    Variación Intermensual
                   </h3>
 
                   <div
@@ -194,7 +211,7 @@ export default function Inflacion({ data, months }) {
                         : "text-yellow-custom"
                     }`}
                   >
-                    {selectedData ? `${selectedData.valor.toFixed(1)}%` : "N/A"}
+                    {selectedData ? `${selectedData.variacionMensual}%` : "N/A"}
                   </div>
                 </div>
                 <div className="text-xs text-gray-400 flex items-center gap-2">
@@ -204,7 +221,37 @@ export default function Inflacion({ data, months }) {
               </div>
             </div>
 
-            {/* Card 2 - Variación Acumulada */}
+            {/* Card 2 - Variación Interanual */}
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+                <div className="space-y-2">
+                  <h3
+                    className={`text-sm font-medium text-orange-200 ${
+                      selectedRegion === "nacional"
+                        ? "text-orange-200"
+                        : "text-yellow-200"
+                    }`}
+                  >
+                    Variación Interanual
+                  </h3>
+                  <div
+                    className={`text-2xl font-bold  ${
+                      selectedRegion === "nacional"
+                        ? "text-orange-custom"
+                        : "text-yellow-custom"
+                    }`}
+                  >
+                    {selectedData ? `${selectedData.variacionAnual}%` : "N/A"}
+                  </div>
+                </div>
+                <div className="text-xs text-gray-400 flex items-center gap-2">
+                  <ArrowUpRight className="w-4 h-4" />
+                  <span>Total acumulado en el período</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3 - Variación Acumulada */}
             <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
               <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                 <div className="space-y-2">
@@ -224,41 +271,7 @@ export default function Inflacion({ data, months }) {
                         : "text-yellow-custom"
                     }`}
                   >
-                    "aca va la acumulada"
-                  </div>
-                </div>
-                <div className="text-xs text-gray-400 flex items-center gap-2">
-                  <ArrowUpRight className="w-4 h-4" />
-                  <span>Total acumulado en el período</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3 - Diferencia Intermensual */}
-            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
-              <div className="relative z-10 flex h-full flex-col justify-between gap-4">
-                <div className="space-y-2">
-                  <h3
-                    className={`"text-sm font-medium text-orange-200 ${
-                      selectedRegion === "nacional"
-                        ? "text-orange-200"
-                        : "text-yellow-200"
-                    }`}
-                  >
-                    Diferencia Intermensual
-                  </h3>
-                  <div
-                    className={`text-2xl font-bold  ${
-                      selectedRegion === "nacional"
-                        ? "text-orange-custom"
-                        : "text-yellow-custom"
-                    }`}
-                  >
-                    {currentIndex > 0
-                      ? `${(
-                          selectedData.valor - IPC[currentIndex - 1].valor
-                        ).toFixed(1)} pp.`
-                      : "N/A"}
+                    {selectedData ? `${selectedData.acumuladaAnual}%` : "N/A"}
                   </div>
                 </div>
                 <div className="text-xs text-gray-400 flex items-center gap-2">
