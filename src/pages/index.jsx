@@ -42,7 +42,6 @@ export default function Home() {
 
     fetchData();
   }, []);
-  
 
   if (loading)
     return (
@@ -70,7 +69,6 @@ export default function Home() {
       </section>
     );
   if (error) return <div>Error: {error}</div>;
-
 
   return (
     <div className="full-container">

@@ -23,22 +23,32 @@ export default function Inflacion({ data, months }) {
 
   const currentData = data[selectedRegion];
 
-  const organizedData = months.map((month, index) => ({
-    name: month.mes,
-    IPC: Number(currentData[index]) || 0,
-  }));
+  const IPC = months.map((month, index) => {
+    const valor = Number(currentData[index]) || 0;
+    const valorAnterior = index > 0 ? Number(currentData[index - 1]) || 0 : 0;
+    const valorAnualAnterior =
+      index >= 12 ? Number(currentData[index - 12]) || 0 : 0;
 
-  const selectedData = organizedData.find(
-    (item) => item.name === selectedMonth
-  );
-  const currentIndex = months.findIndex((m) => m.mes === selectedMonth);
+    const variacionMensual = valorAnterior
+      ? ((valor - valorAnterior) / valorAnterior) * 100
+      : 0;
+    const variacionAnual = valorAnualAnterior
+      ? ((valor - valorAnualAnterior) / valorAnualAnterior) * 100
+      : 0;
 
-  const calculateAccumulated = () => {
-    if (!selectedData) return 0;
-    return organizedData
-      .slice(0, currentIndex + 1)
-      .reduce((acc, curr) => acc + curr.IPC, 0);
-  };
+    return {
+      mes: month.mes,
+      año: month.año,
+      valor,
+      variacionMensual: variacionMensual.toFixed(1),
+      variacionAnual: variacionAnual.toFixed(1),
+    };
+  });
+
+  console.log(IPC);
+
+  const selectedData = IPC.find((item) => item.mes === selectedMonth);
+  const currentIndex = IPC.findIndex((m) => m.mes === selectedMonth);
 
   const handleScroll = (e) => {
     const scrollPosition = e.target.scrollLeft;
@@ -46,7 +56,6 @@ export default function Inflacion({ data, months }) {
     const activeIndex = Math.round(scrollPosition / cardWidth);
     setActiveCard(activeIndex);
   };
-
 
   return (
     <section className="bg-gray-900 overflow-hidden">
@@ -91,7 +100,7 @@ export default function Inflacion({ data, months }) {
         <div className="h-[300px] w-full bg-gray-800 rounded-xl p-4">
           <ResponsiveContainer>
             <AreaChart
-              data={organizedData}
+              data={IPC}
               margin={{ top: 0, right: 15, left: -30, bottom: 0 }}
             >
               <defs>
@@ -113,7 +122,7 @@ export default function Inflacion({ data, months }) {
                 </linearGradient>
               </defs>
               <XAxis
-                dataKey="name"
+                dataKey="mes"
                 angle={-45}
                 textAnchor="end"
                 height={60}
@@ -128,7 +137,7 @@ export default function Inflacion({ data, months }) {
               />
               <Area
                 type="monotone"
-                dataKey="IPC"
+                dataKey="valor"
                 stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
                 fill="url(#colorIPC)"
                 strokeWidth={2}
@@ -141,7 +150,7 @@ export default function Inflacion({ data, months }) {
                 strokeDasharray="3 3"
               />
               <Brush
-                dataKey="name"
+                dataKey="mes"
                 height={15}
                 stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
                 fill="#1f2937"
@@ -185,7 +194,7 @@ export default function Inflacion({ data, months }) {
                         : "text-yellow-custom"
                     }`}
                   >
-                    {selectedData ? `${selectedData.IPC.toFixed(1)}%` : "N/A"}
+                    {selectedData ? `${selectedData.valor.toFixed(1)}%` : "N/A"}
                   </div>
                 </div>
                 <div className="text-xs text-gray-400 flex items-center gap-2">
@@ -215,7 +224,7 @@ export default function Inflacion({ data, months }) {
                         : "text-yellow-custom"
                     }`}
                   >
-                    {`${calculateAccumulated().toFixed(1)}%`}
+                    "aca va la acumulada"
                   </div>
                 </div>
                 <div className="text-xs text-gray-400 flex items-center gap-2">
@@ -247,7 +256,7 @@ export default function Inflacion({ data, months }) {
                   >
                     {currentIndex > 0
                       ? `${(
-                          selectedData.IPC - organizedData[currentIndex - 1].IPC
+                          selectedData.valor - IPC[currentIndex - 1].valor
                         ).toFixed(1)} pp.`
                       : "N/A"}
                   </div>
