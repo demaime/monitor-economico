@@ -42,29 +42,48 @@ export default function CanastaSalario({ data, months }) {
     const JubConBono = data.jubilaciones.conBono[index] * multiplier;
     const JubSinBono = data.jubilaciones.sinBono[index] * multiplier;
 
+    // Valores del mes anterior para variación mensual
     const CBAAnterior = index > 0 ? currentData.basica[index - 1] : 0;
     const CBTAnterior = index > 0 ? currentData.total[index - 1] : 0;
+    const SMVAnterior = index > 0 ? data.smv[index - 1] * multiplier : 0;
+    const JubConBonoAnterior =
+      index > 0 ? data.jubilaciones.conBono[index - 1] * multiplier : 0;
+    const JubSinBonoAnterior =
+      index > 0 ? data.jubilaciones.sinBono[index - 1] * multiplier : 0;
 
-    const variacionCBA = CBAAnterior
-      ? ((CBA - CBAAnterior) / CBAAnterior) * 100
-      : 0;
-    const variacionCBT = CBTAnterior
-      ? ((CBT - CBTAnterior) / CBTAnterior) * 100
-      : 0;
+    // Valores del año anterior para variación interanual
+    const CBAAnual = index >= 12 ? currentData.basica[index - 12] : 0;
+    const CBTAnual = index >= 12 ? currentData.total[index - 12] : 0;
+    const SMVAnual = index >= 12 ? data.smv[index - 12] * multiplier : 0;
+    const JubConBonoAnual =
+      index >= 12 ? data.jubilaciones.conBono[index - 12] * multiplier : 0;
+    const JubSinBonoAnual =
+      index >= 12 ? data.jubilaciones.sinBono[index - 12] * multiplier : 0;
 
-    // Assuming annual and accumulated variations are calculated similarly
-    const variacionAnualCBA =
-      index >= 12
-        ? ((CBA - currentData.basica[index - 12]) /
-            currentData.basica[index - 12]) *
-          100
-        : 0;
-    const variacionAnualCBT =
-      index >= 12
-        ? ((CBT - currentData.total[index - 12]) /
-            currentData.total[index - 12]) *
-          100
-        : 0;
+    // Encontrar el último valor de diciembre para variación acumulada
+    let ultimoDiciembre = {
+      CBA: 0,
+      CBT: 0,
+      SMV: 0,
+      JubConBono: 0,
+      JubSinBono: 0,
+    };
+
+    for (let i = index - 1; i >= 0; i--) {
+      if (months[i].mes === "DICIEMBRE") {
+        ultimoDiciembre = {
+          CBA: currentData.basica[i],
+          CBT: currentData.total[i],
+          SMV: data.smv[i] * multiplier,
+          JubConBono: data.jubilaciones.conBono[i] * multiplier,
+          JubSinBono: data.jubilaciones.sinBono[i] * multiplier,
+        };
+        break;
+      }
+    }
+
+    const calcularVariacion = (actual, anterior) =>
+      anterior ? ((actual - anterior) / anterior) * 100 : 0;
 
     return {
       mes: month.mes,
@@ -74,10 +93,54 @@ export default function CanastaSalario({ data, months }) {
       SMV,
       JubConBono,
       JubSinBono,
-      variacionCBA: parseFloat(variacionCBA.toFixed(1)),
-      variacionCBT: parseFloat(variacionCBT.toFixed(1)),
-      variacionAnualCBA: parseFloat(variacionAnualCBA.toFixed(1)),
-      variacionAnualCBT: parseFloat(variacionAnualCBT.toFixed(1)),
+      // Variaciones mensuales
+      variacionMensualCBA: parseFloat(
+        calcularVariacion(CBA, CBAAnterior).toFixed(1)
+      ),
+      variacionMensualCBT: parseFloat(
+        calcularVariacion(CBT, CBTAnterior).toFixed(1)
+      ),
+      variacionMensualSMV: parseFloat(
+        calcularVariacion(SMV, SMVAnterior).toFixed(1)
+      ),
+      variacionMensualJubConBono: parseFloat(
+        calcularVariacion(JubConBono, JubConBonoAnterior).toFixed(1)
+      ),
+      variacionMensualJubSinBono: parseFloat(
+        calcularVariacion(JubSinBono, JubSinBonoAnterior).toFixed(1)
+      ),
+      // Variaciones interanuales
+      variacionAnualCBA: parseFloat(
+        calcularVariacion(CBA, CBAAnual).toFixed(1)
+      ),
+      variacionAnualCBT: parseFloat(
+        calcularVariacion(CBT, CBTAnual).toFixed(1)
+      ),
+      variacionAnualSMV: parseFloat(
+        calcularVariacion(SMV, SMVAnual).toFixed(1)
+      ),
+      variacionAnualJubConBono: parseFloat(
+        calcularVariacion(JubConBono, JubConBonoAnual).toFixed(1)
+      ),
+      variacionAnualJubSinBono: parseFloat(
+        calcularVariacion(JubSinBono, JubSinBonoAnual).toFixed(1)
+      ),
+      // Variaciones acumuladas
+      variacionAcumuladaCBA: parseFloat(
+        calcularVariacion(CBA, ultimoDiciembre.CBA).toFixed(1)
+      ),
+      variacionAcumuladaCBT: parseFloat(
+        calcularVariacion(CBT, ultimoDiciembre.CBT).toFixed(1)
+      ),
+      variacionAcumuladaSMV: parseFloat(
+        calcularVariacion(SMV, ultimoDiciembre.SMV).toFixed(1)
+      ),
+      variacionAcumuladaJubConBono: parseFloat(
+        calcularVariacion(JubConBono, ultimoDiciembre.JubConBono).toFixed(1)
+      ),
+      variacionAcumuladaJubSinBono: parseFloat(
+        calcularVariacion(JubSinBono, ultimoDiciembre.JubSinBono).toFixed(1)
+      ),
     };
   });
 
@@ -147,101 +210,49 @@ export default function CanastaSalario({ data, months }) {
 
   // Function to get the data for the selected card
   const getModalData = (index) => {
-    const multiplier = selectedType === "familiar" ? 2 : 1;
-    const currentMonthData = canastaData[selectedMonthIndex];
-    const previousMonthData =
-      selectedMonthIndex > 0 ? canastaData[selectedMonthIndex - 1] : null;
+    const currentMonthData =
+      canastaDataForDisplay[selectedMonthIndexForDisplay];
 
     switch (index) {
       case 0: // CBA
         return {
           title: "Canasta Básica Alimentaria",
           value: currentMonthData.CBA,
-          variacionMensual: currentMonthData.variacionCBA,
+          variacionMensual: currentMonthData.variacionMensualCBA,
           variacionAnual: currentMonthData.variacionAnualCBA,
-          variacionAcumulada: previousMonthData
-            ? ((currentMonthData.CBA - previousMonthData.CBA) /
-                previousMonthData.CBA) *
-              100
-            : 0,
+          variacionAcumulada: currentMonthData.variacionAcumuladaCBA,
         };
       case 1: // CBT
         return {
           title: "Canasta Básica Total",
           value: currentMonthData.CBT,
-          variacionMensual: currentMonthData.variacionCBT,
+          variacionMensual: currentMonthData.variacionMensualCBT,
           variacionAnual: currentMonthData.variacionAnualCBT,
-          variacionAcumulada: previousMonthData
-            ? ((currentMonthData.CBT - previousMonthData.CBT) /
-                previousMonthData.CBT) *
-              100
-            : 0,
+          variacionAcumulada: currentMonthData.variacionAcumuladaCBT,
         };
       case 2: // SMV
         return {
           title: "Salario Mínimo Vital y Móvil",
           value: currentMonthData.SMV,
-          variacionMensual: previousMonthData
-            ? ((currentMonthData.SMV - previousMonthData.SMV) /
-                previousMonthData.SMV) *
-              100
-            : 0,
-          variacionAnual:
-            selectedMonthIndex >= 12
-              ? ((currentMonthData.SMV -
-                  canastaData[selectedMonthIndex - 12].SMV) /
-                  canastaData[selectedMonthIndex - 12].SMV) *
-                100
-              : 0,
-          variacionAcumulada: previousMonthData
-            ? ((currentMonthData.SMV - previousMonthData.SMV) /
-                previousMonthData.SMV) *
-              100
-            : 0,
+          variacionMensual: currentMonthData.variacionMensualSMV,
+          variacionAnual: currentMonthData.variacionAnualSMV,
+          variacionAcumulada: currentMonthData.variacionAcumuladaSMV,
         };
       case 3: // Jubilación con Bono
         return {
           title: "Jubilación con Bono",
           value: currentMonthData.JubConBono,
-          variacionMensual: previousMonthData
-            ? ((currentMonthData.JubConBono - previousMonthData.JubConBono) /
-                previousMonthData.JubConBono) *
-              100
-            : 0,
-          variacionAnual:
-            selectedMonthIndex >= 12
-              ? ((currentMonthData.JubConBono -
-                  canastaData[selectedMonthIndex - 12].JubConBono) /
-                  canastaData[selectedMonthIndex - 12].JubConBono) *
-                100
-              : 0,
-          variacionAcumulada: previousMonthData
-            ? ((currentMonthData.JubConBono - previousMonthData.JubConBono) /
-                previousMonthData.JubConBono) *
-              100
-            : 0,
+          variacionMensual: currentMonthData.variacionMensualJubConBono,
+          variacionAnual: currentMonthData.variacionAnualJubConBono,
+          variacionAcumulada: currentMonthData.variacionAcumuladaJubConBono,
         };
       case 4: // Jubilación sin Bono
         return {
           title: "Jubilación sin Bono",
           value: currentMonthData.JubSinBono,
-          variacionMensual: previousMonthData
-            ? ((currentMonthData.JubSinBono - previousMonthData.JubSinBono) /
-                previousMonthData.JubSinBono) *
-              100
-            : 0,
-          variacionAnual:
-            selectedMonthIndex >= 12
-              ? ((currentMonthData.JubSinBono -
-                  canastaData[selectedMonthIndex - 12].JubSinBono) /
-                  canastaData[selectedMonthIndex - 12].JubSinBono) *
-                100
-              : 0,
-          variacionAcumulada: previousMonthData
-            ? ((currentMonthData.JubSinBono - previousMonthData.JubSinBono) /
-                previousMonthData.JubSinBono) *
-              100
-            : 0,
+          variacionMensual: currentMonthData.variacionMensualJubSinBono,
+          variacionAnual: currentMonthData.variacionAnualJubSinBono,
+          variacionAcumulada: currentMonthData.variacionAcumuladaJubSinBono,
         };
       default:
         return {};
