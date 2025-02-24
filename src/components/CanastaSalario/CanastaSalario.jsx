@@ -19,7 +19,6 @@ import {
   ReferenceLine,
 } from "recharts";
 import MonthSelector from "../MonthSelector/MonthSelector";
-import { usePercentageVariation } from "../../hooks/usePercentageVariation";
 
 export default function CanastaSalario({ data, months }) {
   const [selectedMonth, setSelectedMonth] = useState(
@@ -34,36 +33,58 @@ export default function CanastaSalario({ data, months }) {
   const currentData = data[selectedRegion][selectedType];
   const selectedMonthIndex = months.findIndex((m) => m.mes === selectedMonth);
 
-  const chartData = months.map((month, index) => {
-    // Factor de multiplicación basado en el tipo seleccionado
+  // Calculate variations and create an object.
+  const canastaData = months.map((month, index) => {
     const multiplier = selectedType === "familiar" ? 2 : 1;
+    const CBA = currentData.basica[index];
+    const CBT = currentData.total[index];
+    const SMV = data.smv[index] * multiplier;
+    const JubConBono = data.jubilaciones.conBono[index] * multiplier;
+    const JubSinBono = data.jubilaciones.sinBono[index] * multiplier;
+
+    const CBAAnterior = index > 0 ? currentData.basica[index - 1] : 0;
+    const CBTAnterior = index > 0 ? currentData.total[index - 1] : 0;
+
+    const variacionCBA = CBAAnterior
+      ? ((CBA - CBAAnterior) / CBAAnterior) * 100
+      : 0;
+    const variacionCBT = CBTAnterior
+      ? ((CBT - CBTAnterior) / CBTAnterior) * 100
+      : 0;
+
+    // Assuming annual and accumulated variations are calculated similarly
+    const variacionAnualCBA =
+      index >= 12
+        ? ((CBA - currentData.basica[index - 12]) /
+            currentData.basica[index - 12]) *
+          100
+        : 0;
+    const variacionAnualCBT =
+      index >= 12
+        ? ((CBT - currentData.total[index - 12]) /
+            currentData.total[index - 12]) *
+          100
+        : 0;
 
     return {
-      name: month.mes,
-      CBA: currentData.basica[index],
-      CBT: currentData.total[index],
-      SMV: data.smv[index] * multiplier,
-      JubConBono: data.jubilaciones.conBono[index] * multiplier,
-      JubSinBono: data.jubilaciones.sinBono[index] * multiplier,
+      mes: month.mes,
+      año: month.año,
+      CBA,
+      CBT,
+      SMV,
+      JubConBono,
+      JubSinBono,
+      variacionCBA: parseFloat(variacionCBA.toFixed(1)),
+      variacionCBT: parseFloat(variacionCBT.toFixed(1)),
+      variacionAnualCBA: parseFloat(variacionAnualCBA.toFixed(1)),
+      variacionAnualCBT: parseFloat(variacionAnualCBT.toFixed(1)),
     };
   });
 
-  const CustomizedLabel = ({ x, y, value }) => {
-    return (
-      <text
-        x={x}
-        y={y}
-        dy={-8}
-        dx={5}
-        fontSize={8}
-        className="font-bold"
-        textAnchor="middle"
-        fill={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
-      >
-        {`${value}%`}
-      </text>
-    );
-  };
+  // Ensure to slice the last 12 months for display
+  const canastaDataForDisplay = canastaData.slice(-12);
+
+  console.log(canastaData);
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -121,6 +142,117 @@ export default function CanastaSalario({ data, months }) {
     setSelectedCard(index);
     setIsModalOpen(true);
   };
+
+  console.log(canastaData.slice(-12));
+
+  // Function to get the data for the selected card
+  const getModalData = (index) => {
+    const multiplier = selectedType === "familiar" ? 2 : 1;
+    const currentMonthData = canastaData[selectedMonthIndex];
+    const previousMonthData =
+      selectedMonthIndex > 0 ? canastaData[selectedMonthIndex - 1] : null;
+
+    switch (index) {
+      case 0: // CBA
+        return {
+          title: "Canasta Básica Alimentaria",
+          value: currentMonthData.CBA,
+          variacionMensual: currentMonthData.variacionCBA,
+          variacionAnual: currentMonthData.variacionAnualCBA,
+          variacionAcumulada: previousMonthData
+            ? ((currentMonthData.CBA - previousMonthData.CBA) /
+                previousMonthData.CBA) *
+              100
+            : 0,
+        };
+      case 1: // CBT
+        return {
+          title: "Canasta Básica Total",
+          value: currentMonthData.CBT,
+          variacionMensual: currentMonthData.variacionCBT,
+          variacionAnual: currentMonthData.variacionAnualCBT,
+          variacionAcumulada: previousMonthData
+            ? ((currentMonthData.CBT - previousMonthData.CBT) /
+                previousMonthData.CBT) *
+              100
+            : 0,
+        };
+      case 2: // SMV
+        return {
+          title: "Salario Mínimo Vital y Móvil",
+          value: currentMonthData.SMV,
+          variacionMensual: previousMonthData
+            ? ((currentMonthData.SMV - previousMonthData.SMV) /
+                previousMonthData.SMV) *
+              100
+            : 0,
+          variacionAnual:
+            selectedMonthIndex >= 12
+              ? ((currentMonthData.SMV -
+                  canastaData[selectedMonthIndex - 12].SMV) /
+                  canastaData[selectedMonthIndex - 12].SMV) *
+                100
+              : 0,
+          variacionAcumulada: previousMonthData
+            ? ((currentMonthData.SMV - previousMonthData.SMV) /
+                previousMonthData.SMV) *
+              100
+            : 0,
+        };
+      case 3: // Jubilación con Bono
+        return {
+          title: "Jubilación con Bono",
+          value: currentMonthData.JubConBono,
+          variacionMensual: previousMonthData
+            ? ((currentMonthData.JubConBono - previousMonthData.JubConBono) /
+                previousMonthData.JubConBono) *
+              100
+            : 0,
+          variacionAnual:
+            selectedMonthIndex >= 12
+              ? ((currentMonthData.JubConBono -
+                  canastaData[selectedMonthIndex - 12].JubConBono) /
+                  canastaData[selectedMonthIndex - 12].JubConBono) *
+                100
+              : 0,
+          variacionAcumulada: previousMonthData
+            ? ((currentMonthData.JubConBono - previousMonthData.JubConBono) /
+                previousMonthData.JubConBono) *
+              100
+            : 0,
+        };
+      case 4: // Jubilación sin Bono
+        return {
+          title: "Jubilación sin Bono",
+          value: currentMonthData.JubSinBono,
+          variacionMensual: previousMonthData
+            ? ((currentMonthData.JubSinBono - previousMonthData.JubSinBono) /
+                previousMonthData.JubSinBono) *
+              100
+            : 0,
+          variacionAnual:
+            selectedMonthIndex >= 12
+              ? ((currentMonthData.JubSinBono -
+                  canastaData[selectedMonthIndex - 12].JubSinBono) /
+                  canastaData[selectedMonthIndex - 12].JubSinBono) *
+                100
+              : 0,
+          variacionAcumulada: previousMonthData
+            ? ((currentMonthData.JubSinBono - previousMonthData.JubSinBono) /
+                previousMonthData.JubSinBono) *
+              100
+            : 0,
+        };
+      default:
+        return {};
+    }
+  };
+
+  console.log(selectedMonth);
+
+  const selectedMonthIndexForDisplay = canastaDataForDisplay.findIndex(
+    (m) => m.mes === selectedMonth
+  );
 
   return (
     <section className="bg-gray-900 overflow-hidden">
@@ -199,11 +331,11 @@ export default function CanastaSalario({ data, months }) {
         <div className="h-[300px] w-full bg-gray-800 rounded-xl p-4">
           <ResponsiveContainer>
             <LineChart
-              data={chartData}
+              data={canastaDataForDisplay}
               margin={{ top: 0, right: 15, left: -20, bottom: 0 }}
             >
               <XAxis
-                dataKey="name"
+                dataKey="mes"
                 angle={-45}
                 textAnchor="end"
                 height={60}
@@ -256,7 +388,7 @@ export default function CanastaSalario({ data, months }) {
                 strokeDasharray="3 3"
               />
               <Brush
-                dataKey="name"
+                dataKey="mes"
                 height={15}
                 stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
                 fill="#1f2937"
@@ -307,7 +439,7 @@ export default function CanastaSalario({ data, months }) {
                   >
                     $
                     {new Intl.NumberFormat("es-AR").format(
-                      currentData.basica[selectedMonthIndex]
+                      canastaDataForDisplay[selectedMonthIndexForDisplay].CBA
                     )}
                   </div>
                 </div>
@@ -349,7 +481,7 @@ export default function CanastaSalario({ data, months }) {
                   >
                     $
                     {new Intl.NumberFormat("es-AR").format(
-                      currentData.total[selectedMonthIndex]
+                      canastaDataForDisplay[selectedMonthIndexForDisplay].CBT
                     )}
                   </div>
                 </div>
@@ -377,8 +509,7 @@ export default function CanastaSalario({ data, months }) {
                   <div className="text-2xl font-bold text-green-400">
                     $
                     {new Intl.NumberFormat("es-AR").format(
-                      data.smv[selectedMonthIndex] *
-                        (selectedType === "familiar" ? 2 : 1)
+                      canastaDataForDisplay[selectedMonthIndexForDisplay].SMV
                     )}
                   </div>
                 </div>
@@ -408,8 +539,8 @@ export default function CanastaSalario({ data, months }) {
                   <div className="text-2xl font-bold text-blue-400">
                     $
                     {new Intl.NumberFormat("es-AR").format(
-                      data.jubilaciones.conBono[selectedMonthIndex] *
-                        (selectedType === "familiar" ? 2 : 1)
+                      canastaDataForDisplay[selectedMonthIndexForDisplay]
+                        .JubConBono
                     )}
                   </div>
                 </div>
@@ -439,8 +570,8 @@ export default function CanastaSalario({ data, months }) {
                   <div className="text-2xl font-bold text-blue-300">
                     $
                     {new Intl.NumberFormat("es-AR").format(
-                      data.jubilaciones.sinBono[selectedMonthIndex] *
-                        (selectedType === "familiar" ? 2 : 1)
+                      canastaDataForDisplay[selectedMonthIndexForDisplay]
+                        .JubSinBono
                     )}
                   </div>
                 </div>
@@ -479,8 +610,7 @@ export default function CanastaSalario({ data, months }) {
           <div className="bg-gray-900 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-700">
             <div className="p-4 flex justify-between items-center border-b border-gray-700">
               <h2 className="text-xl font-bold text-gray-100">
-                Detalles{" "}
-                {/* Puedes personalizar el título según selectedCard */}
+                Detalles de {getModalData(selectedCard).title}
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -490,9 +620,27 @@ export default function CanastaSalario({ data, months }) {
               </button>
             </div>
             <div className="p-4">
-              {/* Aquí irá el contenido del modal según selectedCard */}
               <p className="text-gray-400">
-                Contenido del modal para la tarjeta {selectedCard + 1}
+                Mes: {canastaDataForDisplay[selectedMonthIndexForDisplay].mes}{" "}
+                {canastaDataForDisplay[selectedMonthIndexForDisplay].año}
+              </p>
+              <p className="text-gray-400">
+                Valor: $
+                {new Intl.NumberFormat("es-AR").format(
+                  getModalData(selectedCard).value
+                )}
+              </p>
+              <p className="text-gray-400">
+                Variación Mensual:{" "}
+                {getModalData(selectedCard).variacionMensual.toFixed(1)}%
+              </p>
+              <p className="text-gray-400">
+                Variación Anual:{" "}
+                {getModalData(selectedCard).variacionAnual.toFixed(1)}%
+              </p>
+              <p className="text-gray-400">
+                Variación Acumulada:{" "}
+                {getModalData(selectedCard).variacionAcumulada.toFixed(1)}%
               </p>
             </div>
           </div>
