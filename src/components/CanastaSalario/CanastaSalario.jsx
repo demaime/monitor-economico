@@ -31,7 +31,6 @@ export default function CanastaSalario({ data, months }) {
   const [selectedCard, setSelectedCard] = useState(null);
 
   const currentData = data[selectedRegion][selectedType];
-  const selectedMonthIndex = months.findIndex((m) => m.mes === selectedMonth);
 
   // Calculate variations and create an object.
   const canastaData = months.map((month, index) => {
@@ -205,8 +204,6 @@ export default function CanastaSalario({ data, months }) {
     setSelectedCard(index);
     setIsModalOpen(true);
   };
-
-  console.log(canastaData.slice(-12));
 
   // Function to get the data for the selected card
   const getModalData = (index) => {
