@@ -81,7 +81,7 @@ export default function Home() {
 
         <Zoom>
           <Fade>
-            <h1 className="text-lg font-semibold mb-8 text-[#FF5733]">
+            <h1 className="text-lg font-semibold mb-8 text-[#FF5733] text-center px-2">
               No se pudo conectar. Por favor intente de nuevo
             </h1>
           </Fade>
