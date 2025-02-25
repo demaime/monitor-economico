@@ -68,7 +68,35 @@ export default function Home() {
         </Zoom>
       </section>
     );
-  if (error) return <div>Error: {error}</div>;
+  if (error)
+    return (
+      <section className="center-flex-col bg-gradient">
+        <Fade>
+          <h1 className="text-5xl text-[#FF5733] w-full mb-12 font-semibold">
+            <span className="text-white font-black">M</span>ONITOR <br />
+            <span className="text-white font-black">I</span>NDICADORES <br />
+            <span className="text-white font-black">E</span>CONOMICOS
+          </h1>
+        </Fade>
+
+        <Zoom>
+          <Fade>
+            <h1 className="text-lg font-semibold mb-8 text-[#FF5733]">
+              No se pudo conectar. Por favor intente de nuevo
+            </h1>
+          </Fade>
+        </Zoom>
+
+        <Zoom>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-[#FF5733] text-white rounded-md hover:bg-[#E64A2E] transition-colors"
+          >
+            Recargar página
+          </button>
+        </Zoom>
+      </section>
+    );
 
   return (
     <div className="full-container">

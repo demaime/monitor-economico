@@ -182,7 +182,7 @@ export default function Aperturas({
                 position: "insideTop",
                 fill: selectedRegion === "nacional" ? "#fff" : "#000",
                 formatter: (value) => `${value}%`,
-                fontSize: window.innerWidth < 640 ? 4 : 10,
+                fontSize: window.innerWidth < 640 ? 5 : 10,
                 fontWeight: window.innerWidth < 640 ? 700 : 400,
               }}
             />
