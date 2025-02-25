@@ -7,6 +7,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { Info, X } from "lucide-react";
+import { useState } from "react";
 
 export default function Aperturas({
   data,
@@ -14,6 +16,8 @@ export default function Aperturas({
   selectedRegion,
   selectedMonth,
 }) {
+  const [showModal, setShowModal] = useState(false);
+
   // Obtenemos los últimos 12 meses
   const last12Months = months.slice(-12);
 
@@ -99,13 +103,36 @@ export default function Aperturas({
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
-      <div className="text-gray-300 text-[10px] sm:text-[12px]">
-        <span>Apertura - variaciones mensuales - </span>
-        <span className="font-medium">
-          {last12Months[selectedMonthIndex].mes}{" "}
-          {last12Months[selectedMonthIndex].año}
-        </span>
+      <div className="text-gray-300 text-[10px] sm:text-[12px] flex items-center justify-between">
+        <div>
+          <span>Apertura - Variaciones mensuales - </span>
+          <span className="font-medium">
+            {last12Months[selectedMonthIndex].mes}{" "}
+            {last12Months[selectedMonthIndex].año}
+          </span>
+        </div>
+        <Info
+          className="w-4 h-4 cursor-pointer hover:text-white transition-colors bg-gray-800 rounded-full"
+          onClick={() => setShowModal(true)}
+        />
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute right-4 top-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <div className="p-6">
+              <h2 className="text-xl text-white mb-4">Información</h2>
+              <p className="text-gray-300">Contenido del modal...</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex-1">
         <ResponsiveContainer width="100%" height="100%">
@@ -114,8 +141,8 @@ export default function Aperturas({
             margin={{
               top: window.innerWidth < 640 ? 15 : 20,
               right: window.innerWidth < 640 ? 5 : 15,
-              left: window.innerWidth < 640 ? -30 : 10,
-              bottom: window.innerWidth < 640 ? 0 : 20,
+              left: window.innerWidth < 640 ? -30 : -20,
+              bottom: window.innerWidth < 640 ? 0 : 5,
             }}
           >
             <XAxis
@@ -125,7 +152,7 @@ export default function Aperturas({
               height={window.innerWidth < 640 ? 60 : 80}
               tick={{
                 fill: "#9ca3af",
-                fontSize: window.innerWidth < 640 ? 8 : 12,
+                fontSize: window.innerWidth < 640 ? 5 : 10,
               }}
             />
             <YAxis
@@ -155,7 +182,7 @@ export default function Aperturas({
                 position: "insideTop",
                 fill: selectedRegion === "nacional" ? "#fff" : "#000",
                 formatter: (value) => `${value}%`,
-                fontSize: window.innerWidth < 640 ? 5 : 10,
+                fontSize: window.innerWidth < 640 ? 3 : 10,
               }}
             />
           </BarChart>

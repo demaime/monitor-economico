@@ -177,7 +177,7 @@ export default function Inflacion({ data, months }) {
                   angle={-45}
                   textAnchor="end"
                   height={60}
-                  tick={{ fill: "#9ca3af", fontSize: 8 }}
+                  tick={{ fill: "#9ca3af", fontSize: 6 }}
                 />
                 <YAxis
                   tick={{ fill: "#9ca3af", fontSize: 8 }}

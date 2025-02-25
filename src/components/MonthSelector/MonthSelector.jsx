@@ -12,18 +12,11 @@ export default function MonthSelector({
 
   const handlePrevMonth = () => {
     if (currentIndex > 0) {
-      console.log("Prev - Current Index:", currentIndex);
-      console.log("Prev - Moving to:", monthNames[currentIndex - 1]);
       onMonthChange(monthNames[currentIndex - 1]);
     }
   };
 
   const handleNextMonth = () => {
-    console.log("Next - Current Index:", currentIndex);
-    console.log("Next - Total months:", monthNames.length);
-    console.log("Next - Current month:", monthNames[currentIndex]);
-    console.log("Next - Next month would be:", monthNames[currentIndex + 1]);
-
     if (currentIndex < monthNames.length - 1) {
       onMonthChange(monthNames[currentIndex + 1]);
     }
