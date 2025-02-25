@@ -20,12 +20,15 @@ export default async function handler(req, res) {
   // ID de la hoja de cálculo y rango
   const spreadsheetId = "1CVnPUD9jj9nYFp3-uJOyv_uwBmm-GRNmaJxpQG0kMw8";
   const ranges = {
+    //Años y meses
     año: "datos!C1:1",
     meses: "datos!C2:2",
+
+    //Inflacion
     inflacionNacional: "datos!C3:3",
     inflacionCaba: "datos!C4:4",
 
-    // Apertura Nacional (C5:C16)
+    // Apertura Nacional
     alimentosNacional: "datos!C5:5",
     bebidasNacional: "datos!C6:6",
     indumentariaNacional: "datos!C7:7",
@@ -39,7 +42,7 @@ export default async function handler(req, res) {
     restaurantesNacional: "datos!C15:15",
     bienesServiciosNacional: "datos!C16:16",
 
-    // Apertura CABA (C17:C29)
+    // Apertura CABA
     alimentosCaba: "datos!C17:17",
     bebidasCaba: "datos!C18:18",
     indumentariaCaba: "datos!C19:19",
@@ -54,7 +57,7 @@ export default async function handler(req, res) {
     segurosCaba: "datos!C28:28",
     cuidadoPersonalCaba: "datos!C29:29",
 
-    // Canastas (actualizadas a nuevas filas)
+    // Canastas
     cbaIndividualNacional: "datos!C30:30",
     cbtIndividualNacional: "datos!C31:31",
     cbaFamiliarNacional: "datos!C32:32",

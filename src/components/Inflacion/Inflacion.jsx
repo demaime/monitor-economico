@@ -80,8 +80,6 @@ export default function Inflacion({ data, months }) {
     setActiveCard(activeIndex);
   };
 
-  data && console.log(data);
-
   return (
     <section className="bg-gray-900 overflow-hidden">
       <div className="w-[90%] h-[90%] flex flex-col gap-4">

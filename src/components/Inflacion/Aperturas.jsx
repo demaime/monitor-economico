@@ -100,7 +100,7 @@ export default function Aperturas({
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <div className="text-gray-300 text-[10px] sm:text-[12px]">
-        <span>Variaciones mensuales - </span>
+        <span>Apertura - variaciones mensuales - </span>
         <span className="font-medium">
           {last12Months[selectedMonthIndex].mes}{" "}
           {last12Months[selectedMonthIndex].año}
@@ -137,7 +137,7 @@ export default function Aperturas({
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#1f2937",
+                backgroundColor: "#0d1117",
                 border: "none",
                 borderRadius: "0.5rem",
                 fontSize: window.innerWidth < 640 ? 10 : 12,
@@ -155,7 +155,7 @@ export default function Aperturas({
                 position: "insideTop",
                 fill: selectedRegion === "nacional" ? "#fff" : "#000",
                 formatter: (value) => `${value}%`,
-                fontSize: window.innerWidth < 640 ? 8 : 12,
+                fontSize: window.innerWidth < 640 ? 5 : 10,
               }}
             />
           </BarChart>
