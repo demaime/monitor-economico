@@ -99,7 +99,7 @@ export default function Aperturas({
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
-      <div className="text-gray-300 text-[10px] sm:text-sm">
+      <div className="text-gray-300 text-[10px] sm:text-[5px]">
         <span>Variaciones mensuales - </span>
         <span className="font-medium">
           {last12Months[selectedMonthIndex].mes}{" "}
@@ -141,9 +141,11 @@ export default function Aperturas({
                 border: "none",
                 borderRadius: "0.5rem",
                 fontSize: window.innerWidth < 640 ? 10 : 12,
+                color: "#ffffff",
               }}
               labelStyle={{ color: "#9ca3af" }}
               formatter={(value) => [`${value}%`, "Variación"]}
+              itemStyle={{ color: "#ffffff" }}
             />
             <Bar
               dataKey="variacion"
