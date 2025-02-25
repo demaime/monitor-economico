@@ -99,7 +99,7 @@ export default function Aperturas({
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
-      <div className="text-gray-300 text-[10px] sm:text-[5px]">
+      <div className="text-gray-300 text-[10px] sm:text-[12px]">
         <span>Variaciones mensuales - </span>
         <span className="font-medium">
           {last12Months[selectedMonthIndex].mes}{" "}
@@ -114,8 +114,8 @@ export default function Aperturas({
             margin={{
               top: window.innerWidth < 640 ? 15 : 20,
               right: window.innerWidth < 640 ? 5 : 15,
-              left: window.innerWidth < 640 ? -35 : 10,
-              bottom: window.innerWidth < 640 ? 50 : 60,
+              left: window.innerWidth < 640 ? -30 : 10,
+              bottom: window.innerWidth < 640 ? 0 : 20,
             }}
           >
             <XAxis

@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { TrendingUp, ArrowUpRight, Percent, Plus, X } from "lucide-react";
+import {
+  TrendingUp,
+  ArrowUpRight,
+  Percent,
+  LineChart,
+  BarChartBig,
+} from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -21,7 +27,7 @@ export default function Inflacion({ data, months }) {
   );
   const [activeCard, setActiveCard] = useState(0);
   const [selectedRegion, setSelectedRegion] = useState("nacional");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeView, setActiveView] = useState("evolution");
 
   const currentData = data[selectedRegion].general;
 
@@ -110,13 +116,32 @@ export default function Inflacion({ data, months }) {
               CABA
             </button>
           </div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="p-2 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700"
-            title="Apertura"
-          >
-            <Plus size={16} />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveView("evolution")}
+              className={`px-4 py-2 rounded-lg ${
+                activeView === "evolution"
+                  ? selectedRegion === "nacional"
+                    ? "bg-orange-custom text-white"
+                    : "bg-yellow-custom text-gray-800"
+                  : "bg-gray-800 text-gray-300"
+              }`}
+            >
+              <LineChart className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setActiveView("apertura")}
+              className={`px-4 py-2 rounded-lg ${
+                activeView === "apertura"
+                  ? selectedRegion === "nacional"
+                    ? "bg-orange-custom text-white"
+                    : "bg-yellow-custom text-gray-800"
+                  : "bg-gray-800 text-gray-300"
+              }`}
+            >
+              <BarChartBig className="w-5 h-5" />
+            </button>
+          </div>
         </div>
         <MonthSelector
           months={months}
@@ -125,72 +150,82 @@ export default function Inflacion({ data, months }) {
         />
 
         <div className="h-[300px] w-full bg-gray-800 rounded-xl p-4">
-          <ResponsiveContainer>
-            <AreaChart
-              data={IPCForDisplay}
-              margin={{ top: 0, right: 15, left: -30, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="colorIPC" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="45%"
-                    stopColor={
-                      selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"
-                    }
-                    stopOpacity={0.3}
-                  />
-                  <stop
-                    offset="99%"
-                    stopColor={
-                      selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"
-                    }
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              </defs>
-              <XAxis
-                dataKey="mes"
-                angle={-45}
-                textAnchor="end"
-                height={60}
-                tick={{ fill: "#9ca3af", fontSize: 8 }}
-              />
-              <YAxis
-                tick={{ fill: "#9ca3af", fontSize: 8 }}
-                axisLine={{ stroke: "#374151" }}
-              />
-              <Tooltip
-                content={<CustomTooltip selectedRegion={selectedRegion} />}
-              />
-              <Area
-                type="monotone"
-                dataKey="variacionMensual"
-                stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
-                fill="url(#colorIPC)"
-                strokeWidth={2}
-                label={<CustomizedLabel selectedRegion={selectedRegion} />}
-              />
-              <ReferenceLine
-                x={selectedMonth}
-                stroke="#56595e"
-                strokeWidth={1}
-                strokeDasharray="3 3"
-              />
-              <Brush
-                dataKey="mes"
-                height={15}
-                stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
-                fill="#1f2937"
-                travellerWidth={10}
-                style={{
-                  fontSize: "8px",
-                  marginTop: "2px",
-                  stroke: selectedRegion === "nacional" ? "#ff5733" : "#f6ff00",
-                  fill: selectedRegion === "nacional" ? "#ff5733" : "#f6ff00",
-                }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          {activeView === "evolution" ? (
+            <ResponsiveContainer>
+              <AreaChart
+                data={IPCForDisplay}
+                margin={{ top: 0, right: 15, left: -30, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="colorIPC" x1="0" y1="0" x2="0" y2="1">
+                    <stop
+                      offset="45%"
+                      stopColor={
+                        selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"
+                      }
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="99%"
+                      stopColor={
+                        selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"
+                      }
+                      stopOpacity={0}
+                    />
+                  </linearGradient>
+                </defs>
+                <XAxis
+                  dataKey="mes"
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                  tick={{ fill: "#9ca3af", fontSize: 8 }}
+                />
+                <YAxis
+                  tick={{ fill: "#9ca3af", fontSize: 8 }}
+                  axisLine={{ stroke: "#374151" }}
+                />
+                <Tooltip
+                  content={<CustomTooltip selectedRegion={selectedRegion} />}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="variacionMensual"
+                  stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
+                  fill="url(#colorIPC)"
+                  strokeWidth={2}
+                  label={<CustomizedLabel selectedRegion={selectedRegion} />}
+                />
+                <ReferenceLine
+                  x={selectedMonth}
+                  stroke="#56595e"
+                  strokeWidth={1}
+                  strokeDasharray="3 3"
+                />
+                <Brush
+                  dataKey="mes"
+                  height={15}
+                  stroke={selectedRegion === "nacional" ? "#ff5733" : "#f6ff00"}
+                  fill="#1f2937"
+                  travellerWidth={10}
+                  style={{
+                    fontSize: "8px",
+                    marginTop: "2px",
+                    stroke:
+                      selectedRegion === "nacional" ? "#ff5733" : "#f6ff00",
+                    fill: selectedRegion === "nacional" ? "#ff5733" : "#f6ff00",
+                  }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <Aperturas
+              data={data}
+              months={months}
+              selectedRegion={selectedRegion}
+              selectedMonth={selectedMonth}
+            />
+          )}
         </div>
 
         {/* Cards container */}
@@ -309,27 +344,6 @@ export default function Inflacion({ data, months }) {
           </div>
         </div>
       </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-gray-800 w-[95%] h-[95%] rounded-xl p-6 relative">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-200"
-            >
-              <X size={24} />
-            </button>
-            <h2 className="text-xl text-gray-100 mb-4">Apertura</h2>
-            <Aperturas
-              data={data}
-              months={months}
-              selectedRegion={selectedRegion}
-              selectedMonth={selectedMonth}
-            />
-          </div>
-        </div>
-      )}
     </section>
   );
 }
