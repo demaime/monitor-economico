@@ -183,6 +183,7 @@ export default function Aperturas({
                 fill: selectedRegion === "nacional" ? "#fff" : "#000",
                 formatter: (value) => `${value}%`,
                 fontSize: window.innerWidth < 640 ? 4 : 10,
+                fontWeight: window.innerWidth < 640 ? 700 : 400,
               }}
             />
           </BarChart>
