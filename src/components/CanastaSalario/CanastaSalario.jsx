@@ -146,8 +146,6 @@ export default function CanastaSalario({ data, months }) {
   // Ensure to slice the last 12 months for display
   const canastaDataForDisplay = canastaData.slice(-12);
 
-  console.log(canastaData);
-
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const formatCurrency = (value) => {
@@ -255,8 +253,6 @@ export default function CanastaSalario({ data, months }) {
         return {};
     }
   };
-
-  console.log(selectedMonth);
 
   const selectedMonthIndexForDisplay = canastaDataForDisplay.findIndex(
     (m) => m.mes === selectedMonth

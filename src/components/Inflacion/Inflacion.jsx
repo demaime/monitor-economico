@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TrendingUp, ArrowUpRight, Percent } from "lucide-react";
+import { TrendingUp, ArrowUpRight, Percent, Plus, X } from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -13,6 +13,7 @@ import {
 import MonthSelector from "../MonthSelector/MonthSelector";
 import CustomizedLabel from "./CustomizedLabel";
 import CustomTooltip from "./CustomTooltip";
+import Aperturas from "./Aperturas";
 
 export default function Inflacion({ data, months }) {
   const [selectedMonth, setSelectedMonth] = useState(
@@ -20,8 +21,9 @@ export default function Inflacion({ data, months }) {
   );
   const [activeCard, setActiveCard] = useState(0);
   const [selectedRegion, setSelectedRegion] = useState("nacional");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const currentData = data[selectedRegion];
+  const currentData = data[selectedRegion].general;
 
   const IPC = months.map((month, index) => {
     const valor = Number(currentData[index]) || 0;
@@ -72,7 +74,7 @@ export default function Inflacion({ data, months }) {
     setActiveCard(activeIndex);
   };
 
-  selectedData && console.log(selectedData);
+  data && console.log(data);
 
   return (
     <section className="bg-gray-900 overflow-hidden">
@@ -85,29 +87,37 @@ export default function Inflacion({ data, months }) {
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex justify-between">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setSelectedRegion("nacional")}
+              className={`px-4 py-2 rounded-lg ${
+                selectedRegion === "nacional"
+                  ? "bg-orange-custom text-white"
+                  : "bg-gray-800 text-gray-300"
+              }`}
+            >
+              Nacional
+            </button>
+            <button
+              onClick={() => setSelectedRegion("caba")}
+              className={`px-4 py-2 rounded-lg ${
+                selectedRegion === "caba"
+                  ? "bg-yellow-custom text-gray-800"
+                  : "bg-gray-800 text-gray-300"
+              }`}
+            >
+              CABA
+            </button>
+          </div>
           <button
-            onClick={() => setSelectedRegion("nacional")}
-            className={`px-4 py-2 rounded-lg ${
-              selectedRegion === "nacional"
-                ? "bg-orange-custom text-white"
-                : "bg-gray-800 text-gray-300"
-            }`}
+            onClick={() => setIsModalOpen(true)}
+            className="p-2 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700"
+            title="Apertura"
           >
-            Nacional
-          </button>
-          <button
-            onClick={() => setSelectedRegion("caba")}
-            className={`px-4 py-2 rounded-lg ${
-              selectedRegion === "caba"
-                ? "bg-yellow-custom text-gray-800"
-                : "bg-gray-800 text-gray-300"
-            }`}
-          >
-            CABA
+            <Plus size={16} />
           </button>
         </div>
-
         <MonthSelector
           months={months}
           selectedMonth={selectedMonth}
@@ -299,6 +309,27 @@ export default function Inflacion({ data, months }) {
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-gray-800 w-[95%] h-[95%] rounded-xl p-6 relative">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-200"
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-xl text-gray-100 mb-4">Apertura</h2>
+            <Aperturas
+              data={data}
+              months={months}
+              selectedRegion={selectedRegion}
+              selectedMonth={selectedMonth}
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }

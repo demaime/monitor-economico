@@ -77,8 +77,41 @@ export default function Home() {
           <Portada />
           <Inflacion
             data={{
-              nacional: data.inflacionNacional,
-              caba: data.inflacionCaba,
+              nacional: {
+                general: data.inflacionNacional,
+                apertura: {
+                  alimentos: data.alimentosNacional,
+                  bebidas: data.bebidasNacional,
+                  indumentaria: data.indumentariaNacional,
+                  vivienda: data.viviendaNacional,
+                  equipamiento: data.equipamientoNacional,
+                  salud: data.saludNacional,
+                  transporte: data.transporteNacional,
+                  comunicacion: data.comunicacionNacional,
+                  recreacion: data.recreacionNacional,
+                  educacion: data.educacionNacional,
+                  restaurantes: data.restaurantesNacional,
+                  bienesServicios: data.bienesServiciosNacional,
+                },
+              },
+              caba: {
+                general: data.inflacionCaba,
+                apertura: {
+                  alimentos: data.alimentosCaba,
+                  bebidas: data.bebidasCaba,
+                  indumentaria: data.indumentariaCaba,
+                  vivienda: data.viviendaCaba,
+                  equipamiento: data.equipamientoCaba,
+                  salud: data.saludCaba,
+                  transporte: data.transporteCaba,
+                  comunicacion: data.comunicacionCaba,
+                  recreacion: data.recreacionCaba,
+                  educacion: data.educacionCaba,
+                  restaurantes: data.restaurantesCaba,
+                  seguros: data.segurosCaba,
+                  cuidadoPersonal: data.cuidadoPersonalCaba,
+                },
+              },
             }}
             months={data.meses}
           />
