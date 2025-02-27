@@ -114,7 +114,7 @@ export default function Inflacion({ data, months }) {
               CABA
             </button>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 relative">
             <button
               onClick={() => setActiveView("evolution")}
               className={`px-4 py-2 rounded-lg ${
@@ -139,6 +139,15 @@ export default function Inflacion({ data, months }) {
             >
               <BarChartBig className="w-5 h-5" />
             </button>
+            <div
+              className={`absolute right-0 -top-8 rounded-lg px-2 py-1 text-xs ${
+                selectedRegion === "nacional"
+                  ? "bg-orange-custom text-white"
+                  : "bg-yellow-custom text-gray-800"
+              }`}
+            >
+              {activeView === "evolution" ? "EVOLUTIVO" : "APERTURA"}
+            </div>
           </div>
         </div>
         <MonthSelector

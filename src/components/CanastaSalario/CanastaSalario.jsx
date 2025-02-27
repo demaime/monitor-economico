@@ -296,7 +296,16 @@ export default function CanastaSalario({ data, months }) {
               CABA
             </button>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 relative">
+            <div
+              className={`absolute right-0 -top-8 rounded-lg px-2 py-1 text-xs ${
+                selectedRegion === "nacional"
+                  ? "bg-orange-custom text-white"
+                  : "bg-yellow-custom text-gray-800"
+              }`}
+            >
+              {selectedType === "individual" ? "INDIVIDUAL" : "GRUPAL"}
+            </div>
             <button
               onClick={() => setSelectedType("individual")}
               className={`p-2 rounded-lg ${

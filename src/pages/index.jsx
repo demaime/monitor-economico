@@ -10,51 +10,73 @@ export default function Home() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [countdown, setCountdown] = useState(null);
+
+  const fetchData = async () => {
+    const startTime = Date.now();
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/sheets");
+      if (!response.ok) {
+        // Si es error de quota, esperar más tiempo
+        if (response.status === 429) {
+          setCountdown(60); // Esperar 1 minuto antes de reintentar
+          throw new Error("Límite de solicitudes excedido. Esperando...");
+        }
+        throw new Error(
+          `HTTP error! status: ${response.status} - ${response.statusText}`
+        );
+      }
+      const result = await response.json();
+
+      // Calcular tiempo transcurrido y esperar si es necesario
+      const elapsedTime = Date.now() - startTime;
+      const minimumWait = 2000; // 2 segundos en milisegundos
+
+      if (elapsedTime < minimumWait) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, minimumWait - elapsedTime)
+        );
+      }
+
+      setData(result.data);
+      setError(null);
+      setCountdown(null);
+    } catch (error) {
+      console.group("=== Error Detallado ===");
+      console.error("Mensaje:", error.message);
+      console.error("Tipo de Error:", error.name);
+      console.error("Stack Trace:", error.stack);
+      console.error("Detalles adicionales:", {
+        esErrorDeRed: error instanceof TypeError,
+        timestamp: new Date().toISOString(),
+        url: "/api/sheets",
+      });
+      console.groupEnd();
+
+      setError("Error de respuesta");
+      setCountdown(3);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const startTime = Date.now();
-
-      try {
-        const response = await fetch("/api/sheets");
-        if (!response.ok) {
-          throw new Error(
-            `HTTP error! status: ${response.status} - ${response.statusText}`
-          );
-        }
-        const result = await response.json();
-
-        // Calcular tiempo transcurrido y esperar si es necesario
-        const elapsedTime = Date.now() - startTime;
-        const minimumWait = 2000; // 2 segundos en milisegundos
-
-        if (elapsedTime < minimumWait) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, minimumWait - elapsedTime)
-          );
-        }
-
-        setData(result.data);
-      } catch (error) {
-        console.group("=== Error Detallado ===");
-        console.error("Mensaje:", error.message);
-        console.error("Tipo de Error:", error.name);
-        console.error("Stack Trace:", error.stack);
-        console.error("Detalles adicionales:", {
-          esErrorDeRed: error instanceof TypeError,
-          timestamp: new Date().toISOString(),
-          url: "/api/sheets",
-        });
-        console.groupEnd();
-
-        setError("Network response was not ok");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
+
+  useEffect(() => {
+    let timer;
+    if (countdown !== null && countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      fetchData();
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   if (loading)
     return (
@@ -81,6 +103,7 @@ export default function Home() {
         </Zoom>
       </section>
     );
+
   if (error)
     return (
       <section className="center-flex-col bg-gradient">
@@ -94,19 +117,21 @@ export default function Home() {
 
         <Zoom>
           <Fade>
-            <h1 className="text-lg font-semibold mb-8 text-[#FF5733] text-center px-2">
-              No se pudo conectar. Por favor intente de nuevo
+            <h1 className="text-lg font-semibold mb-8 text-[#FF5733] text-center px-8">
+              No se pudo conectar.{" "}
+              {countdown > 0
+                ? `Reintentando en ${countdown} ${
+                    countdown === 1 ? "segundo" : "segundos"
+                  }...`
+                : "Reintentando..."}
             </h1>
           </Fade>
         </Zoom>
 
         <Zoom>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-[#FF5733] text-white rounded-md hover:bg-[#E64A2E] transition-colors"
-          >
-            Recargar página
-          </button>
+          <Fade>
+            <Loader />
+          </Fade>
         </Zoom>
       </section>
     );

@@ -4,6 +4,7 @@ import { LineChart, Radio, BarChart2, Activity } from "lucide-react";
 import axios from "axios";
 import DolarEnVivo from "./DolarEnVivo";
 import DolarEvolutivo from "./DolarEvolutivo";
+import DolarComparativo from "./DolarComparativo";
 
 export default function Dolar({ months }) {
   const [selectedMonth, setSelectedMonth] = useState(
@@ -54,7 +55,7 @@ export default function Dolar({ months }) {
           <p className="text-sm text-gray-400">DolarApi</p>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end relative">
           <div className="flex gap-2">
             <button
               onClick={() => setActiveView("live")}
@@ -87,6 +88,13 @@ export default function Dolar({ months }) {
               <BarChart2 className="w-5 h-5" />
             </button>
           </div>
+          <div className="absolute right-0 -top-8 rounded-lg bg-orange-custom text-white px-2 py-1 text-xs">
+            {activeView === "live"
+              ? "EN VIVO"
+              : activeView === "evolution"
+              ? "EVOLUTIVO"
+              : "COMPARATIVO"}
+          </div>
         </div>
 
         {/* Content container for the different views */}
@@ -95,7 +103,9 @@ export default function Dolar({ months }) {
           {activeView === "evolution" && months && (
             <DolarEvolutivo months={months} historicalData={historicalData} />
           )}
-          {activeView === "comparative" && <div>Comparative View Content</div>}
+          {activeView === "comparative" && months && (
+            <DolarComparativo months={months} historicalData={historicalData} />
+          )}
         </div>
       </div>
     </section>
