@@ -184,7 +184,7 @@ export default function DolarComparativo({
                 backgroundColor: "#111827",
                 border: "1px solid #374151",
                 borderRadius: "0.75rem",
-                padding: "0.75rem",
+                padding: window.innerWidth < 768 ? "0.5rem" : "0.75rem",
               }}
               formatter={(value, name) => {
                 const dolarType = DOLAR_TYPES[name];
@@ -194,18 +194,29 @@ export default function DolarComparativo({
                 const item = prepareChartData()[0];
                 if (item && item[`${name}_diff`]) {
                   const diff = item[`${name}_diff`];
+                  const diffText =
+                    window.innerWidth < 768
+                      ? `$${diff.toLocaleString()} (${(
+                          (diff / item.oficial) *
+                          100
+                        ).toFixed(1)}%)`
+                      : `Diferencia: $${diff.toLocaleString()} (${(
+                          (diff / item.oficial) *
+                          100
+                        ).toFixed(2)}%)`;
                   return [
-                    [
-                      `$${value.toLocaleString()}`,
-                      `Diferencia: $${diff.toLocaleString()} (${(
-                        (diff / item.oficial) *
-                        100
-                      ).toFixed(2)}%)`,
-                    ],
+                    `$${value.toLocaleString()} ▬ ${diffText}`,
                     dolarType.name,
                   ];
                 }
                 return [value, name];
+              }}
+              labelStyle={{
+                color: "#fff",
+                fontSize: window.innerWidth < 768 ? "0.65rem" : "0.875rem",
+              }}
+              itemStyle={{
+                fontSize: window.innerWidth < 768 ? "0.65rem" : "0.875rem",
               }}
             />
             {/* Línea de referencia en el valor del dólar oficial */}
