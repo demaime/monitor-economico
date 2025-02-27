@@ -39,6 +39,7 @@ export default function DolarComparativo({ months, historicalData }) {
   const [selectedMonth, setSelectedMonth] = useState(
     months && months.length > 0 ? months[months.length - 1].mes : ""
   );
+  const [activeCard, setActiveCard] = useState(0);
 
   // Función para convertir YYYY-MM a nombre de mes
   const formatMonthName = (dateStr) => {
@@ -119,6 +120,14 @@ export default function DolarComparativo({ months, historicalData }) {
     ];
   };
 
+  // Add handleScroll function for carousel
+  const handleScroll = (e) => {
+    const scrollPosition = e.target.scrollLeft;
+    const cardWidth = window.innerWidth * 0.85; // 85vw
+    const activeIndex = Math.round(scrollPosition / cardWidth);
+    setActiveCard(activeIndex);
+  };
+
   if (!months || months.length === 0) {
     return <div>No hay datos de meses disponibles</div>;
   }
@@ -153,7 +162,7 @@ export default function DolarComparativo({ months, historicalData }) {
             data={prepareChartData()}
             margin={{
               top: 20,
-              right: window.innerWidth < 768 ? -30 : 180,
+              right: window.innerWidth < 768 ? 0 : 180,
               left: window.innerWidth < 768 ? -30 : 0,
               bottom: 20,
             }}
@@ -204,9 +213,15 @@ export default function DolarComparativo({ months, historicalData }) {
                 stroke="#4ade80"
                 strokeDasharray="3 3"
                 label={{
-                  value: `Oficial: $${prepareChartData()[0].oficial.toLocaleString()}`,
+                  value:
+                    window.innerWidth < 768
+                      ? `Oficial: $${prepareChartData()[0].oficial.toLocaleString()} ►`
+                      : `Oficial: $${prepareChartData()[0].oficial.toLocaleString()}`,
                   fill: "#4ade80",
-                  position: "right",
+                  position: window.innerWidth < 768 ? "insideRight" : "right",
+                  angle: window.innerWidth < 768 ? -90 : 0,
+                  offset: window.innerWidth < 768 ? 10 : 0,
+                  fontSize: window.innerWidth < 768 ? 10 : 12,
                 }}
               />
             )}
@@ -235,15 +250,19 @@ export default function DolarComparativo({ months, historicalData }) {
       </div>
 
       {/* Cards con diferencias */}
-      <div className="flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="flex-1 flex flex-col">
+        {/* Carousel container */}
+        <div
+          className="flex gap-4 overflow-x-auto md:grid md:grid-cols-5 snap-x snap-mandatory scroll-smooth"
+          onScroll={handleScroll}
+        >
           {Object.entries(DOLAR_TYPES).map(([dolarType, info]) => {
             const diff = calculateDifference(dolarType, selectedMonth);
 
             return (
               <div
                 key={dolarType}
-                className="relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50"
+                className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center"
               >
                 <div className="relative z-10 flex h-full flex-col justify-between gap-4">
                   <div className="space-y-2">
@@ -256,10 +275,12 @@ export default function DolarComparativo({ months, historicalData }) {
                           className="text-2xl font-bold"
                           style={{ color: info.color }}
                         >
-                          ${diff.difference.toLocaleString()}
+                          ${diff.difference >= 0 ? "" : "-"}
+                          {Math.abs(diff.difference).toLocaleString()}
                         </div>
                         <div className="text-sm text-gray-400">
-                          +{diff.percentage}%
+                          {diff.percentage >= 0 ? "+" : ""}
+                          {diff.percentage}%
                         </div>
                       </div>
                     )}
@@ -268,6 +289,18 @@ export default function DolarComparativo({ months, historicalData }) {
               </div>
             );
           })}
+        </div>
+
+        {/* Indicadores de scroll (solo en móvil) */}
+        <div className="flex gap-1 justify-center py-2 md:hidden">
+          {Object.keys(DOLAR_TYPES).map((_, index) => (
+            <div
+              key={index}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                activeCard === index ? "bg-blue-500" : "bg-gray-700"
+              }`}
+            />
+          ))}
         </div>
       </div>
     </div>
