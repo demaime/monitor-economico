@@ -69,6 +69,16 @@ export default async function handler(req, res) {
     smv: "datos!C38:38",
     jubConBono: "datos!C39:39",
     jubSinBono: "datos!C40:40",
+
+    // Transporte
+    subte: "datos!C41:41",
+    tren: "datos!C42:42",
+    colectivo: "datos!C43:43",
+    nafta: "datos!C44:44",
+    peajeNorte: "datos!C45:45",
+    peajeOeste: "datos!C46:46",
+    patentamientoAutos: "datos!C47:47",
+    patentamientoMotos: "datos!C48:48",
   };
 
   try {

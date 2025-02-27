@@ -6,6 +6,8 @@ import Loader from "@/components/Loader/Loader";
 import { Fade, Zoom } from "react-awesome-reveal";
 import Portada from "@/components/Portada/Portada";
 import Dolar from "@/components/Dolar/Dolar";
+import Transporte from "@/components/Transporte/Transporte";
+
 export default function Home() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -216,6 +218,27 @@ export default function Home() {
             months={data.meses}
           />
           <Dolar months={data.meses} />
+          <Transporte
+            data={{
+              publico: {
+                subte: data.subte,
+                tren: data.tren,
+                colectivo: data.colectivo,
+              },
+              particular: {
+                nafta: data.nafta,
+                peajes: {
+                  norte: data.peajeNorte,
+                  oeste: data.peajeOeste,
+                },
+                patentamiento: {
+                  autos: data.patentamientoAutos,
+                  motos: data.patentamientoMotos,
+                },
+              },
+            }}
+            months={data.meses}
+          />
           <AsistenciaSocial data={data} />
         </>
       )}
