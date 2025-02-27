@@ -40,10 +40,12 @@ const DOLAR_TYPES = {
   },
 };
 
-export default function DolarEvolutivo({ months, historicalData }) {
-  const [selectedMonth, setSelectedMonth] = useState(
-    months && months.length > 0 ? months[months.length - 1].mes : ""
-  );
+export default function DolarEvolutivo({
+  months,
+  historicalData,
+  selectedMonth,
+  setSelectedMonth,
+}) {
   const [loading, setLoading] = useState(false);
   const [activeCard, setActiveCard] = useState(0);
 

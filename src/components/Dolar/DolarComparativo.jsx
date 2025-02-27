@@ -35,10 +35,12 @@ const DOLAR_TYPES = {
   },
 };
 
-export default function DolarComparativo({ months, historicalData }) {
-  const [selectedMonth, setSelectedMonth] = useState(
-    months && months.length > 0 ? months[months.length - 1].mes : ""
-  );
+export default function DolarComparativo({
+  months,
+  historicalData,
+  selectedMonth,
+  setSelectedMonth,
+}) {
   const [activeCard, setActiveCard] = useState(0);
 
   // Función para convertir YYYY-MM a nombre de mes

@@ -101,10 +101,20 @@ export default function Dolar({ months }) {
         <div className="h-full w-full rounded-xl overflow-y-auto">
           {activeView === "live" && <DolarEnVivo dolarData={dolarData} />}
           {activeView === "evolution" && months && (
-            <DolarEvolutivo months={months} historicalData={historicalData} />
+            <DolarEvolutivo
+              months={months}
+              historicalData={historicalData}
+              selectedMonth={selectedMonth}
+              setSelectedMonth={setSelectedMonth}
+            />
           )}
           {activeView === "comparative" && months && (
-            <DolarComparativo months={months} historicalData={historicalData} />
+            <DolarComparativo
+              months={months}
+              historicalData={historicalData}
+              selectedMonth={selectedMonth}
+              setSelectedMonth={setSelectedMonth}
+            />
           )}
         </div>
       </div>
