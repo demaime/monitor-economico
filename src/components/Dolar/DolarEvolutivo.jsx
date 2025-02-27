@@ -216,12 +216,27 @@ export default function DolarEvolutivo({ months, historicalData }) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#1f2937",
-                border: "none",
-                borderRadius: "0.5rem",
+                backgroundColor: "#111827",
+                border: "1px solid #374151",
+                borderRadius: "0.75rem",
+                padding: "0.75rem",
+                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
               }}
-              labelStyle={{ color: "#f3f4f6" }}
-              formatter={(value) => [`$${value.toLocaleString()}`, null]}
+              labelStyle={{
+                color: "#f3f4f6",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                marginBottom: "0.5rem",
+              }}
+              formatter={(value, name) => {
+                return [
+                  `$${value.toLocaleString("es-AR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}`,
+                  name,
+                ];
+              }}
             />
             <ReferenceLine
               x={selectedMonth}

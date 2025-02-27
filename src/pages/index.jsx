@@ -18,7 +18,9 @@ export default function Home() {
       try {
         const response = await fetch("/api/sheets");
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error(
+            `HTTP error! status: ${response.status} - ${response.statusText}`
+          );
         }
         const result = await response.json();
 
@@ -34,7 +36,18 @@ export default function Home() {
 
         setData(result.data);
       } catch (error) {
-        setError(error.message);
+        console.group("=== Error Detallado ===");
+        console.error("Mensaje:", error.message);
+        console.error("Tipo de Error:", error.name);
+        console.error("Stack Trace:", error.stack);
+        console.error("Detalles adicionales:", {
+          esErrorDeRed: error instanceof TypeError,
+          timestamp: new Date().toISOString(),
+          url: "/api/sheets",
+        });
+        console.groupEnd();
+
+        setError("Network response was not ok");
       } finally {
         setLoading(false);
       }
