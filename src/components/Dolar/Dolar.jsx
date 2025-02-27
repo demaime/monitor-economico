@@ -11,29 +11,37 @@ export default function Dolar({ months }) {
   );
   const [activeView, setActiveView] = useState("live");
   const [dolarData, setDolarData] = useState(null);
+  const [historicalData, setHistoricalData] = useState(null);
 
   useEffect(() => {
-    const fetchDolarData = async () => {
+    const fetchAllData = async () => {
       try {
-        const response = await axios.get("/api/getDolar");
-        setDolarData(response.data);
+        // Fetch both live and historical data simultaneously
+        const [liveResponse, historicalResponse] = await Promise.all([
+          axios.get("/api/getDolar"),
+          axios.get("/api/getDolarHistorico"),
+        ]);
+
+        setDolarData(liveResponse.data);
+        setHistoricalData(historicalResponse.data);
       } catch (error) {
-        console.error("Error fetching dolar data:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    fetchDolarData();
+    fetchAllData();
 
-    // Actualizar datos cada 5 minutos si está en la vista "live"
-    let interval;
-    if (activeView === "live") {
-      interval = setInterval(fetchDolarData, 5 * 60 * 1000);
-    }
+    // Update live data every 5 minutes
+    const interval = setInterval(() => {
+      if (activeView === "live") {
+        axios
+          .get("/api/getDolar")
+          .then((response) => setDolarData(response.data));
+      }
+    }, 5 * 60 * 1000);
 
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [activeView]);
+    return () => clearInterval(interval);
+  }, []); // Remove activeView dependency
 
   return (
     <section className="bg-gray-900 overflow-hidden">
@@ -85,7 +93,7 @@ export default function Dolar({ months }) {
         <div className="h-full w-full bg-gray-800 rounded-xl p-4 overflow-y-auto">
           {activeView === "live" && <DolarEnVivo dolarData={dolarData} />}
           {activeView === "evolution" && months && (
-            <DolarEvolutivo months={months} />
+            <DolarEvolutivo months={months} historicalData={historicalData} />
           )}
           {activeView === "comparative" && <div>Comparative View Content</div>}
         </div>

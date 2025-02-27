@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MonthSelector from "../MonthSelector/MonthSelector";
 import axios from "axios";
 import {
@@ -40,12 +40,11 @@ const DOLAR_TYPES = {
   },
 };
 
-export default function DolarEvolutivo({ months }) {
-  const [historicalData, setHistoricalData] = useState(null);
+export default function DolarEvolutivo({ months, historicalData }) {
   const [selectedMonth, setSelectedMonth] = useState(
     months && months.length > 0 ? months[months.length - 1].mes : ""
   );
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [activeCard, setActiveCard] = useState(0);
 
   // Función para convertir YYYY-MM a nombre de mes
@@ -119,32 +118,11 @@ export default function DolarEvolutivo({ months }) {
     };
   };
 
-  useEffect(() => {
-    const fetchHistoricalData = async () => {
-      try {
-        const response = await axios.get("/api/getDolarHistorico");
-        setHistoricalData(response.data);
-        console.log("Datos del dólar:", response.data);
-        console.log(
-          "Tipos de dólar en historicalData:",
-          Object.keys(response.data)
-        );
-        console.log("Tipos de dólar definidos:", Object.keys(DOLAR_TYPES));
-      } catch (error) {
-        console.error("Error fetching historical data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHistoricalData();
-  }, []);
-
   if (!months || months.length === 0) {
     return <div>No hay datos de meses disponibles</div>;
   }
 
-  if (loading) {
+  if (!historicalData) {
     return (
       <div className="flex h-full items-center justify-center text-gray-400">
         Cargando datos históricos...
