@@ -21,11 +21,15 @@ export default function Home() {
       if (!response.ok) {
         // Si es error de quota, esperar más tiempo
         if (response.status === 429) {
-          setCountdown(60); // Esperar 1 minuto antes de reintentar
-          throw new Error("Límite de solicitudes excedido. Esperando...");
+          const data = await response.json();
+          const retryAfter = data.retryAfter || 60;
+          setCountdown(retryAfter);
+          throw new Error(
+            `Límite de solicitudes excedido. Reintentando en ${retryAfter} segundos...`
+          );
         }
         throw new Error(
-          `HTTP error! status: ${response.status} - ${response.statusText}`
+          `Error de conexión (${response.status}). Por favor, intente más tarde.`
         );
       }
       const result = await response.json();

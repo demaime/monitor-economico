@@ -72,21 +72,23 @@ export default async function handler(req, res) {
   };
 
   try {
-    // Obtener datos de la hoja de cálculo para cada rango
+    // Obtener todos los rangos en una única solicitud
+    const response = await sheets.spreadsheets.values.batchGet({
+      spreadsheetId,
+      ranges: Object.values(ranges),
+      majorDimension: "ROWS",
+      valueRenderOption: "UNFORMATTED_VALUE",
+    });
+
+    if (response.status !== 200) {
+      throw new Error(`Error fetching data: ${response.statusText}`);
+    }
+
     const data = {};
-    for (const [key, range] of Object.entries(ranges)) {
-      const response = await sheets.spreadsheets.values.get({
-        spreadsheetId,
-        range,
-        majorDimension: "ROWS",
-        valueRenderOption: "UNFORMATTED_VALUE",
-      });
+    response.data.valueRanges.forEach((range, index) => {
+      const key = Object.keys(ranges)[index];
+      const rows = range.values;
 
-      if (response.status !== 200) {
-        throw new Error(`Error fetching data: ${response.statusText}`);
-      }
-
-      const rows = response.data.values;
       if (Array.isArray(rows) && rows.length) {
         // Filtramos celdas vacías y tomamos los últimos 24 valores
         const filteredData = rows[0].filter((cell) => {
@@ -99,7 +101,7 @@ export default async function handler(req, res) {
       } else {
         data[key] = [];
       }
-    }
+    });
 
     // Crear el array de objetos mes+año
     if (data.meses && data.año) {
@@ -117,6 +119,16 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error("Error fetching data from Google Sheets:", error);
-    res.status(500).json({ error: error.message });
+
+    // Mejorar el manejo de errores específicos
+    if (error.code === 429) {
+      res.status(429).json({
+        error: "Rate limit exceeded",
+        message: "Please try again in a few minutes",
+        retryAfter: 60,
+      });
+    } else {
+      res.status(500).json({ error: error.message });
+    }
   }
 }

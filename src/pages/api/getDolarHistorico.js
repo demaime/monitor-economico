@@ -24,8 +24,8 @@ export default async function handler(req, res) {
         url: "https://api.argentinadatos.com/v1/cotizaciones/dolares/contadoconliqui",
       },
       {
-        name: "cripto",
-        url: "https://api.argentinadatos.com/v1/cotizaciones/dolares/cripto",
+        name: "tarjeta",
+        url: "https://api.argentinadatos.com/v1/cotizaciones/dolares/tarjeta",
       },
       {
         name: "mayorista",

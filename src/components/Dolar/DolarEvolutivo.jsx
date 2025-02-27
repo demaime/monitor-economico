@@ -30,8 +30,8 @@ const DOLAR_TYPES = {
     name: "Dólar CCL",
     color: "#a855f7", // violeta
   },
-  cripto: {
-    name: "Dólar Cripto",
+  tarjeta: {
+    name: "Dólar Tarjeta",
     color: "#eab308", // amarillo
   },
   mayorista: {

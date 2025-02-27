@@ -22,8 +22,8 @@ const DOLAR_TYPES = {
     color: "bg-purple-100 border-purple-200",
     textColor: "text-purple-800",
   },
-  cripto: {
-    name: "Dólar Cripto",
+  tarjeta: {
+    name: "Dólar Tarjeta",
     color: "bg-yellow-100 border-yellow-200",
     textColor: "text-yellow-800",
   },

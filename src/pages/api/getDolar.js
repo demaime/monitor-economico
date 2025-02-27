@@ -11,7 +11,7 @@ export default async function handler(req, res) {
       { name: "blue", url: "https://dolarapi.com/v1/dolares/blue" },
       { name: "mep", url: "https://dolarapi.com/v1/dolares/bolsa" },
       { name: "ccl", url: "https://dolarapi.com/v1/dolares/contadoconliqui" },
-      { name: "cripto", url: "https://dolarapi.com/v1/dolares/cripto" },
+      { name: "tarjeta", url: "https://dolarapi.com/v1/dolares/tarjeta" },
       { name: "mayorista", url: "https://dolarapi.com/v1/dolares/mayorista" },
     ];
 
