@@ -130,12 +130,13 @@ export default function DolarEvolutivo({ months, historicalData }) {
     );
   }
 
-  // Encontrar el mes seleccionado en formato YYYY-MM
+  // Modificar la búsqueda del mes seleccionado
   const selectedMonthData =
+    selectedMonth &&
     historicalData &&
     Object.values(historicalData)[0]?.find(
       (m) => formatMonthName(m.month) === selectedMonth
-    );
+    )?.average;
 
   // Función para preparar datos para el gráfico
   const prepareChartData = () => {
@@ -171,7 +172,7 @@ export default function DolarEvolutivo({ months, historicalData }) {
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col gap-2 bg-gray-900">
       {/* Título y Selector de Mes */}
       <div className="flex flex-col w-full">
         <div className="flex items-center justify-between">
@@ -184,7 +185,7 @@ export default function DolarEvolutivo({ months, historicalData }) {
       </div>
 
       {/* Gráfico (75% altura en móvil) */}
-      <div className="h-[75%] md:h-2/3 rounded-xl p-4">
+      <div className="h-[75%] md:h-2/3 rounded-xl p-4 bg-gray-800">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={prepareChartData()}
@@ -222,7 +223,12 @@ export default function DolarEvolutivo({ months, historicalData }) {
               labelStyle={{ color: "#f3f4f6" }}
               formatter={(value) => [`$${value.toLocaleString()}`, null]}
             />
-            <ReferenceLine y={selectedMonthData?.current} stroke="#f3f4f6" />
+            <ReferenceLine
+              x={selectedMonth}
+              stroke="#56595e"
+              strokeWidth={1}
+              strokeDasharray="3 3"
+            />
             {Object.entries(DOLAR_TYPES).map(([dolarType, info]) => (
               <Line
                 key={dolarType}
@@ -236,13 +242,15 @@ export default function DolarEvolutivo({ months, historicalData }) {
             ))}
             <Brush
               dataKey="month"
-              height={20}
-              stroke="#4b5563"
+              height={15}
+              stroke="#ff5733"
               fill="#1f2937"
               travellerWidth={10}
-              startIndex={Math.max(0, prepareChartData().length - 6)}
               style={{
                 fontSize: window.innerWidth < 768 ? "8px" : "12px",
+                marginTop: "2px",
+                stroke: "#ff5733",
+                fill: "#ff5733",
               }}
             />
           </LineChart>

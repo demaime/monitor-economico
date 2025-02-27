@@ -90,7 +90,7 @@ export default function Dolar({ months }) {
         </div>
 
         {/* Content container for the different views */}
-        <div className="h-full w-full bg-gray-800 rounded-xl p-4 overflow-y-auto">
+        <div className="h-full w-full rounded-xl p-4 overflow-y-auto">
           {activeView === "live" && <DolarEnVivo dolarData={dolarData} />}
           {activeView === "evolution" && months && (
             <DolarEvolutivo months={months} historicalData={historicalData} />
