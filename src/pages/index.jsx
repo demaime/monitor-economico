@@ -5,7 +5,7 @@ import Inflacion from "@/components/Inflacion/Inflacion";
 import Loader from "@/components/Loader/Loader";
 import { Fade, Zoom } from "react-awesome-reveal";
 import Portada from "@/components/Portada/Portada";
-
+import Dolar from "@/components/Dolar/Dolar";
 export default function Home() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -173,6 +173,7 @@ export default function Home() {
             }}
             months={data.meses}
           />
+          <Dolar months={data.meses} />
           <AsistenciaSocial data={data} />
         </>
       )}
