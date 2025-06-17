@@ -84,7 +84,10 @@ export default function Inflacion({ data, months }) {
     <section className="bg-gray-900 overflow-hidden">
       <div className="w-[90%] h-[90%] flex flex-col gap-4">
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-gray-100">Inflación</h1>
+          <h1 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            <TrendingUp className="w-7 h-7" />
+            Inflación
+          </h1>
 
           <p className="text-sm text-gray-400">
             Nacional: INDEC | CABA: INDECBA

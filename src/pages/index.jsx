@@ -8,6 +8,9 @@ import Portada from "@/components/Portada/Portada";
 import Dolar from "@/components/Dolar/Dolar";
 import Transporte from "@/components/Transporte/Transporte";
 import Alquileres from "@/components/Alquileres/Alquileres";
+import ConsumosCotidianos from "@/components/ConsumosCotidianos/ConsumosCotidianos";
+import Servicios from "@/components/Servicios/Servicios";
+import AsistenciaSocial from "@/components/AsistenciaSocial/AsistenciaSocial";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -247,6 +250,43 @@ export default function Home() {
                 norte: data.alquilerNorte,
                 oesteSur: data.alquilerOesteSur,
               },
+            }}
+            months={data.meses}
+          />
+          <ConsumosCotidianos
+            data={{
+              consumos: {
+                kiloPan: data.kiloPan,
+                litroLeche: data.litroLeche,
+                kiloYerba: data.kiloYerba,
+                litroCerveza: data.litroCerveza,
+                facturas: data.facturas,
+                kiloCarne: data.kiloCarne,
+                cocaCola: data.cocaCola,
+                fideos: data.fideos,
+              },
+            }}
+            months={data.meses}
+          />
+          <Servicios
+            data={{
+              gimnasio: data.gimnasio,
+              cine: data.cine,
+              libro: data.libro,
+              cortePeloHombre: data.cortePeloHombre,
+              cortePeloMujer: data.cortePeloMujer,
+            }}
+            months={data.meses}
+          />
+          <AsistenciaSocial
+            data={{
+              auh: data.auh,
+              auhTopeIndividual: data.auhTopeIndividual,
+              auhTopeGrupoFamiliar: data.auhTopeGrupoFamiliar,
+              becaProgresar: data.becaProgresar,
+              acompaniamientoSocial: data.acompaniamientoSocial,
+              seguroDesempleoMin: data.seguroDesempleoMin,
+              seguroDesempleoMax: data.seguroDesempleoMax,
             }}
             months={data.meses}
           />

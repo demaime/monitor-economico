@@ -22,6 +22,7 @@ export default async function handler(req, res) {
   const ranges = {
     //Años y meses
     año: "datos!C1:1",
+    año: "datos!C1:1",
     meses: "datos!C2:2",
 
     //Inflacion
@@ -81,9 +82,35 @@ export default async function handler(req, res) {
     patentamientoMotos: "datos!C48:48",
 
     // Alquileres
-    alquilerCaba: "datos!C50:50",
-    alquilerNorte: "datos!C51:51",
-    alquilerOesteSur: "datos!C52:52",
+    alquilerCaba: "datos!C49:49",
+    alquilerNorte: "datos!C50:50",
+    alquilerOesteSur: "datos!C51:51",
+
+    // Consumo Básico
+    kiloPan: "datos!C56:56",
+    litroLeche: "datos!C57:57",
+    kiloYerba: "datos!C58:58",
+    litroCerveza: "datos!C59:59",
+    facturas: "datos!C60:60",
+    kiloCarne: "datos!C61:61",
+    cocaCola: "datos!C62:62",
+    fideos: "datos!C63:63",
+
+    // Servicios
+    gimnasio: "datos!C64:64",
+    cine: "datos!C65:65",
+    libro: "datos!C66:66",
+    cortePeloHombre: "datos!C67:67",
+    cortePeloMujer: "datos!C68:68",
+
+    // Asistencia Social
+    auh: "datos!C69:69",
+    auhTopeIndividual: "datos!C70:70",
+    auhTopeGrupoFamiliar: "datos!C71:71",
+    becaProgresar: "datos!C72:72",
+    acompaniamientoSocial: "datos!C73:73",
+    seguroDesempleoMin: "datos!C74:74",
+    seguroDesempleoMax: "datos!C75:75",
   };
 
   try {

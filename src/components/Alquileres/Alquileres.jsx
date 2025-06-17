@@ -5,6 +5,7 @@ import {
   Percent,
   LineChart,
   Home,
+  Grid3X3,
 } from "lucide-react";
 import {
   LineChart as RechartsLineChart,
@@ -14,7 +15,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
-  CartesianGrid,
 } from "recharts";
 import MonthSelector from "../MonthSelector/MonthSelector";
 
@@ -23,6 +23,7 @@ export default function Alquileres({ data, months }) {
     months[months.length - 1].mes
   );
   const [activeCard, setActiveCard] = useState(0);
+  const [activeView, setActiveView] = useState("evolution");
 
   // Procesar datos para crear el dataset unificado CON variaciones calculadas
   const alquileresData = months.map((month, index) => {
@@ -132,6 +133,131 @@ export default function Alquileres({ data, months }) {
     return null;
   };
 
+  // Componente Heatmap
+  const HeatmapView = () => {
+    // Función para obtener color basado en variación
+    const getHeatmapColor = (variation) => {
+      const absVar = Math.abs(variation);
+      if (variation > 0) {
+        // Variaciones positivas (subas) - tonos rojos
+        if (absVar >= 15) return "bg-red-600";
+        if (absVar >= 10) return "bg-red-500";
+        if (absVar >= 5) return "bg-red-400";
+        return "bg-red-300";
+      } else if (variation < 0) {
+        // Variaciones negativas (bajas) - tonos verdes
+        if (absVar >= 15) return "bg-green-600";
+        if (absVar >= 10) return "bg-green-500";
+        if (absVar >= 5) return "bg-green-400";
+        return "bg-green-300";
+      }
+      return "bg-gray-600"; // Cero o sin datos
+    };
+
+    const zones = [
+      { key: "caba", name: "CABA", color: "#ff5733" },
+      { key: "norte", name: "NORTE", color: "#33ff57" },
+      { key: "oesteSur", name: "OESTE/SUR", color: "#3357ff" },
+    ];
+
+    return (
+      <div className="h-full w-full bg-gray-800 rounded-xl p-4 flex flex-col">
+        {/* Título y leyenda */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+          <h3 className="text-lg font-bold text-gray-100 mb-2 md:mb-0">
+            Variaciones Mensuales por Zona
+          </h3>
+          <div className="flex flex-wrap gap-2 text-xs">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-green-500 rounded"></div>
+              <span className="text-gray-300">Baja</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-gray-600 rounded"></div>
+              <span className="text-gray-300">Estable</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-red-500 rounded"></div>
+              <span className="text-gray-300">Suba</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Heatmap grid - responsive */}
+        <div className="flex-1 overflow-x-auto flex items-center">
+          <div className="min-w-[600px] w-full">
+            {/* Header con meses */}
+            <div
+              className="grid gap-1 mb-2"
+              style={{
+                gridTemplateColumns: `120px repeat(${alquileresDataForDisplay.length}, 1fr)`,
+              }}
+            >
+              <div className="text-xs text-gray-400 font-medium"></div>
+              {alquileresDataForDisplay.map((monthData, index) => (
+                <div
+                  key={index}
+                  className={`text-xs text-gray-300 text-center py-1 px-1 rounded ${
+                    monthData.mes === selectedMonth
+                      ? "bg-orange-custom text-white font-bold"
+                      : ""
+                  }`}
+                >
+                  {monthData.mes.slice(0, 3)}
+                </div>
+              ))}
+            </div>
+
+            {/* Filas de zonas */}
+            {zones.map((zone) => (
+              <div
+                key={zone.key}
+                className="grid gap-1 mb-2"
+                style={{
+                  gridTemplateColumns: `120px repeat(${alquileresDataForDisplay.length}, 1fr)`,
+                }}
+              >
+                {/* Nombre de la zona */}
+                <div
+                  className="text-sm font-medium text-white py-2 px-2 rounded text-center"
+                  style={{ backgroundColor: zone.color }}
+                >
+                  {zone.name}
+                </div>
+
+                {/* Celdas de variación */}
+                {alquileresDataForDisplay.map((monthData, index) => {
+                  const variation =
+                    monthData[`${zone.key}Variations`]?.mensual || 0;
+                  return (
+                    <div
+                      key={index}
+                      className={`
+                        ${getHeatmapColor(variation)} 
+                        text-white text-xs font-medium 
+                        py-2 px-1 rounded text-center 
+                        hover:brightness-125 hover:shadow-lg transition-all duration-200 cursor-pointer
+                        flex items-center justify-center
+                        ${
+                          monthData.mes === selectedMonth
+                            ? "ring-2 ring-white"
+                            : ""
+                        }
+                      `}
+                      title={`${zone.name} - ${monthData.mes}: ${variation}%`}
+                    >
+                      {variation.toFixed(1)}%
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const handleScroll = (e) => {
     const scrollPosition = e.target.scrollLeft;
     const cardWidth = window.innerWidth * 0.85;
@@ -150,68 +276,101 @@ export default function Alquileres({ data, months }) {
           <p className="text-sm text-gray-400">Evolución de precios por zona</p>
         </div>
 
+        <div className="flex justify-end relative">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveView("evolution")}
+              className={`px-4 py-2 rounded-lg ${
+                activeView === "evolution"
+                  ? "bg-orange-custom text-white"
+                  : "bg-gray-800 text-gray-300"
+              }`}
+            >
+              <LineChart className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setActiveView("heatmap")}
+              className={`px-4 py-2 rounded-lg ${
+                activeView === "heatmap"
+                  ? "bg-orange-custom text-white"
+                  : "bg-gray-800 text-gray-300"
+              }`}
+            >
+              <Grid3X3 className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="absolute right-0 -top-8 rounded-lg bg-orange-custom text-white px-2 py-1 text-xs">
+            {activeView === "evolution" ? "EVOLUTIVO" : "HEATMAP"}
+          </div>
+        </div>
+
         <MonthSelector
           months={months}
           selectedMonth={selectedMonth}
           onMonthChange={setSelectedMonth}
         />
 
-        <div className="h-[300px] w-full bg-gray-800 rounded-xl p-4">
-          <ResponsiveContainer>
-            <RechartsLineChart
-              data={alquileresDataForDisplay}
-              margin={{ top: 0, right: 15, left: -30, bottom: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis
-                dataKey="mes"
-                angle={-45}
-                textAnchor="end"
-                height={60}
-                tick={{ fill: "#9ca3af", fontSize: 6 }}
-              />
-              <YAxis
-                tick={{ fill: "#9ca3af", fontSize: 8 }}
-                axisLine={{ stroke: "#374151" }}
-                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-              />
-              <Tooltip content={<CustomTooltip />} />
+        <div className="h-[400px] w-full">
+          {activeView === "evolution" ? (
+            <div className="h-full bg-gray-800 rounded-xl p-4">
+              <ResponsiveContainer>
+                <RechartsLineChart
+                  data={alquileresDataForDisplay}
+                  margin={{ top: 0, right: 15, left: -30, bottom: 0 }}
+                >
+                  <XAxis
+                    dataKey="mes"
+                    angle={-45}
+                    textAnchor="end"
+                    height={60}
+                    tick={{ fill: "#9ca3af", fontSize: 6 }}
+                  />
+                  <YAxis
+                    tick={{ fill: "#9ca3af", fontSize: 8 }}
+                    axisLine={{ stroke: "#374151" }}
+                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
 
-              {/* Líneas para cada zona */}
-              <Line
-                type="monotone"
-                dataKey="caba"
-                stroke="#ff5733"
-                strokeWidth={2}
-                dot={{ fill: "#ff5733", strokeWidth: 2, r: 3 }}
-                name="CABA"
-              />
-              <Line
-                type="monotone"
-                dataKey="norte"
-                stroke="#33ff57"
-                strokeWidth={2}
-                dot={{ fill: "#33ff57", strokeWidth: 2, r: 3 }}
-                name="NORTE"
-              />
-              <Line
-                type="monotone"
-                dataKey="oesteSur"
-                stroke="#3357ff"
-                strokeWidth={2}
-                dot={{ fill: "#3357ff", strokeWidth: 2, r: 3 }}
-                name="OESTE/SUR"
-              />
+                  {/* Líneas para cada zona */}
+                  <Line
+                    type="monotone"
+                    dataKey="caba"
+                    stroke="#ff5733"
+                    strokeWidth={2}
+                    dot={{ fill: "#ff5733", strokeWidth: 2, r: 3 }}
+                    name="CABA"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="norte"
+                    stroke="#33ff57"
+                    strokeWidth={2}
+                    dot={{ fill: "#33ff57", strokeWidth: 2, r: 3 }}
+                    name="NORTE"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="oesteSur"
+                    stroke="#3357ff"
+                    strokeWidth={2}
+                    dot={{ fill: "#3357ff", strokeWidth: 2, r: 3 }}
+                    name="OESTE/SUR"
+                  />
 
-              {/* Línea de referencia del mes seleccionado */}
-              <ReferenceLine
-                x={selectedMonth}
-                stroke="#56595e"
-                strokeWidth={1}
-                strokeDasharray="3 3"
-              />
-            </RechartsLineChart>
-          </ResponsiveContainer>
+                  {/* Línea de referencia del mes seleccionado */}
+                  <ReferenceLine
+                    x={selectedMonth}
+                    stroke="#56595e"
+                    strokeWidth={1}
+                    strokeDasharray="3 3"
+                  />
+                </RechartsLineChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <HeatmapView />
+          )}
         </div>
 
         {/* Cards container */}

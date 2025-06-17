@@ -8,7 +8,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
-  CartesianGrid,
 } from "recharts";
 
 // Reusing the same DOLAR_TYPES but excluding 'oficial' since it's our base for comparison
@@ -170,7 +169,6 @@ export default function DolarComparativo({
             }}
             barCategoryGap={20}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
             <XAxis type="category" dataKey="name" hide={true} />
             <YAxis
               tick={{

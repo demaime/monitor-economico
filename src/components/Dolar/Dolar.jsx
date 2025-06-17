@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import MonthSelector from "../MonthSelector/MonthSelector";
-import { LineChart, Radio, BarChart2, Activity } from "lucide-react";
+import {
+  LineChart,
+  Radio,
+  BarChart2,
+  Activity,
+  DollarSign,
+} from "lucide-react";
 import axios from "axios";
 import DolarEnVivo from "./DolarEnVivo";
 import DolarEvolutivo from "./DolarEvolutivo";
@@ -48,7 +54,8 @@ export default function Dolar({ months }) {
     <section className="bg-gray-900 overflow-hidden">
       <div className="w-[90%] h-[90%] flex flex-col gap-4">
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-gray-100 flex items-center">
+          <h1 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            <DollarSign className="w-7 h-7" />
             Dólar
           </h1>
 

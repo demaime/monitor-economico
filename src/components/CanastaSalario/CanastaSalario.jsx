@@ -7,6 +7,7 @@ import {
   Users,
   ExternalLink,
   X,
+  ShoppingBasket,
 } from "lucide-react";
 import {
   LineChart,
@@ -262,8 +263,11 @@ export default function CanastaSalario({ data, months }) {
     <section className="bg-gray-900 overflow-hidden">
       <div className="w-[90%] h-[90%] flex flex-col gap-4">
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-gray-100 flex items-center">
-            Canasta <span className="text-orange-custom text-xs mx-1">-</span>{" "}
+          <h1 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            <ShoppingBasket className="w-7 h-7" />
+            Canasta <span className="text-orange-custom text-xs mx-1">
+              -
+            </span>{" "}
             SMV <span className="text-orange-custom text-xs mx-1">-</span>{" "}
             Jubilación
           </h1>
