@@ -79,6 +79,11 @@ export default async function handler(req, res) {
     peajeOeste: "datos!C46:46",
     patentamientoAutos: "datos!C47:47",
     patentamientoMotos: "datos!C48:48",
+
+    // Alquileres
+    alquilerCaba: "datos!C50:50",
+    alquilerNorte: "datos!C51:51",
+    alquilerOesteSur: "datos!C52:52",
   };
 
   try {

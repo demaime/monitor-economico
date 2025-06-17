@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AsistenciaSocial from "@/components/AsistenciaSocial/AsistenciaSocial";
+
 import CanastaSalario from "@/components/CanastaSalario/CanastaSalario";
 import Inflacion from "@/components/Inflacion/Inflacion";
 import Loader from "@/components/Loader/Loader";
@@ -7,6 +7,7 @@ import { Fade, Zoom } from "react-awesome-reveal";
 import Portada from "@/components/Portada/Portada";
 import Dolar from "@/components/Dolar/Dolar";
 import Transporte from "@/components/Transporte/Transporte";
+import Alquileres from "@/components/Alquileres/Alquileres";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -239,7 +240,16 @@ export default function Home() {
             }}
             months={data.meses}
           />
-          <AsistenciaSocial data={data} />
+          <Alquileres
+            data={{
+              alquileres: {
+                caba: data.alquilerCaba,
+                norte: data.alquilerNorte,
+                oesteSur: data.alquilerOesteSur,
+              },
+            }}
+            months={data.meses}
+          />
         </>
       )}
     </div>
