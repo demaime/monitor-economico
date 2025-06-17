@@ -150,7 +150,7 @@ export default function Home() {
     <div className="full-container">
       {data.meses && (
         <>
-          <Portada />
+          <Portada data={data} />
           <Inflacion
             data={{
               nacional: {
