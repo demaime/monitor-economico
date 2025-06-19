@@ -657,7 +657,7 @@ export default function Portada({ data }) {
   }
 
   return (
-    <section className="min-h-screen bg-gray-900 relative overflow-hidden">
+    <section className="h-screen bg-gray-900 relative overflow-hidden">
       {/* Background decorativo */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-0 -left-4 w-72 h-72 bg-orange-custom rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
@@ -665,171 +665,174 @@ export default function Portada({ data }) {
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-orange-custom rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
       </div>
 
-      {/* Header simplificado */}
-      <Fade className="w-full relative z-10">
-        <div className="w-full text-orange-custom font-bold text-center text-lg sm:text-xl lg:text-2xl py-2 sm:py-3">
-          Monitor Indicadores Económicos
-        </div>
-      </Fade>
+      {/* Container con altura fija */}
+      <div className="h-full flex flex-col relative z-10">
+        {/* Header simplificado */}
+        <Fade className="w-full flex-shrink-0">
+          <div className="w-full text-orange-custom font-bold text-center text-lg sm:text-xl lg:text-2xl py-2 sm:py-3">
+            Monitor Indicadores Económicos
+          </div>
+        </Fade>
 
-      {/* Contenido principal */}
-      <div className="relative z-10 p-2 sm:p-3 lg:p-4 max-w-[1400px] mx-auto">
-        {/* Título compacto con indicador de variación */}
-        <motion.div
-          className="text-center mb-3 sm:mb-4 lg:mb-5"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={variationType}
-              className="text-sm sm:text-base lg:text-lg text-gray-300 font-medium"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-            >
-              Variación{" "}
-              {variationType === "mensual" ? "Intermensual" : "Interanual"}
-              <motion.span
-                className="ml-2 text-orange-custom"
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                ●
-              </motion.span>
-            </motion.div>
-          </AnimatePresence>
-        </motion.div>
-
-        {/* Grid de cards responsive - optimizado para mobile */}
-        <div className="w-full">
-          {/* Grid principal */}
+        {/* Contenido principal - flex grow para ocupar espacio restante */}
+        <div className="flex-1 flex flex-col p-2 sm:p-3 lg:p-4 max-w-[1400px] mx-auto w-full overflow-hidden">
+          {/* Título compacto con indicador de variación */}
           <motion.div
-            className={`grid gap-3 sm:gap-4 lg:gap-5 justify-items-center place-content-center ${
-              isMobile
-                ? "grid-cols-2 max-w-lg mx-auto"
-                : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3"
-            }`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-center mb-2 sm:mb-3 flex-shrink-0"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            {isMobile ? (
-              // Vista mobile con rotación
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentMobileSet}
-                  className="contents"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={variationType}
+                className="text-sm sm:text-base lg:text-lg text-gray-300 font-medium"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+              >
+                Variación{" "}
+                {variationType === "mensual" ? "Intermensual" : "Interanual"}
+                <motion.span
+                  className="ml-2 text-orange-custom"
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  {(getMobileSets()[currentMobileSet] || []).map(
-                    (category, index) => (
-                      <motion.div
-                        key={category.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                          duration: 0.4,
-                          delay: index * 0.1,
-                          ease: "easeOut",
-                        }}
-                      >
-                        <IndicatorCard category={category} />
-                      </motion.div>
-                    )
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            ) : (
-              // Vista desktop sin rotación
-              categories.map((category, index) => (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: index * 0.1,
-                    ease: "easeOut",
-                  }}
-                >
-                  <IndicatorCard category={category} />
-                </motion.div>
-              ))
-            )}
+                  ●
+                </motion.span>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
 
-          {/* Indicadores de rotación y botón "Ver todos" solo en mobile */}
-          {isMobile && (
+          {/* Grid de cards responsive - flex-1 para ocupar espacio disponible */}
+          <div className="w-full flex-1 flex flex-col justify-center">
+            {/* Grid principal */}
             <motion.div
-              className="mt-4 flex flex-col items-center space-y-3"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
+              className={`grid gap-3 sm:gap-4 lg:gap-5 justify-items-center place-content-center ${
+                isMobile
+                  ? "grid-cols-2 max-w-lg mx-auto"
+                  : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3"
+              }`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
-              {/* Indicadores de sets (dots) */}
-              <div className="flex items-center space-x-2">
-                {getMobileSets().map((_, index) => (
-                  <motion.button
-                    key={index}
-                    className={`relative w-2 h-2 rounded-full transition-all duration-300 ${
-                      index === currentMobileSet
-                        ? "bg-orange-custom scale-125"
-                        : "bg-gray-600 hover:bg-gray-500"
-                    }`}
-                    onClick={() => setCurrentMobileSet(index)}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
+              {isMobile ? (
+                // Vista mobile con rotación
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentMobileSet}
+                    className="contents"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    {/* Indicador de progreso para el dot activo */}
-                    {index === currentMobileSet && !showAllCategories && (
-                      <motion.div
-                        className="absolute inset-0 rounded-full border-2 border-orange-custom/30"
-                        initial={{ scale: 1 }}
-                        animate={{ scale: [1, 1.8, 1] }}
-                        transition={{
-                          duration: 4,
-                          repeat: Infinity,
-                          ease: "linear",
-                        }}
-                      />
+                    {(getMobileSets()[currentMobileSet] || []).map(
+                      (category, index) => (
+                        <motion.div
+                          key={category.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.4,
+                            delay: index * 0.1,
+                            ease: "easeOut",
+                          }}
+                        >
+                          <IndicatorCard category={category} />
+                        </motion.div>
+                      )
                     )}
-                  </motion.button>
-                ))}
-              </div>
-
-              {/* Botón Ver todos */}
-              <motion.button
-                className="bg-gray-800/80 backdrop-blur-sm border border-gray-700 hover:border-orange-custom rounded-xl px-6 py-3 text-white font-medium text-sm flex items-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-300"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowAllCategories(true)}
-              >
-                <FaEllipsisH className="w-4 h-4" />
-                <span>Ver todos los indicadores</span>
-              </motion.button>
+                  </motion.div>
+                </AnimatePresence>
+              ) : (
+                // Vista desktop sin rotación
+                categories.map((category, index) => (
+                  <motion.div
+                    key={category.id}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.5,
+                      delay: index * 0.1,
+                      ease: "easeOut",
+                    }}
+                  >
+                    <IndicatorCard category={category} />
+                  </motion.div>
+                ))
+              )}
             </motion.div>
-          )}
+
+            {/* Indicadores de rotación y botón "Ver todos" solo en mobile */}
+            {isMobile && (
+              <motion.div
+                className="mt-3 flex flex-col items-center space-y-2 flex-shrink-0"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+              >
+                {/* Indicadores de sets (dots) */}
+                <div className="flex items-center space-x-2">
+                  {getMobileSets().map((_, index) => (
+                    <motion.button
+                      key={index}
+                      className={`relative w-2 h-2 rounded-full transition-all duration-300 ${
+                        index === currentMobileSet
+                          ? "bg-orange-custom scale-125"
+                          : "bg-gray-600 hover:bg-gray-500"
+                      }`}
+                      onClick={() => setCurrentMobileSet(index)}
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      {/* Indicador de progreso para el dot activo */}
+                      {index === currentMobileSet && !showAllCategories && (
+                        <motion.div
+                          className="absolute inset-0 rounded-full border-2 border-orange-custom/30"
+                          initial={{ scale: 1 }}
+                          animate={{ scale: [1, 1.8, 1] }}
+                          transition={{
+                            duration: 4,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
+                        />
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+
+                {/* Botón Ver todos */}
+                <motion.button
+                  className="bg-gray-800/80 backdrop-blur-sm border border-gray-700 hover:border-orange-custom rounded-xl px-4 py-2 text-white font-medium text-sm flex items-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowAllCategories(true)}
+                >
+                  <FaEllipsisH className="w-4 h-4" />
+                  <span>Ver todos los indicadores</span>
+                </motion.button>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Nota compacta sobre actualización - flex-shrink-0 para mantener al final */}
+          <motion.div
+            className="text-center mt-2 sm:mt-3 text-gray-500 text-xs flex-shrink-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1 }}
+          >
+            <p>Última sincronización: {new Date().toLocaleString()}</p>
+          </motion.div>
         </div>
 
-        {/* Nota compacta sobre actualización */}
-        <motion.div
-          className="text-center mt-3 sm:mt-4 lg:mt-5 text-gray-500 text-xs"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1 }}
-        >
-          <p>Última sincronización: {new Date().toLocaleString()}</p>
-        </motion.div>
+        {/* Modal de todas las categorías */}
+        {AllCategoriesModal}
       </div>
-
-      {/* Modal de todas las categorías */}
-      {AllCategoriesModal}
     </section>
   );
 }
