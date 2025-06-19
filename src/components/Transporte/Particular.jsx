@@ -15,6 +15,8 @@ export default function Particular({
   months,
   selectedMonth,
   onMonthChange,
+  isMobile = false,
+  viewMode = "chart",
 }) {
   const [activeCard, setActiveCard] = useState(0);
   const [mobileView, setMobileView] = useState("valores"); // "valores" | "patentamientos"
@@ -179,16 +181,25 @@ export default function Particular({
 
   const CustomTooltipUnidades = ({ active, payload }) => {
     if (active && payload && payload.length) {
+      const formatPatentamiento = (value) => {
+        if (!value || isNaN(value)) {
+          return `Próximo informe: ${nextReportMonth}`;
+        }
+        return new Intl.NumberFormat("es-AR").format(value);
+      };
+
       return (
         <div className="bg-gray-900 p-3 rounded-lg border border-gray-700 shadow-xl">
           <p className="text-gray-200 text-sm font-medium">
             {payload[0].payload.mes} {payload[0].payload.año}
           </p>
           <p className="text-pink-400 font-bold">
-            Pat. Autos: {payload[0].payload.patentamientoAutos}
+            Pat. Autos:{" "}
+            {formatPatentamiento(payload[0].payload.patentamientoAutos)}
           </p>
           <p className="text-orange-400 font-bold">
-            Pat. Motos: {payload[0].payload.patentamientoMotos}
+            Pat. Motos:{" "}
+            {formatPatentamiento(payload[0].payload.patentamientoMotos)}
           </p>
         </div>
       );
@@ -203,10 +214,226 @@ export default function Particular({
     setActiveCard(activeIndex);
   };
 
+  // Función para obtener el próximo mes de informe de patentamientos
+  const getNextPatentamientoReport = () => {
+    const reportMonths = ["MARZO", "JUNIO", "SEPTIEMBRE", "DICIEMBRE"];
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth(); // 0-11
+    const currentYear = currentDate.getFullYear();
+
+    // Mapear meses a números (0-11)
+    const monthMap = {
+      MARZO: 2,
+      JUNIO: 5,
+      SEPTIEMBRE: 8,
+      DICIEMBRE: 11,
+    };
+
+    // Encontrar el próximo mes de reporte
+    for (const month of reportMonths) {
+      const monthNumber = monthMap[month];
+      if (monthNumber > currentMonth) {
+        return month;
+      }
+    }
+
+    // Si no hay ningún mes posterior en el año actual, el próximo será marzo del siguiente año
+    return "MARZO";
+  };
+
+  const nextReportMonth = getNextPatentamientoReport();
+
+  // Si es mobile y está en modo cards, solo mostrar datos
+  if (isMobile && viewMode === "cards") {
+    return (
+      <div className="grid grid-cols-2 gap-2">
+        {/* Nafta Card */}
+        <div className="bg-gray-800 rounded-lg p-2 border border-gray-700">
+          <div className="space-y-1">
+            <h3 className="text-xs font-medium text-red-200">Nafta</h3>
+            <div className="text-sm font-bold text-red-400">
+              ${new Intl.NumberFormat("es-AR").format(selectedMonthData?.nafta)}
+            </div>
+            <div className="grid grid-cols-3 gap-1 text-xs">
+              <div className="text-center">
+                <span className="text-gray-400 block text-xs">Mes</span>
+                <span className="font-bold text-red-400 text-xs">
+                  {selectedMonthData?.variacionMensualNafta}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block text-xs">Año</span>
+                <span className="font-bold text-red-400 text-xs">
+                  {selectedMonthData?.variacionAnualNafta}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block text-xs">Acum</span>
+                <span className="font-bold text-red-400 text-xs">
+                  {selectedMonthData?.variacionAcumuladaNafta}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Peaje Norte Card */}
+        <div className="bg-gray-800 rounded-lg p-2 border border-gray-700">
+          <div className="space-y-1">
+            <h3 className="text-xs font-medium text-purple-200">P. Norte</h3>
+            <div className="text-sm font-bold text-purple-400">
+              $
+              {new Intl.NumberFormat("es-AR").format(
+                selectedMonthData?.peajeNorte
+              )}
+            </div>
+            <div className="grid grid-cols-3 gap-1 text-xs">
+              <div className="text-center">
+                <span className="text-gray-400 block text-xs">Mes</span>
+                <span className="font-bold text-purple-400 text-xs">
+                  {selectedMonthData?.variacionMensualPeajeNorte}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block text-xs">Año</span>
+                <span className="font-bold text-purple-400 text-xs">
+                  {selectedMonthData?.variacionAnualPeajeNorte}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block text-xs">Acum</span>
+                <span className="font-bold text-purple-400 text-xs">
+                  {selectedMonthData?.variacionAcumuladaPeajeNorte}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Peaje Oeste Card */}
+        <div className="bg-gray-800 rounded-lg p-2 border border-gray-700">
+          <div className="space-y-1">
+            <h3 className="text-xs font-medium text-indigo-200">P. Oeste</h3>
+            <div className="text-sm font-bold text-indigo-400">
+              $
+              {new Intl.NumberFormat("es-AR").format(
+                selectedMonthData?.peajeOeste
+              )}
+            </div>
+            <div className="grid grid-cols-3 gap-1 text-xs">
+              <div className="text-center">
+                <span className="text-gray-400 block text-xs">Mes</span>
+                <span className="font-bold text-indigo-400 text-xs">
+                  {selectedMonthData?.variacionMensualPeajeOeste}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block text-xs">Año</span>
+                <span className="font-bold text-indigo-400 text-xs">
+                  {selectedMonthData?.variacionAnualPeajeOeste}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block text-xs">Acum</span>
+                <span className="font-bold text-indigo-400 text-xs">
+                  {selectedMonthData?.variacionAcumuladaPeajeOeste}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Patentamiento Autos Card */}
+        <div className="bg-gray-800 rounded-lg p-2 border border-gray-700">
+          <div className="space-y-1">
+            <h3 className="text-xs font-medium text-pink-200">Autos</h3>
+            <div className="text-sm font-bold text-pink-400">
+              {!selectedMonthData?.patentamientoAutos ||
+              isNaN(selectedMonthData?.patentamientoAutos)
+                ? `Próximo informe: ${nextReportMonth}`
+                : new Intl.NumberFormat("es-AR").format(
+                    selectedMonthData?.patentamientoAutos
+                  )}
+            </div>
+            {selectedMonthData?.patentamientoAutos &&
+            !isNaN(selectedMonthData?.patentamientoAutos) ? (
+              <div className="grid grid-cols-3 gap-1 text-xs">
+                <div className="text-center">
+                  <span className="text-gray-400 block text-xs">Mes</span>
+                  <span className="font-bold text-pink-400 text-xs">
+                    {selectedMonthData?.variacionMensualPatentamientoAutos}%
+                  </span>
+                </div>
+                <div className="text-center">
+                  <span className="text-gray-400 block text-xs">Año</span>
+                  <span className="font-bold text-pink-400 text-xs">
+                    {selectedMonthData?.variacionAnualPatentamientoAutos}%
+                  </span>
+                </div>
+                <div className="text-center">
+                  <span className="text-gray-400 block text-xs">Acum</span>
+                  <span className="font-bold text-pink-400 text-xs">
+                    {selectedMonthData?.variacionAcumuladaPatentamientoAutos}%
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs text-gray-400 text-center">
+                Datos trimestrales
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Patentamiento Motos Card */}
+        <div className="bg-gray-800 rounded-lg p-2 border border-gray-700">
+          <div className="space-y-1">
+            <h3 className="text-xs font-medium text-orange-200">Motos</h3>
+            <div className="text-sm font-bold text-orange-400">
+              {!selectedMonthData?.patentamientoMotos ||
+              isNaN(selectedMonthData?.patentamientoMotos)
+                ? `Próximo informe: ${nextReportMonth}`
+                : new Intl.NumberFormat("es-AR").format(
+                    selectedMonthData?.patentamientoMotos
+                  )}
+            </div>
+            {selectedMonthData?.patentamientoMotos &&
+            !isNaN(selectedMonthData?.patentamientoMotos) ? (
+              <div className="grid grid-cols-3 gap-1 text-xs">
+                <div className="text-center">
+                  <span className="text-gray-400 block text-xs">Mes</span>
+                  <span className="font-bold text-orange-400 text-xs">
+                    {selectedMonthData?.variacionMensualPatentamientoMotos}%
+                  </span>
+                </div>
+                <div className="text-center">
+                  <span className="text-gray-400 block text-xs">Año</span>
+                  <span className="font-bold text-orange-400 text-xs">
+                    {selectedMonthData?.variacionAnualPatentamientoMotos}%
+                  </span>
+                </div>
+                <div className="text-center">
+                  <span className="text-gray-400 block text-xs">Acum</span>
+                  <span className="font-bold text-orange-400 text-xs">
+                    {selectedMonthData?.variacionAcumuladaPatentamientoMotos}%
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs text-gray-400 text-center">
+                Datos trimestrales
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full flex flex-col">
       {/* Mobile view selector */}
-      <div className="flex md:hidden mb-2">
+      <div className={`flex mb-2 ${isMobile ? "hidden" : "md:hidden"}`}>
         <div className="flex w-full gap-2">
           <button
             onClick={() => setMobileView("valores")}
@@ -233,22 +460,31 @@ export default function Particular({
 
       {/* Charts container */}
       <div className="flex-1 flex flex-col md:grid md:grid-cols-2 gap-2">
-        {/* Desktop view */}
-        <div className="hidden md:block bg-gray-800 rounded-xl p-2">
+        {/* Desktop view o Mobile Chart */}
+        <div
+          className={`${
+            !isMobile ? "hidden md:block" : ""
+          } bg-gray-800 rounded-xl p-2 ${isMobile ? "h-64" : ""}`}
+        >
           <ResponsiveContainer>
             <LineChart
               data={transporteDataForDisplay}
-              margin={{ top: 0, right: 15, left: -20, bottom: 0 }}
+              margin={{
+                top: 0,
+                right: isMobile ? 10 : 15,
+                left: -20,
+                bottom: 0,
+              }}
             >
               <XAxis
                 dataKey="mes"
                 angle={-45}
                 textAnchor="end"
                 height={60}
-                tick={{ fill: "#9ca3af", fontSize: 8 }}
+                tick={{ fill: "#9ca3af", fontSize: isMobile ? 6 : 8 }}
               />
               <YAxis
-                tick={{ fill: "#9ca3af", fontSize: 8 }}
+                tick={{ fill: "#9ca3af", fontSize: isMobile ? 6 : 8 }}
                 axisLine={{ stroke: "#374151" }}
               />
               <Tooltip content={<CustomTooltipPesos />} />
@@ -276,18 +512,24 @@ export default function Particular({
                 strokeWidth={1}
                 strokeDasharray="3 3"
               />
-              <Brush
-                dataKey="mes"
-                height={15}
-                stroke="#f87171"
-                fill="#1f2937"
-                travellerWidth={10}
-              />
+              {!isMobile && (
+                <Brush
+                  dataKey="mes"
+                  height={15}
+                  stroke="#f87171"
+                  fill="#1f2937"
+                  travellerWidth={10}
+                />
+              )}
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="hidden md:block bg-gray-800 rounded-xl p-2">
+        <div
+          className={`${
+            !isMobile ? "hidden md:block" : "hidden"
+          } bg-gray-800 rounded-xl p-2`}
+        >
           <ResponsiveContainer>
             <LineChart
               data={transporteDataForDisplay}

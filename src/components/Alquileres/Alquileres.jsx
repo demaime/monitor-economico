@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TrendingUp,
   ArrowUpRight,
@@ -6,6 +6,7 @@ import {
   LineChart,
   Home,
   Grid3X3,
+  BarChart3,
 } from "lucide-react";
 import {
   LineChart as RechartsLineChart,
@@ -24,6 +25,19 @@ export default function Alquileres({ data, months }) {
   );
   const [activeCard, setActiveCard] = useState(0);
   const [activeView, setActiveView] = useState("evolution");
+  const [isMobile, setIsMobile] = useState(false);
+  const [viewMode, setViewMode] = useState("chart"); // "cards" or "chart"
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, []);
 
   // Procesar datos para crear el dataset unificado CON variaciones calculadas
   const alquileresData = months.map((month, index) => {
@@ -276,121 +290,118 @@ export default function Alquileres({ data, months }) {
           <p className="text-sm text-gray-400">Evolución de precios por zona</p>
         </div>
 
-        <div className="flex justify-end relative">
-          <div className="flex gap-2">
+        {/* Mobile toggle button */}
+        {isMobile && (
+          <div className="flex justify-center mb-4">
+            <div className="flex rounded-lg overflow-hidden border border-gray-700">
+              <button
+                onClick={() => setViewMode("cards")}
+                className={`px-4 py-2 flex items-center gap-2 text-sm ${
+                  viewMode === "cards"
+                    ? "bg-orange-custom text-white"
+                    : "bg-gray-800 text-gray-300"
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                Datos
+              </button>
+              <button
+                onClick={() => setViewMode("chart")}
+                className={`px-4 py-2 flex items-center gap-2 text-sm ${
+                  viewMode === "chart"
+                    ? "bg-orange-custom text-white"
+                    : "bg-gray-800 text-gray-300"
+                }`}
+              >
+                <LineChart className="w-4 h-4" />
+                Gráfico
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Desktop controls */}
+        {!isMobile && (
+          <div className="flex justify-end relative">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setActiveView("evolution")}
+                className={`px-4 py-2 rounded-lg ${
+                  activeView === "evolution"
+                    ? "bg-orange-custom text-white"
+                    : "bg-gray-800 text-gray-300"
+                }`}
+              >
+                <LineChart className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setActiveView("heatmap")}
+                className={`px-4 py-2 rounded-lg ${
+                  activeView === "heatmap"
+                    ? "bg-orange-custom text-white"
+                    : "bg-gray-800 text-gray-300"
+                }`}
+              >
+                <Grid3X3 className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="absolute right-0 -top-8 rounded-lg bg-orange-custom text-white px-2 py-1 text-xs">
+              {activeView === "evolution" ? "EVOLUTIVO" : "HEATMAP"}
+            </div>
+          </div>
+        )}
+
+        {/* Mobile chart type selector */}
+        {isMobile && viewMode === "chart" && (
+          <div className="flex gap-2 justify-center">
             <button
               onClick={() => setActiveView("evolution")}
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-3 py-2 rounded-lg text-sm flex items-center gap-2 ${
                 activeView === "evolution"
                   ? "bg-orange-custom text-white"
                   : "bg-gray-800 text-gray-300"
               }`}
             >
-              <LineChart className="w-5 h-5" />
+              <LineChart className="w-4 h-4" />
+              Evolutivo
             </button>
             <button
               onClick={() => setActiveView("heatmap")}
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-3 py-2 rounded-lg text-sm flex items-center gap-2 ${
                 activeView === "heatmap"
                   ? "bg-orange-custom text-white"
                   : "bg-gray-800 text-gray-300"
               }`}
             >
-              <Grid3X3 className="w-5 h-5" />
+              <Grid3X3 className="w-4 h-4" />
+              Heatmap
             </button>
           </div>
-          <div className="absolute right-0 -top-8 rounded-lg bg-orange-custom text-white px-2 py-1 text-xs">
-            {activeView === "evolution" ? "EVOLUTIVO" : "HEATMAP"}
-          </div>
-        </div>
+        )}
 
-        <MonthSelector
-          months={months}
-          selectedMonth={selectedMonth}
-          onMonthChange={setSelectedMonth}
-        />
+        {!isMobile && (
+          <MonthSelector
+            months={months}
+            selectedMonth={selectedMonth}
+            onMonthChange={setSelectedMonth}
+          />
+        )}
 
-        <div className="h-[400px] w-full">
-          {activeView === "evolution" ? (
-            <div className="h-full bg-gray-800 rounded-xl p-4">
-              <ResponsiveContainer>
-                <RechartsLineChart
-                  data={alquileresDataForDisplay}
-                  margin={{ top: 0, right: 15, left: -30, bottom: 0 }}
-                >
-                  <XAxis
-                    dataKey="mes"
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                    tick={{ fill: "#9ca3af", fontSize: 6 }}
-                  />
-                  <YAxis
-                    tick={{ fill: "#9ca3af", fontSize: 8 }}
-                    axisLine={{ stroke: "#374151" }}
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-
-                  {/* Líneas para cada zona */}
-                  <Line
-                    type="monotone"
-                    dataKey="caba"
-                    stroke="#ff5733"
-                    strokeWidth={2}
-                    dot={{ fill: "#ff5733", strokeWidth: 2, r: 3 }}
-                    name="CABA"
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="norte"
-                    stroke="#33ff57"
-                    strokeWidth={2}
-                    dot={{ fill: "#33ff57", strokeWidth: 2, r: 3 }}
-                    name="NORTE"
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="oesteSur"
-                    stroke="#3357ff"
-                    strokeWidth={2}
-                    dot={{ fill: "#3357ff", strokeWidth: 2, r: 3 }}
-                    name="OESTE/SUR"
-                  />
-
-                  {/* Línea de referencia del mes seleccionado */}
-                  <ReferenceLine
-                    x={selectedMonth}
-                    stroke="#56595e"
-                    strokeWidth={1}
-                    strokeDasharray="3 3"
-                  />
-                </RechartsLineChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <HeatmapView />
-          )}
-        </div>
-
-        {/* Cards container */}
-        <div className="flex-1 flex flex-col">
-          {/* Carousel container */}
-          <div
-            className="flex gap-4 overflow-x-auto md:grid md:grid-cols-3 snap-x snap-mandatory scroll-smooth"
-            onScroll={handleScroll}
-          >
-            {/* Card 1 - CABA */}
-            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
-              <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+        {/* Mobile Data View */}
+        {isMobile && viewMode === "cards" && (
+          <div className="space-y-3">
+            {/* Summary Cards Grid */}
+            <div className="grid grid-cols-1 gap-3">
+              {/* CABA Card */}
+              <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-orange-200">CABA</h3>
-                  <div className="text-2xl font-bold text-orange-custom">
+                  <h3 className="text-xs font-medium text-orange-200">CABA</h3>
+                  <div className="text-lg font-bold text-orange-custom">
                     ${selectedData ? selectedData.caba.toLocaleString() : "N/A"}
                   </div>
-                  <div className="space-y-1 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Var. Mensual:</span>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="text-center">
+                      <span className="text-gray-400 block">Mensual</span>
                       <span
                         className={`font-bold ${
                           calculateVariations("caba").mensual >= 0
@@ -401,8 +412,8 @@ export default function Alquileres({ data, months }) {
                         {calculateVariations("caba").mensual}%
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Var. Anual:</span>
+                    <div className="text-center">
+                      <span className="text-gray-400 block">Anual</span>
                       <span
                         className={`font-bold ${
                           calculateVariations("caba").anual >= 0
@@ -413,8 +424,8 @@ export default function Alquileres({ data, months }) {
                         {calculateVariations("caba").anual}%
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Acumulada:</span>
+                    <div className="text-center">
+                      <span className="text-gray-400 block">Acum.</span>
                       <span
                         className={`font-bold ${
                           calculateVariations("caba").acumulada >= 0
@@ -427,28 +438,19 @@ export default function Alquileres({ data, months }) {
                     </div>
                   </div>
                 </div>
-                <div className="text-xs text-gray-400 flex items-center gap-2">
-                  <Home className="w-4 h-4" />
-                  <span>Precio promedio en pesos</span>
-                </div>
               </div>
-            </div>
 
-            {/* Card 2 - NORTE */}
-            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
-              <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+              {/* NORTE Card */}
+              <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-green-200">NORTE</h3>
-                  <div
-                    className="text-2xl font-bold"
-                    style={{ color: "#33ff57" }}
-                  >
+                  <h3 className="text-xs font-medium text-green-200">NORTE</h3>
+                  <div className="text-lg font-bold text-green-400">
                     $
                     {selectedData ? selectedData.norte.toLocaleString() : "N/A"}
                   </div>
-                  <div className="space-y-1 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Var. Mensual:</span>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="text-center">
+                      <span className="text-gray-400 block">Mensual</span>
                       <span
                         className={`font-bold ${
                           calculateVariations("norte").mensual >= 0
@@ -459,8 +461,8 @@ export default function Alquileres({ data, months }) {
                         {calculateVariations("norte").mensual}%
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Var. Anual:</span>
+                    <div className="text-center">
+                      <span className="text-gray-400 block">Anual</span>
                       <span
                         className={`font-bold ${
                           calculateVariations("norte").anual >= 0
@@ -471,8 +473,8 @@ export default function Alquileres({ data, months }) {
                         {calculateVariations("norte").anual}%
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Acumulada:</span>
+                    <div className="text-center">
+                      <span className="text-gray-400 block">Acum.</span>
                       <span
                         className={`font-bold ${
                           calculateVariations("norte").acumulada >= 0
@@ -485,32 +487,23 @@ export default function Alquileres({ data, months }) {
                     </div>
                   </div>
                 </div>
-                <div className="text-xs text-gray-400 flex items-center gap-2">
-                  <Home className="w-4 h-4" />
-                  <span>Precio promedio en pesos</span>
-                </div>
               </div>
-            </div>
 
-            {/* Card 3 - OESTE/SUR */}
-            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
-              <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+              {/* OESTE/SUR Card */}
+              <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-blue-200">
+                  <h3 className="text-xs font-medium text-blue-200">
                     OESTE/SUR
                   </h3>
-                  <div
-                    className="text-2xl font-bold"
-                    style={{ color: "#3357ff" }}
-                  >
+                  <div className="text-lg font-bold text-blue-400">
                     $
                     {selectedData
                       ? selectedData.oesteSur.toLocaleString()
                       : "N/A"}
                   </div>
-                  <div className="space-y-1 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Var. Mensual:</span>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="text-center">
+                      <span className="text-gray-400 block">Mensual</span>
                       <span
                         className={`font-bold ${
                           calculateVariations("oesteSur").mensual >= 0
@@ -521,8 +514,8 @@ export default function Alquileres({ data, months }) {
                         {calculateVariations("oesteSur").mensual}%
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Var. Anual:</span>
+                    <div className="text-center">
+                      <span className="text-gray-400 block">Anual</span>
                       <span
                         className={`font-bold ${
                           calculateVariations("oesteSur").anual >= 0
@@ -533,8 +526,8 @@ export default function Alquileres({ data, months }) {
                         {calculateVariations("oesteSur").anual}%
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Acumulada:</span>
+                    <div className="text-center">
+                      <span className="text-gray-400 block">Acum.</span>
                       <span
                         className={`font-bold ${
                           calculateVariations("oesteSur").acumulada >= 0
@@ -547,26 +540,329 @@ export default function Alquileres({ data, months }) {
                     </div>
                   </div>
                 </div>
-                <div className="text-xs text-gray-400 flex items-center gap-2">
-                  <Home className="w-4 h-4" />
-                  <span>Precio promedio en pesos</span>
+              </div>
+            </div>
+
+            {/* Month Selector for Mobile */}
+            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+              <h3 className="text-xs font-medium text-gray-300 mb-2">
+                Mes seleccionado
+              </h3>
+              <MonthSelector
+                months={months}
+                selectedMonth={selectedMonth}
+                onMonthChange={setSelectedMonth}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Chart View */}
+        {(!isMobile || viewMode === "chart") && (
+          <>
+            {/* Mobile Month Selector for Chart View */}
+            {isMobile && viewMode === "chart" && (
+              <div className="bg-gray-800 rounded-lg p-3 border border-gray-700 mb-3">
+                <h3 className="text-xs font-medium text-gray-300 mb-2">
+                  Mes seleccionado
+                </h3>
+                <MonthSelector
+                  months={months}
+                  selectedMonth={selectedMonth}
+                  onMonthChange={setSelectedMonth}
+                />
+              </div>
+            )}
+
+            <div className={`${isMobile ? "h-64" : "h-[400px]"} w-full`}>
+              {activeView === "evolution" ? (
+                <div className="h-full bg-gray-800 rounded-xl p-4">
+                  <ResponsiveContainer>
+                    <RechartsLineChart
+                      data={alquileresDataForDisplay}
+                      margin={{
+                        top: 0,
+                        right: isMobile ? 10 : 15,
+                        left: isMobile ? -20 : -30,
+                        bottom: 0,
+                      }}
+                    >
+                      <XAxis
+                        dataKey="mes"
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                        tick={{ fill: "#9ca3af", fontSize: isMobile ? 4 : 6 }}
+                      />
+                      <YAxis
+                        tick={{ fill: "#9ca3af", fontSize: isMobile ? 6 : 8 }}
+                        axisLine={{ stroke: "#374151" }}
+                        tickFormatter={(value) =>
+                          `$${(value / 1000).toFixed(0)}k`
+                        }
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+
+                      {/* Líneas para cada zona */}
+                      <Line
+                        type="monotone"
+                        dataKey="caba"
+                        stroke="#ff5733"
+                        strokeWidth={2}
+                        dot={{
+                          fill: "#ff5733",
+                          strokeWidth: 2,
+                          r: isMobile ? 2 : 3,
+                        }}
+                        name="CABA"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="norte"
+                        stroke="#33ff57"
+                        strokeWidth={2}
+                        dot={{
+                          fill: "#33ff57",
+                          strokeWidth: 2,
+                          r: isMobile ? 2 : 3,
+                        }}
+                        name="NORTE"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="oesteSur"
+                        stroke="#3357ff"
+                        strokeWidth={2}
+                        dot={{
+                          fill: "#3357ff",
+                          strokeWidth: 2,
+                          r: isMobile ? 2 : 3,
+                        }}
+                        name="OESTE/SUR"
+                      />
+
+                      {/* Línea de referencia del mes seleccionado */}
+                      <ReferenceLine
+                        x={selectedMonth}
+                        stroke="#56595e"
+                        strokeWidth={1}
+                        strokeDasharray="3 3"
+                      />
+                    </RechartsLineChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <HeatmapView />
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Desktop Cards container */}
+        {!isMobile && (
+          <div className="flex-1 flex flex-col">
+            {/* Carousel container */}
+            <div
+              className="flex gap-4 overflow-x-auto md:grid md:grid-cols-3 snap-x snap-mandatory scroll-smooth"
+              onScroll={handleScroll}
+            >
+              {/* Card 1 - CABA */}
+              <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+                <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-orange-200">
+                      CABA
+                    </h3>
+                    <div className="text-2xl font-bold text-orange-custom">
+                      $
+                      {selectedData
+                        ? selectedData.caba.toLocaleString()
+                        : "N/A"}
+                    </div>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Var. Mensual:</span>
+                        <span
+                          className={`font-bold ${
+                            calculateVariations("caba").mensual >= 0
+                              ? "text-red-400"
+                              : "text-green-400"
+                          }`}
+                        >
+                          {calculateVariations("caba").mensual}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Var. Anual:</span>
+                        <span
+                          className={`font-bold ${
+                            calculateVariations("caba").anual >= 0
+                              ? "text-red-400"
+                              : "text-green-400"
+                          }`}
+                        >
+                          {calculateVariations("caba").anual}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Acumulada:</span>
+                        <span
+                          className={`font-bold ${
+                            calculateVariations("caba").acumulada >= 0
+                              ? "text-red-400"
+                              : "text-green-400"
+                          }`}
+                        >
+                          {calculateVariations("caba").acumulada}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-400 flex items-center gap-2">
+                    <Home className="w-4 h-4" />
+                    <span>Precio promedio en pesos</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2 - NORTE */}
+              <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+                <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-green-200">
+                      NORTE
+                    </h3>
+                    <div
+                      className="text-2xl font-bold"
+                      style={{ color: "#33ff57" }}
+                    >
+                      $
+                      {selectedData
+                        ? selectedData.norte.toLocaleString()
+                        : "N/A"}
+                    </div>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Var. Mensual:</span>
+                        <span
+                          className={`font-bold ${
+                            calculateVariations("norte").mensual >= 0
+                              ? "text-red-400"
+                              : "text-green-400"
+                          }`}
+                        >
+                          {calculateVariations("norte").mensual}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Var. Anual:</span>
+                        <span
+                          className={`font-bold ${
+                            calculateVariations("norte").anual >= 0
+                              ? "text-red-400"
+                              : "text-green-400"
+                          }`}
+                        >
+                          {calculateVariations("norte").anual}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Acumulada:</span>
+                        <span
+                          className={`font-bold ${
+                            calculateVariations("norte").acumulada >= 0
+                              ? "text-red-400"
+                              : "text-green-400"
+                          }`}
+                        >
+                          {calculateVariations("norte").acumulada}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-400 flex items-center gap-2">
+                    <Home className="w-4 h-4" />
+                    <span>Precio promedio en pesos</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 3 - OESTE/SUR */}
+              <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center">
+                <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-blue-200">
+                      OESTE/SUR
+                    </h3>
+                    <div
+                      className="text-2xl font-bold"
+                      style={{ color: "#3357ff" }}
+                    >
+                      $
+                      {selectedData
+                        ? selectedData.oesteSur.toLocaleString()
+                        : "N/A"}
+                    </div>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Var. Mensual:</span>
+                        <span
+                          className={`font-bold ${
+                            calculateVariations("oesteSur").mensual >= 0
+                              ? "text-red-400"
+                              : "text-green-400"
+                          }`}
+                        >
+                          {calculateVariations("oesteSur").mensual}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Var. Anual:</span>
+                        <span
+                          className={`font-bold ${
+                            calculateVariations("oesteSur").anual >= 0
+                              ? "text-red-400"
+                              : "text-green-400"
+                          }`}
+                        >
+                          {calculateVariations("oesteSur").anual}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Acumulada:</span>
+                        <span
+                          className={`font-bold ${
+                            calculateVariations("oesteSur").acumulada >= 0
+                              ? "text-red-400"
+                              : "text-green-400"
+                          }`}
+                        >
+                          {calculateVariations("oesteSur").acumulada}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-400 flex items-center gap-2">
+                    <Home className="w-4 h-4" />
+                    <span>Precio promedio en pesos</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Scroll indicators */}
-          <div className="flex gap-1 justify-center py-2 md:hidden">
-            {[0, 1, 2].map((index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  activeCard === index ? "bg-orange-custom" : "bg-gray-700"
-                }`}
-              />
-            ))}
+            {/* Scroll indicators */}
+            <div className="flex gap-1 justify-center py-2 md:hidden">
+              {[0, 1, 2].map((index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    activeCard === index ? "bg-orange-custom" : "bg-gray-700"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

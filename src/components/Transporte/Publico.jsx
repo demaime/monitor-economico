@@ -16,6 +16,8 @@ export default function Publico({
   months,
   selectedMonth,
   onMonthChange,
+  isMobile = false,
+  viewMode = "chart",
 }) {
   const [activeCard, setActiveCard] = useState(0);
 
@@ -134,24 +136,133 @@ export default function Publico({
     setActiveCard(activeIndex);
   };
 
+  // Si es mobile y está en modo cards, solo mostrar datos
+  if (isMobile && viewMode === "cards") {
+    return (
+      <div className="grid grid-cols-1 gap-3">
+        {/* Subte Card */}
+        <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+          <div className="space-y-2">
+            <h3 className="text-xs font-medium text-blue-200">Subte</h3>
+            <div className="text-lg font-bold text-blue-400">
+              ${new Intl.NumberFormat("es-AR").format(selectedMonthData?.subte)}
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="text-center">
+                <span className="text-gray-400 block">Mensual</span>
+                <span className="font-bold text-blue-400">
+                  {selectedMonthData?.variacionMensualSubte}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block">Anual</span>
+                <span className="font-bold text-blue-400">
+                  {selectedMonthData?.variacionAnualSubte}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block">Acum.</span>
+                <span className="font-bold text-blue-400">
+                  {selectedMonthData?.variacionAcumuladaSubte}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tren Card */}
+        <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+          <div className="space-y-2">
+            <h3 className="text-xs font-medium text-green-200">Tren</h3>
+            <div className="text-lg font-bold text-green-400">
+              ${new Intl.NumberFormat("es-AR").format(selectedMonthData?.tren)}
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="text-center">
+                <span className="text-gray-400 block">Mensual</span>
+                <span className="font-bold text-green-400">
+                  {selectedMonthData?.variacionMensualTren}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block">Anual</span>
+                <span className="font-bold text-green-400">
+                  {selectedMonthData?.variacionAnualTren}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block">Acum.</span>
+                <span className="font-bold text-green-400">
+                  {selectedMonthData?.variacionAcumuladaTren}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Colectivo Card */}
+        <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+          <div className="space-y-2">
+            <h3 className="text-xs font-medium text-yellow-200">Colectivo</h3>
+            <div className="text-lg font-bold text-yellow-400">
+              $
+              {new Intl.NumberFormat("es-AR").format(
+                selectedMonthData?.colectivo
+              )}
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="text-center">
+                <span className="text-gray-400 block">Mensual</span>
+                <span className="font-bold text-yellow-400">
+                  {selectedMonthData?.variacionMensualColectivo}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block">Anual</span>
+                <span className="font-bold text-yellow-400">
+                  {selectedMonthData?.variacionAnualColectivo}%
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-400 block">Acum.</span>
+                <span className="font-bold text-yellow-400">
+                  {selectedMonthData?.variacionAcumuladaColectivo}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Gráfico: más alto en mobile */}
-      <div className="h-[400px] md:h-[300px] w-full bg-gray-800 rounded-xl p-4">
+      <div
+        className={`${
+          isMobile ? "h-64" : "h-[400px] md:h-[300px]"
+        } w-full bg-gray-800 rounded-xl p-4`}
+      >
         <ResponsiveContainer>
           <LineChart
             data={transporteDataForDisplay}
-            margin={{ top: 0, right: 15, left: -20, bottom: 0 }}
+            margin={{
+              top: 0,
+              right: isMobile ? 10 : 15,
+              left: isMobile ? -20 : -20,
+              bottom: 0,
+            }}
           >
             <XAxis
               dataKey="mes"
               angle={-45}
               textAnchor="end"
               height={60}
-              tick={{ fill: "#9ca3af", fontSize: 8 }}
+              tick={{ fill: "#9ca3af", fontSize: isMobile ? 6 : 8 }}
             />
             <YAxis
-              tick={{ fill: "#9ca3af", fontSize: 8 }}
+              tick={{ fill: "#9ca3af", fontSize: isMobile ? 6 : 8 }}
               axisLine={{ stroke: "#374151" }}
             />
             <Tooltip content={<CustomTooltip />} />
@@ -179,62 +290,160 @@ export default function Publico({
               strokeWidth={1}
               strokeDasharray="3 3"
             />
-            <Brush
-              dataKey="mes"
-              height={15}
-              stroke="#60a5fa"
-              fill="#1f2937"
-              travellerWidth={10}
-            />
+            {!isMobile && (
+              <Brush
+                dataKey="mes"
+                height={15}
+                stroke="#60a5fa"
+                fill="#1f2937"
+                travellerWidth={10}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Cards container: más compacto en mobile */}
-      <div className="flex-1 flex flex-col h-[200px] md:h-auto">
-        <div
-          className="flex gap-4 overflow-x-auto md:grid md:grid-cols-3 snap-x snap-mandatory scroll-smooth"
-          onScroll={handleScroll}
-        >
-          {/* Card 1 - Subte */}
-          <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-2 md:p-4 shadow-lg border border-gray-700/50 snap-center">
-            <div className="relative z-10 flex h-full flex-col justify-between gap-2 md:gap-4">
-              <div className="space-y-1 md:space-y-2">
-                <h3 className="text-sm font-medium text-blue-200">Subte</h3>
-                <div className="space-y-2 md:space-y-3">
-                  <div>
-                    <p className="text-xs text-gray-400">Valor Actual</p>
-                    <p className="text-2xl font-bold text-blue-400">
-                      $
-                      {new Intl.NumberFormat("es-AR").format(
-                        selectedMonthData?.subte
-                      )}
-                    </p>
+      {/* Desktop Cards container */}
+      {!isMobile && (
+        <div className="flex-1 flex flex-col h-[200px] md:h-auto">
+          <div
+            className="flex gap-4 overflow-x-auto md:grid md:grid-cols-3 snap-x snap-mandatory scroll-smooth"
+            onScroll={handleScroll}
+          >
+            {/* Card 1 - Subte */}
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-2 md:p-4 shadow-lg border border-gray-700/50 snap-center">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-2 md:gap-4">
+                <div className="space-y-1 md:space-y-2">
+                  <h3 className="text-sm font-medium text-blue-200">Subte</h3>
+                  <div className="space-y-2 md:space-y-3">
+                    <div>
+                      <p className="text-xs text-gray-400">Valor Actual</p>
+                      <p className="text-2xl font-bold text-blue-400">
+                        $
+                        {new Intl.NumberFormat("es-AR").format(
+                          selectedMonthData?.subte
+                        )}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">
+                          Var. Mensual
+                        </span>
+                        <span className="text-sm text-blue-400">
+                          {selectedMonthData?.variacionMensualSubte}%
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">
+                          Var. Interanual
+                        </span>
+                        <span className="text-sm text-blue-400">
+                          {selectedMonthData?.variacionAnualSubte}%
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">
+                          Var. Acumulada
+                        </span>
+                        <span className="text-sm text-blue-400">
+                          {selectedMonthData?.variacionAcumuladaSubte}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        Var. Mensual
-                      </span>
-                      <span className="text-sm text-blue-400">
-                        {selectedMonthData?.variacionMensualSubte}%
-                      </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2 - Tren */}
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-2 md:p-4 shadow-lg border border-gray-700/50 snap-center">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-2 md:gap-4">
+                <div className="space-y-1 md:space-y-2">
+                  <h3 className="text-sm font-medium text-green-200">Tren</h3>
+                  <div className="space-y-2 md:space-y-3">
+                    <div>
+                      <p className="text-xs text-gray-400">Valor Actual</p>
+                      <p className="text-2xl font-bold text-green-400">
+                        $
+                        {new Intl.NumberFormat("es-AR").format(
+                          selectedMonthData?.tren
+                        )}
+                      </p>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        Var. Interanual
-                      </span>
-                      <span className="text-sm text-blue-400">
-                        {selectedMonthData?.variacionAnualSubte}%
-                      </span>
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">
+                          Var. Mensual
+                        </span>
+                        <span className="text-sm text-green-400">
+                          {selectedMonthData?.variacionMensualTren}%
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">
+                          Var. Interanual
+                        </span>
+                        <span className="text-sm text-green-400">
+                          {selectedMonthData?.variacionAnualTren}%
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">
+                          Var. Acumulada
+                        </span>
+                        <span className="text-sm text-green-400">
+                          {selectedMonthData?.variacionAcumuladaTren}%
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        Var. Acumulada
-                      </span>
-                      <span className="text-sm text-blue-400">
-                        {selectedMonthData?.variacionAcumuladaSubte}%
-                      </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3 - Colectivo */}
+            <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-2 md:p-4 shadow-lg border border-gray-700/50 snap-center">
+              <div className="relative z-10 flex h-full flex-col justify-between gap-2 md:gap-4">
+                <div className="space-y-1 md:space-y-2">
+                  <h3 className="text-sm font-medium text-yellow-200">
+                    Colectivo
+                  </h3>
+                  <div className="space-y-2 md:space-y-3">
+                    <div>
+                      <p className="text-xs text-gray-400">Valor Actual</p>
+                      <p className="text-2xl font-bold text-yellow-400">
+                        $
+                        {new Intl.NumberFormat("es-AR").format(
+                          selectedMonthData?.colectivo
+                        )}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">
+                          Var. Mensual
+                        </span>
+                        <span className="text-sm text-yellow-400">
+                          {selectedMonthData?.variacionMensualColectivo}%
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">
+                          Var. Interanual
+                        </span>
+                        <span className="text-sm text-yellow-400">
+                          {selectedMonthData?.variacionAnualColectivo}%
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">
+                          Var. Acumulada
+                        </span>
+                        <span className="text-sm text-yellow-400">
+                          {selectedMonthData?.variacionAcumuladaColectivo}%
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -242,113 +451,19 @@ export default function Publico({
             </div>
           </div>
 
-          {/* Card 2 - Tren */}
-          <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-2 md:p-4 shadow-lg border border-gray-700/50 snap-center">
-            <div className="relative z-10 flex h-full flex-col justify-between gap-2 md:gap-4">
-              <div className="space-y-1 md:space-y-2">
-                <h3 className="text-sm font-medium text-green-200">Tren</h3>
-                <div className="space-y-2 md:space-y-3">
-                  <div>
-                    <p className="text-xs text-gray-400">Valor Actual</p>
-                    <p className="text-2xl font-bold text-green-400">
-                      $
-                      {new Intl.NumberFormat("es-AR").format(
-                        selectedMonthData?.tren
-                      )}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        Var. Mensual
-                      </span>
-                      <span className="text-sm text-green-400">
-                        {selectedMonthData?.variacionMensualTren}%
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        Var. Interanual
-                      </span>
-                      <span className="text-sm text-green-400">
-                        {selectedMonthData?.variacionAnualTren}%
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        Var. Acumulada
-                      </span>
-                      <span className="text-sm text-green-400">
-                        {selectedMonthData?.variacionAcumuladaTren}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3 - Colectivo */}
-          <div className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-2 md:p-4 shadow-lg border border-gray-700/50 snap-center">
-            <div className="relative z-10 flex h-full flex-col justify-between gap-2 md:gap-4">
-              <div className="space-y-1 md:space-y-2">
-                <h3 className="text-sm font-medium text-yellow-200">
-                  Colectivo
-                </h3>
-                <div className="space-y-2 md:space-y-3">
-                  <div>
-                    <p className="text-xs text-gray-400">Valor Actual</p>
-                    <p className="text-2xl font-bold text-yellow-400">
-                      $
-                      {new Intl.NumberFormat("es-AR").format(
-                        selectedMonthData?.colectivo
-                      )}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        Var. Mensual
-                      </span>
-                      <span className="text-sm text-yellow-400">
-                        {selectedMonthData?.variacionMensualColectivo}%
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        Var. Interanual
-                      </span>
-                      <span className="text-sm text-yellow-400">
-                        {selectedMonthData?.variacionAnualColectivo}%
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        Var. Acumulada
-                      </span>
-                      <span className="text-sm text-yellow-400">
-                        {selectedMonthData?.variacionAcumuladaColectivo}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* Scroll indicators */}
+          <div className="flex gap-1 justify-center py-1 md:py-2 md:hidden">
+            {[0, 1, 2].map((index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  activeCard === index ? "bg-blue-500" : "bg-gray-700"
+                }`}
+              />
+            ))}
           </div>
         </div>
-
-        {/* Scroll indicators */}
-        <div className="flex gap-1 justify-center py-1 md:py-2 md:hidden">
-          {[0, 1, 2].map((index) => (
-            <div
-              key={index}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                activeCard === index ? "bg-blue-500" : "bg-gray-700"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
+      )}
     </>
   );
 }

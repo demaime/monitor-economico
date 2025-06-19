@@ -347,161 +347,161 @@ export default function EmaeApertura({
             className={`${isMobile ? "flex-1" : "flex-1 lg:w-1/2"} space-y-4`}
           >
             <div className={`${isMobile ? "h-64" : "h-96"}`}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
                   data={chartData.slice(0, isMobile ? 8 : 10)}
                   margin={
                     isMobile
                       ? { top: 10, right: 5, left: 0, bottom: 20 }
                       : { top: 20, right: 30, left: 40, bottom: 30 }
                   }
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis
-                    dataKey="nombre"
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis
+                  dataKey="nombre"
                     tick={{
                       fill: "#9ca3af",
                       fontSize: isMobile ? 6 : 8,
                     }}
-                    axisLine={{ stroke: "#374151" }}
-                    angle={-45}
-                    textAnchor="end"
+                  axisLine={{ stroke: "#374151" }}
+                  angle={-45}
+                  textAnchor="end"
                     height={isMobile ? 80 : 100}
-                    interval={0}
-                  />
-                  <YAxis
+                  interval={0}
+                />
+                <YAxis
                     tick={{
                       fill: "#9ca3af",
                       fontSize: isMobile ? 8 : 10,
                     }}
-                    axisLine={{ stroke: "#374151" }}
-                    domain={yAxisDomain}
+                  axisLine={{ stroke: "#374151" }}
+                  domain={yAxisDomain}
                     width={isMobile ? 35 : 60}
-                  />
-                  <Tooltip content={customTooltip} />
-                  <Bar dataKey={dataKey} strokeWidth={1}>
+                />
+                <Tooltip content={customTooltip} />
+                <Bar dataKey={dataKey} strokeWidth={1}>
                     {chartData
                       .slice(0, isMobile ? 8 : 10)
                       .map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={entry.color}
-                          stroke={entry.color}
-                        />
-                      ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.color}
+                      stroke={entry.color}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
+        </div>
 
           {/* Columna derecha: Estadísticas y lista - Solo desktop */}
           {!isMobile && (
-            <div className="flex-1 lg:w-1/2 space-y-4">
-              {/* Resumen estadístico */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-700 p-3 rounded-lg">
+        <div className="flex-1 lg:w-1/2 space-y-4">
+          {/* Resumen estadístico */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gray-700 p-3 rounded-lg">
                   <p className="text-gray-400 text-xs">
                     Sectores en crecimiento
                   </p>
-                  <p className="text-green-400 text-xl font-bold">
-                    {showVariations
-                      ? chartData.filter((d) => d.variacionAnual > 0).length
-                      : chartData.filter((d) => d.variacionMensual > 0).length}
-                  </p>
-                </div>
-                <div className="bg-gray-700 p-3 rounded-lg">
-                  <p className="text-gray-400 text-xs">Sectores en caída</p>
-                  <p className="text-red-400 text-xl font-bold">
-                    {showVariations
-                      ? chartData.filter((d) => d.variacionAnual < 0).length
-                      : chartData.filter((d) => d.variacionMensual < 0).length}
-                  </p>
-                </div>
-                <div className="bg-gray-700 p-3 rounded-lg">
-                  <p className="text-gray-400 text-xs">Mayor crecimiento</p>
-                  <p className="text-green-400 text-xl font-bold">
-                    +
-                    {showVariations
+              <p className="text-green-400 text-xl font-bold">
+                {showVariations
+                  ? chartData.filter((d) => d.variacionAnual > 0).length
+                  : chartData.filter((d) => d.variacionMensual > 0).length}
+              </p>
+            </div>
+            <div className="bg-gray-700 p-3 rounded-lg">
+              <p className="text-gray-400 text-xs">Sectores en caída</p>
+              <p className="text-red-400 text-xl font-bold">
+                {showVariations
+                  ? chartData.filter((d) => d.variacionAnual < 0).length
+                  : chartData.filter((d) => d.variacionMensual < 0).length}
+              </p>
+            </div>
+            <div className="bg-gray-700 p-3 rounded-lg">
+              <p className="text-gray-400 text-xs">Mayor crecimiento</p>
+              <p className="text-green-400 text-xl font-bold">
+                +
+                {showVariations
                       ? Math.max(
                           ...chartData.map((d) => d.variacionAnual)
                         ).toFixed(1)
-                      : Math.max(
-                          ...chartData.map((d) => d.variacionMensual)
-                        ).toFixed(1)}
-                    %
-                  </p>
-                </div>
-                <div className="bg-gray-700 p-3 rounded-lg">
-                  <p className="text-gray-400 text-xs">Mayor caída</p>
-                  <p className="text-red-400 text-xl font-bold">
-                    {showVariations
+                  : Math.max(
+                      ...chartData.map((d) => d.variacionMensual)
+                    ).toFixed(1)}
+                %
+              </p>
+            </div>
+            <div className="bg-gray-700 p-3 rounded-lg">
+              <p className="text-gray-400 text-xs">Mayor caída</p>
+              <p className="text-red-400 text-xl font-bold">
+                {showVariations
                       ? Math.min(
                           ...chartData.map((d) => d.variacionAnual)
                         ).toFixed(1)
-                      : Math.min(
-                          ...chartData.map((d) => d.variacionMensual)
-                        ).toFixed(1)}
-                    %
-                  </p>
-                </div>
-              </div>
-
-              {/* Lista detallada */}
-              <div className="h-64 overflow-y-auto">
-                <div className="grid grid-cols-1 gap-2">
-                  {chartData.slice(0, 10).map((sector, index) => (
-                    <div
-                      key={sector.id}
-                      className="flex items-center justify-between bg-gray-700 p-3 rounded-lg"
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        <div
-                          className="w-4 h-4 rounded"
-                          style={{ backgroundColor: sector.color }}
-                        />
-                        <span className="text-gray-200 text-sm truncate">
-                          {sector.nombreCompleto}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm">
-                        <span className="text-yellow-300 font-mono">
-                          {sector.valor}
-                        </span>
-                        <span
-                          className={`font-mono ${
-                            showVariations
-                              ? sector.variacionAnual >= 0
-                                ? "text-green-400"
-                                : "text-red-400"
-                              : sector.variacionMensual >= 0
-                              ? "text-green-400"
-                              : "text-red-400"
-                          }`}
-                        >
-                          {showVariations
-                            ? `${sector.variacionAnual >= 0 ? "+" : ""}${
-                                sector.variacionAnual
-                              }%`
-                            : `${sector.variacionMensual >= 0 ? "+" : ""}${
-                                sector.variacionMensual
-                              }%`}
-                        </span>
-                        {(showVariations
-                          ? sector.variacionAnual
-                          : sector.variacionMensual) >= 0 ? (
-                          <TrendingUp className="w-4 h-4 text-green-400" />
-                        ) : (
-                          <TrendingDown className="w-4 h-4 text-red-400" />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                  : Math.min(
+                      ...chartData.map((d) => d.variacionMensual)
+                    ).toFixed(1)}
+                %
+              </p>
             </div>
-          )}
+          </div>
+
+          {/* Lista detallada */}
+          <div className="h-64 overflow-y-auto">
+            <div className="grid grid-cols-1 gap-2">
+              {chartData.slice(0, 10).map((sector, index) => (
+                <div
+                  key={sector.id}
+                  className="flex items-center justify-between bg-gray-700 p-3 rounded-lg"
+                >
+                  <div className="flex items-center gap-3 flex-1">
+                    <div
+                      className="w-4 h-4 rounded"
+                      style={{ backgroundColor: sector.color }}
+                    />
+                    <span className="text-gray-200 text-sm truncate">
+                      {sector.nombreCompleto}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="text-yellow-300 font-mono">
+                      {sector.valor}
+                    </span>
+                    <span
+                      className={`font-mono ${
+                        showVariations
+                          ? sector.variacionAnual >= 0
+                            ? "text-green-400"
+                            : "text-red-400"
+                          : sector.variacionMensual >= 0
+                          ? "text-green-400"
+                          : "text-red-400"
+                      }`}
+                    >
+                      {showVariations
+                        ? `${sector.variacionAnual >= 0 ? "+" : ""}${
+                            sector.variacionAnual
+                          }%`
+                        : `${sector.variacionMensual >= 0 ? "+" : ""}${
+                            sector.variacionMensual
+                          }%`}
+                    </span>
+                    {(showVariations
+                      ? sector.variacionAnual
+                      : sector.variacionMensual) >= 0 ? (
+                      <TrendingUp className="w-4 h-4 text-green-400" />
+                    ) : (
+                      <TrendingDown className="w-4 h-4 text-red-400" />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+          )}
+      </div>
       )}
     </div>
   );
