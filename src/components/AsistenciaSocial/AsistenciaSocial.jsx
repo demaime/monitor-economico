@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Heart,
   Calendar,
@@ -6,6 +6,8 @@ import {
   Users,
   GraduationCap,
   HandHeart,
+  BarChart3,
+  Maximize2,
 } from "lucide-react";
 import {
   LineChart as RechartsLineChart,
@@ -25,6 +27,21 @@ export default function AsistenciaSocial({ data, months }) {
   );
   const [variationType, setVariationType] = useState("mensual"); // 'mensual' o 'interanual'
   const [activeView, setActiveView] = useState("auh"); // 'auh', 'beca', 'acompaniamiento'
+
+  // Estado para mobile y vista
+  const [isMobile, setIsMobile] = useState(false);
+  const [viewMode, setViewMode] = useState("cards"); // "cards" o "chart"
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
 
   // Procesar datos para el gráfico con AMBOS tipos de variación
   const asistenciaData = months.map((month, index) => {
@@ -302,82 +319,132 @@ export default function AsistenciaSocial({ data, months }) {
 
   return (
     <section className="bg-gray-900 overflow-hidden">
-      <div className="w-[90%] h-[90%] flex flex-col gap-4">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
-            <Heart className="w-7 h-7" />
+      <div className="w-[90%] h-[90%] flex flex-col gap-2 sm:gap-4">
+        <div className="space-y-1 sm:space-y-2">
+          <h1
+            className={`font-bold text-gray-100 flex items-center gap-2 ${
+              isMobile ? "text-lg" : "text-2xl"
+            }`}
+          >
+            <Heart className={`${isMobile ? "w-5 h-5" : "w-7 h-7"}`} />
             Asistencia Social
           </h1>
-          <p className="text-sm text-gray-400">{viewConfig.title}</p>
+          <p className={`text-gray-400 ${isMobile ? "text-xs" : "text-sm"}`}>
+            {viewConfig.title}
+          </p>
         </div>
 
         {/* BOTONES DE VISTA */}
-        <div className="flex justify-between">
-          <div className="flex gap-2">
+        <div
+          className={`flex ${
+            isMobile ? "flex-col space-y-2" : "justify-between"
+          }`}
+        >
+          <div
+            className={`flex gap-1 sm:gap-2 ${
+              isMobile ? "justify-center" : ""
+            }`}
+          >
             <button
               onClick={() => setActiveView("auh")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 activeView === "auh"
                   ? "bg-blue-500 text-white"
                   : "bg-gray-800 text-gray-300 hover:text-gray-200"
               }`}
             >
-              <Users className="w-4 h-4" />
-              AUH
+              <Users className="w-3 h-3 sm:w-4 sm:h-4" />
+              {isMobile ? "AUH" : "AUH"}
             </button>
             <button
               onClick={() => setActiveView("beca")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 activeView === "beca"
                   ? "bg-green-500 text-white"
                   : "bg-gray-800 text-gray-300 hover:text-gray-200"
               }`}
             >
-              <GraduationCap className="w-4 h-4" />
-              Beca Progresar
+              <GraduationCap className="w-3 h-3 sm:w-4 sm:h-4" />
+              {isMobile ? "Beca" : "Beca Progresar"}
             </button>
             <button
               onClick={() => setActiveView("acompaniamiento")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 activeView === "acompaniamiento"
                   ? "bg-orange-500 text-white"
                   : "bg-gray-800 text-gray-300 hover:text-gray-200"
               }`}
             >
-              <HandHeart className="w-4 h-4" />
-              Acompañamiento
+              <HandHeart className="w-3 h-3 sm:w-4 sm:h-4" />
+              {isMobile ? "Acomp." : "Acompañamiento"}
             </button>
           </div>
 
           {/* TOGGLE DE TIPO DE VARIACIÓN */}
-          <div className="flex gap-2 relative">
+          <div
+            className={`flex gap-1 sm:gap-2 relative ${
+              isMobile ? "justify-center" : ""
+            }`}
+          >
             <button
               onClick={() => setVariationType("mensual")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 variationType === "mensual"
                   ? "bg-yellow-custom text-gray-800"
                   : "bg-gray-800 text-gray-300 hover:text-gray-200"
               }`}
             >
-              <Calendar className="w-4 h-4" />
+              <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
               Mensual
             </button>
             <button
               onClick={() => setVariationType("interanual")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
                 variationType === "interanual"
                   ? "bg-yellow-custom text-gray-800"
                   : "bg-gray-800 text-gray-300 hover:text-gray-200"
               }`}
             >
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
               Interanual
             </button>
-            <div className="absolute right-0 -top-8 rounded-lg bg-yellow-custom text-gray-800 px-2 py-1 text-xs">
-              {variationType === "mensual" ? "MES A MES" : "AÑO A AÑO"}
-            </div>
+            {!isMobile && (
+              <div className="absolute right-0 -top-8 rounded-lg bg-yellow-custom text-gray-800 px-2 py-1 text-xs">
+                {variationType === "mensual" ? "MES A MES" : "AÑO A AÑO"}
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Toggle para mobile */}
+        {isMobile && (
+          <div className="flex justify-center">
+            <div className="bg-gray-700 rounded-lg p-1 flex">
+              <button
+                onClick={() => setViewMode("cards")}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                  viewMode === "cards"
+                    ? "bg-orange-custom text-white"
+                    : "text-gray-300"
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                <span>Datos</span>
+              </button>
+              <button
+                onClick={() => setViewMode("chart")}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                  viewMode === "chart"
+                    ? "bg-orange-custom text-white"
+                    : "text-gray-300"
+                }`}
+              >
+                <Maximize2 className="w-4 h-4" />
+                <span>Gráfico</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         <MonthSelector
           months={months}
@@ -386,123 +453,180 @@ export default function AsistenciaSocial({ data, months }) {
         />
 
         {/* GRÁFICO PROTAGONISTA */}
-        <div className="h-[350px] w-full bg-gray-800 rounded-xl p-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <RechartsLineChart
-              data={asistenciaDataForDisplay}
-              margin={{ top: 0, right: 15, left: -20, bottom: 0 }}
-            >
-              <XAxis
-                dataKey="mes"
-                angle={-45}
-                textAnchor="end"
-                height={60}
-                tick={{ fill: "#9ca3af", fontSize: 8 }}
-              />
-              <YAxis
-                tick={{ fill: "#9ca3af", fontSize: 8 }}
-                axisLine={{ stroke: "#374151" }}
-                tickFormatter={(value) => `$${value.toLocaleString()}`}
-              />
-              <Tooltip content={<CustomTooltip />} />
-
-              {/* Línea de referencia en 0% */}
-              <ReferenceLine
-                y={0}
-                stroke="#6b7280"
-                strokeWidth={1}
-                strokeDasharray="2 2"
-              />
-
-              {/* Líneas para cada programa */}
-              {viewConfig.lines.map((line) => (
-                <Line
-                  key={line.key}
-                  type="monotone"
-                  dataKey={line.key}
-                  stroke={line.color}
-                  strokeWidth={line.strokeWidth}
-                  strokeDasharray={line.strokeDasharray}
-                  dot={{ fill: line.color, strokeWidth: 1, r: 2 }}
-                  name={line.name}
+        {(!isMobile || viewMode === "chart") && (
+          <div
+            className={`w-full bg-gray-800 rounded-xl p-2 sm:p-4 ${
+              isMobile ? "h-[280px]" : "h-[350px]"
+            }`}
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <RechartsLineChart
+                data={asistenciaDataForDisplay}
+                margin={
+                  isMobile
+                    ? { top: 0, right: 5, left: -30, bottom: 0 }
+                    : { top: 0, right: 15, left: -20, bottom: 0 }
+                }
+              >
+                <XAxis
+                  dataKey="mes"
+                  angle={-45}
+                  textAnchor="end"
+                  height={isMobile ? 50 : 60}
+                  tick={{
+                    fill: "#9ca3af",
+                    fontSize: isMobile ? 6 : 8,
+                  }}
                 />
-              ))}
+                <YAxis
+                  tick={{
+                    fill: "#9ca3af",
+                    fontSize: isMobile ? 6 : 8,
+                  }}
+                  axisLine={{ stroke: "#374151" }}
+                  tickFormatter={(value) =>
+                    isMobile
+                      ? `$${(value / 1000).toFixed(0)}k`
+                      : `$${value.toLocaleString()}`
+                  }
+                  width={isMobile ? 35 : 60}
+                />
+                <Tooltip content={<CustomTooltip />} />
 
-              {/* Línea de referencia del mes seleccionado */}
-              <ReferenceLine
-                x={selectedMonth}
-                stroke="#56595e"
-                strokeWidth={1}
-                strokeDasharray="3 3"
-              />
+                {/* Línea de referencia en 0% */}
+                <ReferenceLine
+                  y={0}
+                  stroke="#6b7280"
+                  strokeWidth={1}
+                  strokeDasharray="2 2"
+                />
 
-              {/* BRUSH */}
-              <Brush
-                dataKey="mes"
-                height={15}
-                stroke="#f6ff00"
-                fill="#1f2937"
-                travellerWidth={10}
-                startIndex={0}
-                endIndex={asistenciaDataForDisplay.length - 1}
-                style={{
-                  fontSize: "8px",
-                  marginTop: "2px",
-                }}
-              />
-            </RechartsLineChart>
-          </ResponsiveContainer>
-        </div>
+                {/* Líneas para cada programa */}
+                {viewConfig.lines.map((line) => (
+                  <Line
+                    key={line.key}
+                    type="monotone"
+                    dataKey={line.key}
+                    stroke={line.color}
+                    strokeWidth={isMobile ? 1.5 : line.strokeWidth}
+                    strokeDasharray={line.strokeDasharray}
+                    dot={{
+                      fill: line.color,
+                      strokeWidth: 1,
+                      r: isMobile ? 1.5 : 2,
+                    }}
+                    name={line.name}
+                  />
+                ))}
+
+                {/* Línea de referencia del mes seleccionado */}
+                <ReferenceLine
+                  x={selectedMonth}
+                  stroke="#56595e"
+                  strokeWidth={1}
+                  strokeDasharray="3 3"
+                />
+
+                {/* BRUSH - Solo en desktop */}
+                {!isMobile && (
+                  <Brush
+                    dataKey="mes"
+                    height={15}
+                    stroke="#f6ff00"
+                    fill="#1f2937"
+                    travellerWidth={10}
+                    startIndex={0}
+                    endIndex={asistenciaDataForDisplay.length - 1}
+                    style={{
+                      fontSize: "8px",
+                      marginTop: "2px",
+                    }}
+                  />
+                )}
+              </RechartsLineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
 
         {/* Cards container */}
-        <div className="flex-1 flex flex-col">
-          {/* Carousel container */}
-          <div className="flex gap-4 overflow-x-auto md:grid md:grid-cols-5 snap-x snap-mandatory scroll-smooth">
-            {viewConfig.cards.map((line) => {
-              const variacionActual = selectedData
-                ? selectedData[`${line.key}_${variationType}`]
-                : 0;
+        {(!isMobile || viewMode === "cards") && (
+          <div className="flex-1 flex flex-col">
+            {/* Carousel container */}
+            <div
+              className={`gap-2 sm:gap-4 ${
+                isMobile
+                  ? "grid grid-cols-1 space-y-2"
+                  : "flex overflow-x-auto md:grid md:grid-cols-5 snap-x snap-mandatory scroll-smooth"
+              }`}
+            >
+              {viewConfig.cards.map((line) => {
+                const variacionActual = selectedData
+                  ? selectedData[`${line.key}_${variationType}`]
+                  : 0;
 
-              return (
-                <div
-                  key={line.key}
-                  className="min-w-[85vw] shrink-0 md:min-w-0 relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 p-4 shadow-lg border border-gray-700/50 snap-center"
-                >
-                  <div className="relative z-10 flex h-full flex-col justify-between gap-4">
-                    <div className="space-y-2">
-                      <h3
-                        className="text-sm font-medium"
-                        style={{ color: line.color }}
+                return (
+                  <div
+                    key={line.key}
+                    className={`relative overflow-hidden rounded-xl bg-gradient-to-b from-gray-800 to-gray-900 shadow-lg border border-gray-700/50 ${
+                      isMobile
+                        ? "p-3"
+                        : "min-w-[85vw] shrink-0 md:min-w-0 p-4 snap-center"
+                    }`}
+                  >
+                    <div
+                      className={`relative z-10 flex h-full flex-col justify-between ${
+                        isMobile ? "gap-2" : "gap-4"
+                      }`}
+                    >
+                      <div
+                        className={`${isMobile ? "space-y-1" : "space-y-2"}`}
                       >
-                        {line.name}
-                      </h3>
-                      <div className="text-2xl font-bold text-white">
-                        $
-                        {selectedData
-                          ? selectedData[`${line.key}_valor`].toLocaleString()
-                          : "N/A"}
+                        <h3
+                          className={`font-medium ${
+                            isMobile ? "text-xs" : "text-sm"
+                          }`}
+                          style={{ color: line.color }}
+                        >
+                          {line.name}
+                        </h3>
+                        <div
+                          className={`font-bold text-white ${
+                            isMobile ? "text-lg" : "text-2xl"
+                          }`}
+                        >
+                          $
+                          {selectedData
+                            ? selectedData[`${line.key}_valor`].toLocaleString()
+                            : "N/A"}
+                        </div>
+                      </div>
+                      <div
+                        className={`text-gray-400 flex items-center gap-2 ${
+                          isMobile ? "text-xs" : "text-xs"
+                        }`}
+                      >
+                        <div
+                          className={`rounded-full ${
+                            isMobile ? "w-2 h-2" : "w-3 h-3"
+                          }`}
+                          style={{ backgroundColor: line.color }}
+                        />
+                        <span>
+                          Variación {variationType}:{" "}
+                          {selectedData
+                            ? (variacionActual > 0 ? "+" : "") +
+                              variacionActual +
+                              "%"
+                            : "N/A"}
+                        </span>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-400 flex items-center gap-2">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: line.color }}
-                      />
-                      <span>
-                        Variación {variationType}:{" "}
-                        {selectedData
-                          ? (variacionActual > 0 ? "+" : "") +
-                            variacionActual +
-                            "%"
-                          : "N/A"}
-                      </span>
-                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
