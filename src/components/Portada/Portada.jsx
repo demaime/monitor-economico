@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Fade } from "react-awesome-reveal";
 import {
   FaArrowUp,
@@ -11,6 +11,9 @@ import {
   FaShoppingBag,
   FaBolt,
   FaHandsHelping,
+  FaEllipsisH,
+  FaTimes,
+  FaChevronRight,
 } from "react-icons/fa";
 import { Activity } from "lucide-react";
 import Link from "next/link";
@@ -24,6 +27,13 @@ export default function Portada({ data }) {
   const [emaeData, setEmaeData] = useState(null);
   const [emaeLoading, setEmaeLoading] = useState(true);
 
+  // Hook para detectar mobile - debe estar al inicio
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Estado para rotación de cards en mobile
+  const [currentMobileSet, setCurrentMobileSet] = useState(0);
+  const [showAllCategories, setShowAllCategories] = useState(false);
+
   // Alternar entre variación mensual e interanual cada 5 segundos
   useEffect(() => {
     const interval = setInterval(() => {
@@ -32,6 +42,19 @@ export default function Portada({ data }) {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Rotación automática de cards en mobile cada 4 segundos
+  useEffect(() => {
+    if (isMobile && !showAllCategories) {
+      // Solo rotar si el modal NO está abierto
+      const mobileSets = getMobileSets();
+      const interval = setInterval(() => {
+        setCurrentMobileSet((prev) => (prev + 1) % mobileSets.length);
+      }, 4000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isMobile, showAllCategories]); // Agregar showAllCategories como dependencia
 
   // Obtener datos del dólar actual y histórico
   useEffect(() => {
@@ -85,6 +108,17 @@ export default function Portada({ data }) {
     };
 
     fetchEmaeData();
+  }, []);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
 
   // Configuración de categorías con sus datos correspondientes
@@ -164,6 +198,15 @@ export default function Portada({ data }) {
       link: "#asistencia",
     },
   ];
+
+  // Dividir categorías en grupos de 4 para mobile
+  const getMobileSets = () => {
+    const sets = [];
+    for (let i = 0; i < categories.length; i += 4) {
+      sets.push(categories.slice(i, i + 4));
+    }
+    return sets;
+  };
 
   // Función para obtener el último valor disponible
   const getLatestValue = (dataArray) => {
@@ -332,6 +375,66 @@ export default function Portada({ data }) {
     }
   };
 
+  // Componente modal para mostrar todas las categorías - Memoizado para evitar re-renders
+  const AllCategoriesModal = useMemo(() => {
+    if (!showAllCategories) return null;
+
+    return (
+      <AnimatePresence>
+        <motion.div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowAllCategories(false)}
+        >
+          <motion.div
+            className="bg-gray-800 rounded-xl max-w-md w-full max-h-[80vh] overflow-y-auto"
+            initial={{ scale: 0.9, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.9, y: 20 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <h3 className="text-lg font-bold text-white">
+                Todos los indicadores
+              </h3>
+              <button
+                onClick={() => setShowAllCategories(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Lista de categorías */}
+            <div className="p-2">
+              {categories.map((category) => {
+                const IconComponent = category.icon;
+                return (
+                  <Link key={category.id} href={category.link}>
+                    <motion.div
+                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer group"
+                      whileHover={{ x: 4 }}
+                      onClick={() => setShowAllCategories(false)}
+                    >
+                      <IconComponent className="w-5 h-5 text-gray-400 group-hover:text-orange-custom transition-colors" />
+                      <span className="flex-1 text-white font-medium">
+                        {category.name}
+                      </span>
+                      <FaChevronRight className="w-4 h-4 text-gray-500 group-hover:text-orange-custom transition-colors" />
+                    </motion.div>
+                  </Link>
+                );
+              })}
+            </div>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
+    );
+  }, [showAllCategories]); // Solo re-renderizar cuando cambie showAllCategories
+
   // Componente de loader para cards
   const CardLoader = ({ category }) => {
     const IconComponent = category.icon;
@@ -339,7 +442,11 @@ export default function Portada({ data }) {
     return (
       <div
         className="bg-gray-800/80 backdrop-blur-sm border border-gray-700 rounded-xl shadow-lg relative overflow-hidden"
-        style={{ height: "160px", width: "260px", maxWidth: "100%" }}
+        style={{
+          height: isMobile ? "140px" : "160px",
+          width: isMobile ? "140px" : "260px",
+          maxWidth: "100%",
+        }}
       >
         <div className="h-full flex flex-col justify-between p-2 sm:p-3 lg:p-4 animate-pulse">
           {/* Header - altura fija */}
@@ -404,7 +511,11 @@ export default function Portada({ data }) {
       <Link href={category.link}>
         <motion.div
           className="bg-gray-800/80 backdrop-blur-sm border border-gray-700 hover:border-orange-custom rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden text-white group"
-          style={{ height: "160px", width: "260px", maxWidth: "100%" }}
+          style={{
+            height: isMobile ? "140px" : "160px",
+            width: isMobile ? "140px" : "260px",
+            maxWidth: "100%",
+          }}
           whileHover={{
             scale: 1.02,
             y: -4,
@@ -428,7 +539,11 @@ export default function Portada({ data }) {
               >
                 <IconComponent className="text-base sm:text-lg lg:text-xl text-gray-400 group-hover:text-orange-custom transition-colors duration-300 flex-shrink-0" />
               </motion.div>
-              <h3 className="font-semibold text-xs sm:text-sm lg:text-base text-gray-200 truncate">
+              <h3
+                className={`font-semibold text-gray-200 truncate ${
+                  isMobile ? "text-xs" : "text-xs sm:text-sm lg:text-base"
+                }`}
+              >
                 {category.shortName}
               </h3>
             </div>
@@ -447,9 +562,11 @@ export default function Portada({ data }) {
                   >
                     {/* Variación principal */}
                     <div
-                      className={`flex items-center justify-center space-x-1 sm:space-x-2 text-base sm:text-lg lg:text-xl xl:text-2xl font-bold mb-1 ${
-                        variation >= 0 ? "text-red-400" : "text-green-400"
-                      }`}
+                      className={`flex items-center justify-center space-x-1 font-bold mb-1 ${
+                        isMobile
+                          ? "text-sm"
+                          : "text-base sm:text-lg lg:text-xl xl:text-2xl"
+                      } ${variation >= 0 ? "text-red-400" : "text-green-400"}`}
                     >
                       {variation >= 0 ? (
                         <FaArrowUp className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 flex-shrink-0" />
@@ -459,9 +576,17 @@ export default function Portada({ data }) {
                       <span>{Math.abs(variation).toFixed(1)}%</span>
                     </div>
                     {/* Tipo de variación */}
-                    <div className="text-xs text-gray-400">
+                    <div
+                      className={`text-gray-400 ${
+                        isMobile ? "text-xs" : "text-xs"
+                      }`}
+                    >
                       {variationType === "mensual"
-                        ? "Intermensual"
+                        ? isMobile
+                          ? "Intermens."
+                          : "Intermensual"
+                        : isMobile
+                        ? "Interanual"
                         : "Interanual"}
                     </div>
                   </motion.div>
@@ -578,29 +703,118 @@ export default function Portada({ data }) {
           </AnimatePresence>
         </motion.div>
 
-        {/* Grid de cards responsive - optimizado para 9 elementos */}
+        {/* Grid de cards responsive - optimizado para mobile */}
         <div className="w-full">
+          {/* Grid principal */}
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 justify-items-center place-content-center"
+            className={`grid gap-3 sm:gap-4 lg:gap-5 justify-items-center place-content-center ${
+              isMobile
+                ? "grid-cols-2 max-w-lg mx-auto"
+                : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3"
+            }`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            {categories.map((category, index) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.5,
-                  delay: index * 0.1,
-                  ease: "easeOut",
-                }}
-              >
-                <IndicatorCard category={category} />
-              </motion.div>
-            ))}
+            {isMobile ? (
+              // Vista mobile con rotación
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentMobileSet}
+                  className="contents"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {(getMobileSets()[currentMobileSet] || []).map(
+                    (category, index) => (
+                      <motion.div
+                        key={category.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.4,
+                          delay: index * 0.1,
+                          ease: "easeOut",
+                        }}
+                      >
+                        <IndicatorCard category={category} />
+                      </motion.div>
+                    )
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            ) : (
+              // Vista desktop sin rotación
+              categories.map((category, index) => (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: index * 0.1,
+                    ease: "easeOut",
+                  }}
+                >
+                  <IndicatorCard category={category} />
+                </motion.div>
+              ))
+            )}
           </motion.div>
+
+          {/* Indicadores de rotación y botón "Ver todos" solo en mobile */}
+          {isMobile && (
+            <motion.div
+              className="mt-4 flex flex-col items-center space-y-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              {/* Indicadores de sets (dots) */}
+              <div className="flex items-center space-x-2">
+                {getMobileSets().map((_, index) => (
+                  <motion.button
+                    key={index}
+                    className={`relative w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentMobileSet
+                        ? "bg-orange-custom scale-125"
+                        : "bg-gray-600 hover:bg-gray-500"
+                    }`}
+                    onClick={() => setCurrentMobileSet(index)}
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    {/* Indicador de progreso para el dot activo */}
+                    {index === currentMobileSet && !showAllCategories && (
+                      <motion.div
+                        className="absolute inset-0 rounded-full border-2 border-orange-custom/30"
+                        initial={{ scale: 1 }}
+                        animate={{ scale: [1, 1.8, 1] }}
+                        transition={{
+                          duration: 4,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
+                      />
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+
+              {/* Botón Ver todos */}
+              <motion.button
+                className="bg-gray-800/80 backdrop-blur-sm border border-gray-700 hover:border-orange-custom rounded-xl px-6 py-3 text-white font-medium text-sm flex items-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowAllCategories(true)}
+              >
+                <FaEllipsisH className="w-4 h-4" />
+                <span>Ver todos los indicadores</span>
+              </motion.button>
+            </motion.div>
+          )}
         </div>
 
         {/* Nota compacta sobre actualización */}
@@ -613,6 +827,9 @@ export default function Portada({ data }) {
           <p>Última sincronización: {new Date().toLocaleString()}</p>
         </motion.div>
       </div>
+
+      {/* Modal de todas las categorías */}
+      {AllCategoriesModal}
     </section>
   );
 }
