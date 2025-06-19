@@ -6,6 +6,7 @@ import Loader from "@/components/Loader/Loader";
 import { Fade, Zoom } from "react-awesome-reveal";
 import Portada from "@/components/Portada/Portada";
 import Dolar from "@/components/Dolar/Dolar";
+import EMAE from "@/components/EMAE/EMAE";
 import Transporte from "@/components/Transporte/Transporte";
 import Alquileres from "@/components/Alquileres/Alquileres";
 import ConsumosCotidianos from "@/components/ConsumosCotidianos/ConsumosCotidianos";
@@ -222,6 +223,7 @@ export default function Home() {
             months={data.meses}
           />
           <Dolar months={data.meses} />
+          <EMAE />
           <Transporte
             data={{
               publico: {
