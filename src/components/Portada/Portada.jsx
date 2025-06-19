@@ -266,14 +266,14 @@ export default function Portada({ data }) {
 
     return (
       <div
-        className="bg-gray-800 border border-gray-700 rounded-xl shadow-lg relative overflow-hidden"
-        style={{ height: "208px", width: "100%" }}
+        className="bg-gray-800/80 backdrop-blur-sm border border-gray-700 rounded-xl shadow-lg relative overflow-hidden"
+        style={{ height: "180px", width: "100%" }}
       >
-        <div className="h-full flex flex-col justify-between p-6 animate-pulse">
+        <div className="h-full flex flex-col justify-between p-3 sm:p-4 lg:p-5 animate-pulse">
           {/* Header - altura fija */}
-          <div className="flex items-center space-x-3 h-8">
-            <IconComponent className="text-xl text-gray-600 flex-shrink-0" />
-            <h3 className="font-semibold text-base text-gray-400 truncate">
+          <div className="flex items-center space-x-2 sm:space-x-3 h-6 sm:h-8">
+            <IconComponent className="text-base sm:text-lg lg:text-xl text-gray-600 flex-shrink-0" />
+            <h3 className="font-semibold text-xs sm:text-sm lg:text-base text-gray-400 truncate">
               {category.shortName}
             </h3>
           </div>
@@ -281,19 +281,19 @@ export default function Portada({ data }) {
           {/* Variación - área principal */}
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <div className="bg-gray-700 rounded h-10 w-24 mx-auto mb-2"></div>
-              <div className="bg-gray-700 rounded h-3 w-16 mx-auto"></div>
+              <div className="bg-gray-700 rounded h-6 sm:h-8 lg:h-10 w-16 sm:w-20 lg:w-24 mx-auto mb-2"></div>
+              <div className="bg-gray-700 rounded h-2 sm:h-3 w-10 sm:w-12 lg:w-16 mx-auto"></div>
             </div>
           </div>
 
           {/* Valor y fecha - altura fija */}
-          <div className="text-center h-12">
-            <div className="bg-gray-700 rounded h-5 w-20 mx-auto mb-1"></div>
-            <div className="bg-gray-700 rounded h-3 w-16 mx-auto"></div>
+          <div className="text-center h-8 sm:h-10 lg:h-12">
+            <div className="bg-gray-700 rounded h-3 sm:h-4 lg:h-5 w-12 sm:w-16 lg:w-20 mx-auto mb-1"></div>
+            <div className="bg-gray-700 rounded h-2 sm:h-3 w-8 sm:w-12 lg:w-16 mx-auto"></div>
           </div>
         </div>
 
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent opacity-10 transform -skew-x-12 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600/10 to-transparent transform -skew-x-12 animate-pulse"></div>
       </div>
     );
   };
@@ -321,8 +321,8 @@ export default function Portada({ data }) {
     return (
       <Link href={category.link}>
         <motion.div
-          className="bg-gray-800 border border-gray-700 hover:border-orange-500 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden text-white"
-          style={{ height: "208px", width: "100%" }}
+          className="bg-gray-800/80 backdrop-blur-sm border border-gray-700 hover:border-orange-custom rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden text-white group"
+          style={{ height: "180px", width: "100%" }}
           whileHover={{
             scale: 1.02,
             y: -4,
@@ -332,21 +332,21 @@ export default function Portada({ data }) {
         >
           {/* Efecto de brillo en hover */}
           <motion.div
-            className="absolute inset-0 bg-orange-500 opacity-0 hover:opacity-5 transition-opacity duration-300"
-            whileHover={{ opacity: 0.05 }}
+            className="absolute inset-0 bg-gradient-to-br from-orange-custom/10 to-gray-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            whileHover={{ opacity: 1 }}
           />
 
           {/* Layout con flex para control total */}
-          <div className="h-full flex flex-col justify-between p-6">
+          <div className="h-full flex flex-col justify-between p-3 sm:p-4 lg:p-5 relative z-10">
             {/* Header - altura fija */}
-            <div className="flex items-center space-x-3 h-8">
+            <div className="flex items-center space-x-2 sm:space-x-3 h-6 sm:h-8">
               <motion.div
                 whileHover={{ scale: 1.2, rotate: 10 }}
                 transition={{ duration: 0.2 }}
               >
-                <IconComponent className="text-xl text-gray-400 flex-shrink-0" />
+                <IconComponent className="text-base sm:text-lg lg:text-xl text-gray-400 group-hover:text-orange-custom transition-colors duration-300 flex-shrink-0" />
               </motion.div>
-              <h3 className="font-semibold text-base text-gray-200 truncate">
+              <h3 className="font-semibold text-xs sm:text-sm lg:text-base text-gray-200 truncate">
                 {category.shortName}
               </h3>
             </div>
@@ -365,14 +365,14 @@ export default function Portada({ data }) {
                   >
                     {/* Variación principal */}
                     <div
-                      className={`flex items-center justify-center space-x-2 text-3xl font-bold mb-1 ${
+                      className={`flex items-center justify-center space-x-1 sm:space-x-2 text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold mb-1 ${
                         variation >= 0 ? "text-red-400" : "text-green-400"
                       }`}
                     >
                       {variation >= 0 ? (
-                        <FaArrowUp className="w-5 h-5 flex-shrink-0" />
+                        <FaArrowUp className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 flex-shrink-0" />
                       ) : (
-                        <FaArrowDown className="w-5 h-5 flex-shrink-0" />
+                        <FaArrowDown className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 flex-shrink-0" />
                       )}
                       <span>{Math.abs(variation).toFixed(1)}%</span>
                     </div>
@@ -385,7 +385,7 @@ export default function Portada({ data }) {
                   </motion.div>
                 ) : (
                   <motion.div
-                    className="text-2xl font-bold text-gray-500"
+                    className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-500"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -398,11 +398,11 @@ export default function Portada({ data }) {
             </div>
 
             {/* Valor y fecha - altura fija */}
-            <div className="text-center h-12">
+            <div className="text-center h-8 sm:h-10 lg:h-12">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`${category.id}-value-${latestValue}`}
-                  className="text-base font-medium text-gray-300"
+                  className="text-xs sm:text-sm lg:text-base font-medium text-gray-300"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -423,15 +423,22 @@ export default function Portada({ data }) {
 
   if (!data) {
     return (
-      <section className="bg-gray-900 min-h-screen">
-        <Fade className="w-full h-20">
-          <div className="w-full h-full text-orange-custom font-semibold center-flex-col text-lg border-b-2 border-white">
-            MONITOR INDICADORES ECONOMICOS
+      <section className="min-h-screen bg-gray-900 relative overflow-hidden">
+        {/* Background decorativo */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 -left-4 w-72 h-72 bg-orange-custom rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute top-0 -right-4 w-72 h-72 bg-gray-600 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-orange-custom rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        </div>
+
+        <Fade className="w-full">
+          <div className="w-full text-orange-custom font-bold text-center text-lg sm:text-xl lg:text-2xl py-4 sm:py-6">
+            Monitor Indicadores Económicos
           </div>
         </Fade>
-        <div className="center-flex-col text-white p-8">
+        <div className="flex flex-col items-center justify-center text-white p-6 sm:p-8 min-h-96">
           <motion.div
-            className="text-lg"
+            className="text-base sm:text-lg"
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
@@ -443,43 +450,45 @@ export default function Portada({ data }) {
   }
 
   return (
-    <section className="bg-gray-900 min-h-screen">
-      <Fade className="w-full h-20">
-        <div className="w-full h-full text-orange-custom font-semibold center-flex-col text-lg border-b-2 border-white">
-          MONITOR INDICADORES ECONOMICOS
+    <section className="min-h-screen bg-gray-900 relative overflow-hidden">
+      {/* Background decorativo */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-orange-custom rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-gray-600 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-orange-custom rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+      </div>
+
+      {/* Header simplificado */}
+      <Fade className="w-full relative z-10">
+        <div className="w-full text-orange-custom font-bold text-center text-lg sm:text-xl lg:text-3xl py-4 sm:py-6">
+          Monitor Indicadores Económicos
         </div>
       </Fade>
 
-      <div className="p-8">
-        {/* Título y descripción */}
+      {/* Contenido principal */}
+      <div className="relative z-10 p-3 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
+        {/* Título compacto con indicador de variación */}
         <motion.div
-          className="text-center mb-8"
+          className="text-center mb-4 sm:mb-6 lg:mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Tablero de Indicadores Económicos
-          </h1>
-          <p className="text-gray-400 text-lg">
-            Monitoreo en tiempo real de los principales indicadores económicos
-            argentinos
-          </p>
           <AnimatePresence mode="wait">
             <motion.div
               key={variationType}
-              className="mt-2 text-sm text-gray-500"
+              className="text-sm sm:text-base lg:text-lg text-gray-300 font-medium"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
             >
-              Mostrando variación{" "}
-              {variationType === "mensual" ? "intermensual" : "interanual"}
+              Variación{" "}
+              {variationType === "mensual" ? "Intermensual" : "Interanual"}
               <motion.span
-                className="ml-2 text-orange-500"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
+                className="ml-2 text-orange-custom"
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
               >
                 ●
               </motion.span>
@@ -487,10 +496,10 @@ export default function Portada({ data }) {
           </AnimatePresence>
         </motion.div>
 
-        {/* Grid de cards */}
-        <div className="max-w-6xl mx-auto">
+        {/* Grid de cards responsive */}
+        <div className="w-full">
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -512,14 +521,13 @@ export default function Portada({ data }) {
           </motion.div>
         </div>
 
-        {/* Nota sobre actualización */}
+        {/* Nota compacta sobre actualización */}
         <motion.div
-          className="text-center mt-12 text-gray-500 text-sm"
+          className="text-center mt-6 sm:mt-8 lg:mt-12 text-gray-500 text-xs sm:text-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 1 }}
         >
-          <p>Datos actualizados desde Google Sheets</p>
           <p>Última sincronización: {new Date().toLocaleString()}</p>
         </motion.div>
       </div>
