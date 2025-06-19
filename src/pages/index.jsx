@@ -12,6 +12,7 @@ import Alquileres from "@/components/Alquileres/Alquileres";
 import ConsumosCotidianos from "@/components/ConsumosCotidianos/ConsumosCotidianos";
 import Servicios from "@/components/Servicios/Servicios";
 import AsistenciaSocial from "@/components/AsistenciaSocial/AsistenciaSocial";
+import BackToTopButton from "@/components/BackToTopButton/BackToTopButton";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -151,149 +152,172 @@ export default function Home() {
     <div className="full-container">
       {data.meses && (
         <>
-          <Portada data={data} />
-          <Inflacion
-            data={{
-              nacional: {
-                general: data.inflacionNacional,
-                apertura: {
-                  alimentos: data.alimentosNacional,
-                  bebidas: data.bebidasNacional,
-                  indumentaria: data.indumentariaNacional,
-                  vivienda: data.viviendaNacional,
-                  equipamiento: data.equipamientoNacional,
-                  salud: data.saludNacional,
-                  transporte: data.transporteNacional,
-                  comunicacion: data.comunicacionNacional,
-                  recreacion: data.recreacionNacional,
-                  educacion: data.educacionNacional,
-                  restaurantes: data.restaurantesNacional,
-                  bienesServicios: data.bienesServiciosNacional,
+          <section id="inicio">
+            <Portada data={data} />
+          </section>
+          <section id="inflacion">
+            <Inflacion
+              data={{
+                nacional: {
+                  general: data.inflacionNacional,
+                  apertura: {
+                    alimentos: data.alimentosNacional,
+                    bebidas: data.bebidasNacional,
+                    indumentaria: data.indumentariaNacional,
+                    vivienda: data.viviendaNacional,
+                    equipamiento: data.equipamientoNacional,
+                    salud: data.saludNacional,
+                    transporte: data.transporteNacional,
+                    comunicacion: data.comunicacionNacional,
+                    recreacion: data.recreacionNacional,
+                    educacion: data.educacionNacional,
+                    restaurantes: data.restaurantesNacional,
+                    bienesServicios: data.bienesServiciosNacional,
+                  },
                 },
-              },
-              caba: {
-                general: data.inflacionCaba,
-                apertura: {
-                  alimentos: data.alimentosCaba,
-                  bebidas: data.bebidasCaba,
-                  indumentaria: data.indumentariaCaba,
-                  vivienda: data.viviendaCaba,
-                  equipamiento: data.equipamientoCaba,
-                  salud: data.saludCaba,
-                  transporte: data.transporteCaba,
-                  comunicacion: data.comunicacionCaba,
-                  recreacion: data.recreacionCaba,
-                  educacion: data.educacionCaba,
-                  restaurantes: data.restaurantesCaba,
-                  seguros: data.segurosCaba,
-                  cuidadoPersonal: data.cuidadoPersonalCaba,
+                caba: {
+                  general: data.inflacionCaba,
+                  apertura: {
+                    alimentos: data.alimentosCaba,
+                    bebidas: data.bebidasCaba,
+                    indumentaria: data.indumentariaCaba,
+                    vivienda: data.viviendaCaba,
+                    equipamiento: data.equipamientoCaba,
+                    salud: data.saludCaba,
+                    transporte: data.transporteCaba,
+                    comunicacion: data.comunicacionCaba,
+                    recreacion: data.recreacionCaba,
+                    educacion: data.educacionCaba,
+                    restaurantes: data.restaurantesCaba,
+                    seguros: data.segurosCaba,
+                    cuidadoPersonal: data.cuidadoPersonalCaba,
+                  },
                 },
-              },
-            }}
-            months={data.meses}
-          />
-          <CanastaSalario
-            data={{
-              nacional: {
-                individual: {
-                  basica: data.cbaIndividualNacional,
-                  total: data.cbtIndividualNacional,
+              }}
+              months={data.meses}
+            />
+          </section>
+          <section id="canasta">
+            <CanastaSalario
+              data={{
+                nacional: {
+                  individual: {
+                    basica: data.cbaIndividualNacional,
+                    total: data.cbtIndividualNacional,
+                  },
+                  familiar: {
+                    basica: data.cbaFamiliarNacional,
+                    total: data.cbtFamiliarNacional,
+                  },
                 },
-                familiar: {
-                  basica: data.cbaFamiliarNacional,
-                  total: data.cbtFamiliarNacional,
+                caba: {
+                  individual: {
+                    basica: data.cbaIndividualCaba,
+                    total: data.cbtIndividualCaba,
+                  },
+                  familiar: {
+                    basica: data.cbaFamiliarCaba,
+                    total: data.cbtFamiliarCaba,
+                  },
                 },
-              },
-              caba: {
-                individual: {
-                  basica: data.cbaIndividualCaba,
-                  total: data.cbtIndividualCaba,
+                smv: data.smv,
+                jubilaciones: {
+                  conBono: data.jubConBono,
+                  sinBono: data.jubSinBono,
                 },
-                familiar: {
-                  basica: data.cbaFamiliarCaba,
-                  total: data.cbtFamiliarCaba,
+              }}
+              months={data.meses}
+            />
+          </section>
+          <section id="dolar">
+            <Dolar months={data.meses} />
+          </section>
+          <section id="emae">
+            <EMAE />
+          </section>
+          <section id="transporte">
+            <Transporte
+              data={{
+                publico: {
+                  subte: data.subte,
+                  tren: data.tren,
+                  colectivo: data.colectivo,
                 },
-              },
-              smv: data.smv,
-              jubilaciones: {
-                conBono: data.jubConBono,
-                sinBono: data.jubSinBono,
-              },
-            }}
-            months={data.meses}
-          />
-          <Dolar months={data.meses} />
-          <EMAE />
-          <Transporte
-            data={{
-              publico: {
-                subte: data.subte,
-                tren: data.tren,
-                colectivo: data.colectivo,
-              },
-              particular: {
-                nafta: data.nafta,
-                peajes: {
-                  norte: data.peajeNorte,
-                  oeste: data.peajeOeste,
+                particular: {
+                  nafta: data.nafta,
+                  peajes: {
+                    norte: data.peajeNorte,
+                    oeste: data.peajeOeste,
+                  },
+                  patentamiento: {
+                    autos: data.patentamientoAutos,
+                    motos: data.patentamientoMotos,
+                  },
                 },
-                patentamiento: {
-                  autos: data.patentamientoAutos,
-                  motos: data.patentamientoMotos,
+              }}
+              months={data.meses}
+            />
+          </section>
+          <section id="alquileres">
+            <Alquileres
+              data={{
+                alquileres: {
+                  caba: data.alquilerCaba,
+                  norte: data.alquilerNorte,
+                  oesteSur: data.alquilerOesteSur,
                 },
-              },
-            }}
-            months={data.meses}
-          />
-          <Alquileres
-            data={{
-              alquileres: {
-                caba: data.alquilerCaba,
-                norte: data.alquilerNorte,
-                oesteSur: data.alquilerOesteSur,
-              },
-            }}
-            months={data.meses}
-          />
-          <ConsumosCotidianos
-            data={{
-              consumos: {
-                kiloPan: data.kiloPan,
-                litroLeche: data.litroLeche,
-                kiloYerba: data.kiloYerba,
-                litroCerveza: data.litroCerveza,
-                facturas: data.facturas,
-                kiloCarne: data.kiloCarne,
-                cocaCola: data.cocaCola,
-                fideos: data.fideos,
-              },
-            }}
-            months={data.meses}
-          />
-          <Servicios
-            data={{
-              gimnasio: data.gimnasio,
-              cine: data.cine,
-              libro: data.libro,
-              cortePeloHombre: data.cortePeloHombre,
-              cortePeloMujer: data.cortePeloMujer,
-            }}
-            months={data.meses}
-          />
-          <AsistenciaSocial
-            data={{
-              auh: data.auh,
-              auhTopeIndividual: data.auhTopeIndividual,
-              auhTopeGrupoFamiliar: data.auhTopeGrupoFamiliar,
-              becaProgresar: data.becaProgresar,
-              acompaniamientoSocial: data.acompaniamientoSocial,
-              seguroDesempleoMin: data.seguroDesempleoMin,
-              seguroDesempleoMax: data.seguroDesempleoMax,
-            }}
-            months={data.meses}
-          />
+              }}
+              months={data.meses}
+            />
+          </section>
+          <section id="consumos">
+            <ConsumosCotidianos
+              data={{
+                consumos: {
+                  kiloPan: data.kiloPan,
+                  litroLeche: data.litroLeche,
+                  kiloYerba: data.kiloYerba,
+                  litroCerveza: data.litroCerveza,
+                  facturas: data.facturas,
+                  kiloCarne: data.kiloCarne,
+                  cocaCola: data.cocaCola,
+                  fideos: data.fideos,
+                },
+              }}
+              months={data.meses}
+            />
+          </section>
+          <section id="servicios">
+            <Servicios
+              data={{
+                gimnasio: data.gimnasio,
+                cine: data.cine,
+                libro: data.libro,
+                cortePeloHombre: data.cortePeloHombre,
+                cortePeloMujer: data.cortePeloMujer,
+              }}
+              months={data.meses}
+            />
+          </section>
+          <section id="asistencia">
+            <AsistenciaSocial
+              data={{
+                auh: data.auh,
+                auhTopeIndividual: data.auhTopeIndividual,
+                auhTopeGrupoFamiliar: data.auhTopeGrupoFamiliar,
+                becaProgresar: data.becaProgresar,
+                acompaniamientoSocial: data.acompaniamientoSocial,
+                seguroDesempleoMin: data.seguroDesempleoMin,
+                seguroDesempleoMax: data.seguroDesempleoMax,
+              }}
+              months={data.meses}
+            />
+          </section>
         </>
       )}
+
+      {/* Botón flotante para volver al inicio */}
+      <BackToTopButton />
     </div>
   );
 }

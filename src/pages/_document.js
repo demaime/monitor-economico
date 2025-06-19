@@ -2,8 +2,49 @@ import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html lang="es">
       <Head>
+        <title>Monitor Indicadores Económicos</title>
+        <meta
+          name="description"
+          content="Monitor en tiempo real de indicadores económicos argentinos: inflación, dólar, EMAE, canasta básica y más."
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Monitor Indicadores Económicos" />
+        <meta
+          property="og:description"
+          content="📊 Seguí en tiempo real la inflación, dólar blue, EMAE, canasta básica y todos los indicadores económicos de Argentina"
+        />
+        <meta property="og:image" content="/logo.png" />
+        <meta
+          property="og:url"
+          content="https://monitor-economico.vercel.app"
+        />
+        <meta
+          property="og:site_name"
+          content="Monitor Indicadores Económicos"
+        />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Monitor Indicadores Económicos" />
+        <meta
+          name="twitter:description"
+          content="📊 Seguí en tiempo real la inflación, dólar blue, EMAE, canasta básica y todos los indicadores económicos de Argentina"
+        />
+        <meta name="twitter:image" content="/logo.png" />
+
+        {/* WhatsApp optimizado */}
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta
+          property="og:image:alt"
+          content="Monitor Indicadores Económicos - Dashboard"
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"

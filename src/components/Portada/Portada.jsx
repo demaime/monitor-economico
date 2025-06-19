@@ -12,6 +12,7 @@ import {
   FaBolt,
   FaHandsHelping,
 } from "react-icons/fa";
+import { Activity } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -20,6 +21,8 @@ export default function Portada({ data }) {
   const [dolarData, setDolarData] = useState(null);
   const [dolarHistorico, setDolarHistorico] = useState(null);
   const [dolarLoading, setDolarLoading] = useState(true);
+  const [emaeData, setEmaeData] = useState(null);
+  const [emaeLoading, setEmaeLoading] = useState(true);
 
   // Alternar entre variación mensual e interanual cada 5 segundos
   useEffect(() => {
@@ -61,6 +64,29 @@ export default function Portada({ data }) {
     fetchDolarData();
   }, []);
 
+  // Obtener datos del EMAE
+  useEffect(() => {
+    const fetchEmaeData = async () => {
+      try {
+        setEmaeLoading(true);
+        const response = await fetch(
+          "https://apis.datos.gob.ar/series/api/series/?ids=143.3_NO_PR_2004_A_21&limit=24&format=json"
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          setEmaeData(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching EMAE data:", error);
+      } finally {
+        setEmaeLoading(false);
+      }
+    };
+
+    fetchEmaeData();
+  }, []);
+
   // Configuración de categorías con sus datos correspondientes
   const categories = [
     {
@@ -78,6 +104,15 @@ export default function Portada({ data }) {
       icon: FaDollarSign,
       dataKey: "dolarBlue",
       link: "#dolar",
+      isExternal: true,
+    },
+    {
+      id: "emae",
+      name: "EMAE",
+      shortName: "EMAE",
+      icon: Activity,
+      dataKey: "emae",
+      link: "#emae",
       isExternal: true,
     },
     {
@@ -176,6 +211,19 @@ export default function Portada({ data }) {
       return "TIEMPO REAL";
     }
 
+    if (category.isExternal && category.id === "emae") {
+      if (emaeData && emaeData.length > 0) {
+        const latestData = emaeData[emaeData.length - 1];
+        const fecha = new Date(latestData[0]);
+        const mes = fecha
+          .toLocaleDateString("es-AR", { month: "short" })
+          .toUpperCase();
+        const año = fecha.getFullYear();
+        return `${mes}/${año}`;
+      }
+      return "SIN FECHA";
+    }
+
     const categoryData = data?.[category.dataKey];
     const latestIndex = getLatestValueIndex(categoryData);
 
@@ -213,6 +261,28 @@ export default function Portada({ data }) {
     return Number(variation.toFixed(1));
   };
 
+  // Función para calcular variación del EMAE
+  const getEmaeVariation = (type) => {
+    if (!emaeData || emaeData.length < 2) return null;
+
+    const latestValue = Number(emaeData[emaeData.length - 1][1]);
+    let compareIndex;
+
+    if (type === "mensual") {
+      // Comparar con el mes anterior
+      compareIndex = emaeData.length - 2;
+    } else {
+      // Comparar con 12 meses atrás
+      compareIndex = emaeData.length - 13;
+    }
+
+    if (compareIndex < 0 || !emaeData[compareIndex]) return null;
+
+    const previousValue = Number(emaeData[compareIndex][1]);
+    const variation = ((latestValue - previousValue) / previousValue) * 100;
+    return Number(variation.toFixed(1));
+  };
+
   // Función para calcular variación
   const getVariation = (dataArray, type) => {
     if (!dataArray || dataArray.length < 2) return null;
@@ -247,6 +317,8 @@ export default function Portada({ data }) {
         return `${value.toFixed(1)}%`;
       case "dolar":
         return `$${value.toFixed(0)}`;
+      case "emae":
+        return `${value.toFixed(1)}`;
       case "canasta":
       case "alquileres":
       case "consumos":
@@ -267,9 +339,9 @@ export default function Portada({ data }) {
     return (
       <div
         className="bg-gray-800/80 backdrop-blur-sm border border-gray-700 rounded-xl shadow-lg relative overflow-hidden"
-        style={{ height: "180px", width: "100%" }}
+        style={{ height: "160px", width: "260px", maxWidth: "100%" }}
       >
-        <div className="h-full flex flex-col justify-between p-3 sm:p-4 lg:p-5 animate-pulse">
+        <div className="h-full flex flex-col justify-between p-2 sm:p-3 lg:p-4 animate-pulse">
           {/* Header - altura fija */}
           <div className="flex items-center space-x-2 sm:space-x-3 h-6 sm:h-8">
             <IconComponent className="text-base sm:text-lg lg:text-xl text-gray-600 flex-shrink-0" />
@@ -309,6 +381,16 @@ export default function Portada({ data }) {
       }
       latestValue = dolarData?.blue?.venta || null;
       variation = getDolarVariation(variationType);
+    } else if (category.isExternal && category.id === "emae") {
+      // Manejo especial para datos del EMAE
+      if (emaeLoading) {
+        return <CardLoader category={category} />;
+      }
+      latestValue =
+        emaeData && emaeData.length > 0
+          ? Number(emaeData[emaeData.length - 1][1])
+          : null;
+      variation = getEmaeVariation(variationType);
     } else {
       // Datos normales del Google Sheets
       categoryData = data?.[category.dataKey];
@@ -322,7 +404,7 @@ export default function Portada({ data }) {
       <Link href={category.link}>
         <motion.div
           className="bg-gray-800/80 backdrop-blur-sm border border-gray-700 hover:border-orange-custom rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden text-white group"
-          style={{ height: "180px", width: "100%" }}
+          style={{ height: "160px", width: "260px", maxWidth: "100%" }}
           whileHover={{
             scale: 1.02,
             y: -4,
@@ -337,7 +419,7 @@ export default function Portada({ data }) {
           />
 
           {/* Layout con flex para control total */}
-          <div className="h-full flex flex-col justify-between p-3 sm:p-4 lg:p-5 relative z-10">
+          <div className="h-full flex flex-col justify-between p-2 sm:p-3 lg:p-4 relative z-10">
             {/* Header - altura fija */}
             <div className="flex items-center space-x-2 sm:space-x-3 h-6 sm:h-8">
               <motion.div
@@ -365,7 +447,7 @@ export default function Portada({ data }) {
                   >
                     {/* Variación principal */}
                     <div
-                      className={`flex items-center justify-center space-x-1 sm:space-x-2 text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold mb-1 ${
+                      className={`flex items-center justify-center space-x-1 sm:space-x-2 text-base sm:text-lg lg:text-xl xl:text-2xl font-bold mb-1 ${
                         variation >= 0 ? "text-red-400" : "text-green-400"
                       }`}
                     >
@@ -460,16 +542,16 @@ export default function Portada({ data }) {
 
       {/* Header simplificado */}
       <Fade className="w-full relative z-10">
-        <div className="w-full text-orange-custom font-bold text-center text-lg sm:text-xl lg:text-3xl py-4 sm:py-6">
+        <div className="w-full text-orange-custom font-bold text-center text-lg sm:text-xl lg:text-2xl py-2 sm:py-3">
           Monitor Indicadores Económicos
         </div>
       </Fade>
 
       {/* Contenido principal */}
-      <div className="relative z-10 p-3 sm:p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto">
+      <div className="relative z-10 p-2 sm:p-3 lg:p-4 max-w-[1400px] mx-auto">
         {/* Título compacto con indicador de variación */}
         <motion.div
-          className="text-center mb-4 sm:mb-6 lg:mb-8"
+          className="text-center mb-3 sm:mb-4 lg:mb-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -496,10 +578,10 @@ export default function Portada({ data }) {
           </AnimatePresence>
         </motion.div>
 
-        {/* Grid de cards responsive */}
+        {/* Grid de cards responsive - optimizado para 9 elementos */}
         <div className="w-full">
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 justify-items-center place-content-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -523,7 +605,7 @@ export default function Portada({ data }) {
 
         {/* Nota compacta sobre actualización */}
         <motion.div
-          className="text-center mt-6 sm:mt-8 lg:mt-12 text-gray-500 text-xs sm:text-sm"
+          className="text-center mt-3 sm:mt-4 lg:mt-5 text-gray-500 text-xs"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 1 }}
