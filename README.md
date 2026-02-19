@@ -1,40 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Monitor Económico Argentina
 
-## Getting Started
+Dashboard interactivo de indicadores económicos argentinos con datos en tiempo real y evolución histórica. Permite visualizar inflación, tipo de cambio, actividad económica, canasta básica, transporte, alquileres, consumos cotidianos, servicios y programas de asistencia social.
 
-First, run the development server:
+**[Ver sitio en vivo](https://monitor-economico.vercel.app)**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tecnologías
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **[Next.js 15](https://nextjs.org/)** — Framework React con Pages Router y Turbopack
+- **[Tailwind CSS](https://tailwindcss.com/)** — Estilos utilitarios
+- **[Recharts](https://recharts.org/)** — Gráficos interactivos
+- **[Framer Motion](https://www.framer.com/motion/)** — Animaciones
+- **[Google Sheets API](https://developers.google.com/sheets/api)** — Fuente de datos principal
+- **[DolarAPI](https://dolarapi.com/)** — Cotizaciones del dólar en tiempo real
+- **[APIs datos.gob.ar](https://datos.gob.ar/)** — Datos oficiales de actividad económica
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Fuentes de datos
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+| Fuente                                             | Uso                                                                                 |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Google Sheets API                                  | Indicadores económicos generales (inflación, canasta, transporte, alquileres, etc.) |
+| [DolarAPI](https://dolarapi.com/)                  | Cotizaciones del dólar en tiempo real                                               |
+| [Argentina Datos API](https://argentinadatos.com/) | Cotizaciones históricas del dólar                                                   |
+| [datos.gob.ar](https://datos.gob.ar/)              | EMAE y series de actividad económica                                                |
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+## Características
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Tema oscuro con diseño responsivo mobile-first
+- PWA instalable con soporte offline via Service Worker
+- Scroll snap entre secciones a pantalla completa
+- Actualización automática de cotizaciones cada 5 minutos
+- Gráficos interactivos con tooltips
+- Animaciones de entrada al hacer scroll
+- Manejo de errores y reintentos para APIs con rate limiting
 
-## Learn More
+## Secciones
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+| Sección                 | Descripción                                                                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Inflación**           | Variación mensual, anual y acumulada a nivel nacional y CABA, con desglose por categoría (alimentos, indumentaria, vivienda, etc.) |
+| **Dólar**               | Cotizaciones en vivo (Oficial, Blue, MEP, CCL, Tarjeta, Mayorista) con actualización cada 5 minutos y evolución histórica          |
+| **EMAE**                | Estimador Mensual de Actividad Económica con 16+ sectores y evolución de los últimos 24 meses                                      |
+| **Canasta y Salario**   | Canasta básica alimentaria y total (individual/familiar), salario mínimo y jubilaciones                                            |
+| **Transporte**          | Costos de transporte público (subte, tren, colectivo) y privado (nafta, peajes, patente)                                           |
+| **Alquileres**          | Precios de alquiler por zona: CABA, Zona Norte, Zona Oeste-Sur                                                                     |
+| **Consumos cotidianos** | Precios de productos de consumo diario (pan, leche, yerba, cerveza, etc.)                                                          |
+| **Servicios**           | Precios de gimnasio, cine, libros, peluquería                                                                                      |
+| **Asistencia social**   | Programas sociales: AUH, becas, seguro de desempleo                                                                                |
