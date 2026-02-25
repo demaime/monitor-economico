@@ -3,13 +3,9 @@ import { readFileSync } from "fs";
 import path from "path";
 
 export default async function handler(req, res) {
-  // Cargar las credenciales del archivo JSON desde la variable de entorno
   const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
-
-  // Reemplaza las secuencias `\n` en `private_key` por saltos de línea reales
   credentials.private_key = credentials.private_key.replace(/\\n/g, "\n");
 
-  // Autenticación
   const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
@@ -114,7 +110,6 @@ export default async function handler(req, res) {
   };
 
   try {
-    // Obtener todos los rangos en una única solicitud
     const response = await sheets.spreadsheets.values.batchGet({
       spreadsheetId,
       ranges: Object.values(ranges),
@@ -132,20 +127,17 @@ export default async function handler(req, res) {
       const rows = range.values;
 
       if (Array.isArray(rows) && rows.length) {
-        // Filtramos celdas vacías y tomamos los últimos 24 valores
         const filteredData = rows[0].filter((cell) => {
           if (typeof cell === "number") return true;
           if (typeof cell === "string") return cell.trim() !== "";
           return cell !== null && cell !== undefined;
         });
-        // Obtener los últimos 24 valores para todos los campos
         data[key] = filteredData.slice(-24);
       } else {
         data[key] = [];
       }
     });
 
-    // Crear el array de objetos mes+año
     if (data.meses && data.año) {
       data.meses = data.meses.map((mes, index) => ({
         id: `${data.año[index]}${mes}`,
@@ -162,7 +154,6 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("Error fetching data from Google Sheets:", error);
 
-    // Mejorar el manejo de errores específicos
     if (error.code === 429) {
       res.status(429).json({
         error: "Rate limit exceeded",

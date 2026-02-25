@@ -24,9 +24,8 @@ export default function EmaeEvolutivo({
   selectedMonth,
   seriesConfig,
 }) {
-  // Estado para mobile y vista
   const [isMobile, setIsMobile] = useState(false);
-  const [viewMode, setViewMode] = useState("cards"); // "cards" o "chart"
+  const [viewMode, setViewMode] = useState("cards");
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -47,29 +46,12 @@ export default function EmaeEvolutivo({
     );
   }
 
-  // Usar el array completo de 24 meses si está disponible, sino usar solo los 12 mostrados
   const fullMonthsArray = emaeData.fullMonthsArray || months;
-
-  // Preparar datos para el gráfico usando solo los últimos 12 meses
-  console.log("=== DEBUG CHART DATA ===");
-  console.log("emaeData keys:", Object.keys(emaeData));
-  console.log(
-    "General series length:",
-    emaeData["143.3_NO_PR_2004_A_21"]?.length
-  );
 
   const chartData = months.map((month, index) => {
     const generalSeriesData = emaeData["143.3_NO_PR_2004_A_21"];
-    // Corregir el cálculo del índice: usar directamente los últimos 12 elementos de la serie
     const fullArrayIndex = generalSeriesData.length - months.length + index;
     const value = generalSeriesData[fullArrayIndex];
-
-    console.log(`Month ${index} (${month.mes}):`, {
-      fullArrayIndex,
-      totalSeriesLength: generalSeriesData.length,
-      rawValue: value,
-      processedValue: value ? Number(value[1].toFixed(2)) : 0,
-    });
 
     return {
       mes: month.mes,
@@ -78,60 +60,25 @@ export default function EmaeEvolutivo({
     };
   });
 
-  // Encontrar datos del mes seleccionado
   const selectedIndex = chartData.findIndex(
     (item) => item.mes === selectedMonth
   );
   const selectedData = chartData[selectedIndex];
 
-  // Calcular variaciones
   let variacionMensual = 0;
   let variacionAnual = 0;
-
-  console.log("=== DEBUG EMAE EVOLUTIVO ===");
-  console.log("Mes seleccionado:", selectedMonth);
-  console.log(
-    "Months array:",
-    months.map((m) => m.mes)
-  );
-  console.log(
-    "Full months array:",
-    fullMonthsArray.map((m) => `${m.mes}-${m.año}`)
-  );
-  console.log("Selected data:", selectedData);
-  console.log("Selected index en months:", selectedIndex);
-
-  const selectedIndexInFull = fullMonthsArray.findIndex(
-    (m) => m.mes === selectedMonth
-  );
-  console.log("Selected index en fullMonthsArray:", selectedIndexInFull);
 
   if (selectedIndex > 0) {
     const valorActual = selectedData.valor;
     const valorAnterior = chartData[selectedIndex - 1].valor;
-    console.log(
-      "Variación mensual - Valor actual:",
-      valorActual,
-      "Valor anterior:",
-      valorAnterior
-    );
     if (valorAnterior !== 0) {
       variacionMensual = ((valorActual - valorAnterior) / valorAnterior) * 100;
     }
   }
 
-  // Para variación anual, calcular usando la serie original
   const generalSeriesData = emaeData["143.3_NO_PR_2004_A_21"];
   const currentIndexInSeries =
     generalSeriesData.length - months.length + selectedIndex;
-
-  console.log("Condiciones para var anual:", {
-    selectedIndexInFull,
-    fullMonthsArrayLength: fullMonthsArray.length,
-    currentIndexInSeries,
-    totalSeriesLength: generalSeriesData.length,
-    canCalculateAnnual: currentIndexInSeries >= 12,
-  });
 
   if (currentIndexInSeries >= 12) {
     const valorActual = selectedData.valor;
@@ -140,27 +87,10 @@ export default function EmaeEvolutivo({
       ? Number(annualPreviousValue[1])
       : 0;
 
-    console.log("Variación anual - Valor actual:", valorActual);
-    console.log(
-      "Valor hace 12 meses (índice",
-      currentIndexInSeries - 12,
-      "):",
-      valorAnualAnterior
-    );
-    console.log(
-      "Fecha hace 12 meses:",
-      annualPreviousValue ? annualPreviousValue[0] : "N/A"
-    );
-
     if (valorAnualAnterior !== 0) {
       variacionAnual =
         ((valorActual - valorAnualAnterior) / valorAnualAnterior) * 100;
-      console.log("Variación anual calculada:", variacionAnual);
     }
-  } else {
-    console.log(
-      "No se puede calcular variación anual - necesitamos al menos 12 meses de datos históricos"
-    );
   }
 
   const customTooltip = ({ active, payload, label }) => {

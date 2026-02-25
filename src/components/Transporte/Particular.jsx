@@ -214,7 +214,6 @@ export default function Particular({
     setActiveCard(activeIndex);
   };
 
-  // Función para obtener el próximo mes de informe de patentamientos
   const getNextPatentamientoReport = () => {
     const reportMonths = ["MARZO", "JUNIO", "SEPTIEMBRE", "DICIEMBRE"];
     const currentDate = new Date();

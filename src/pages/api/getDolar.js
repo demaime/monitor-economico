@@ -17,7 +17,6 @@ export default async function handler(req, res) {
 
     const formattedData = {};
 
-    // Realizar las llamadas una por una para mejor manejo de errores
     for (const endpoint of endpoints) {
       try {
         const response = await axios.get(endpoint.url, { timeout: 5000 });
@@ -41,7 +40,6 @@ export default async function handler(req, res) {
       }
     }
 
-    // Si no se pudo obtener ningún dato, devolver error
     if (Object.keys(formattedData).length === 0) {
       throw new Error("No se pudo obtener ningún dato de las APIs");
     }

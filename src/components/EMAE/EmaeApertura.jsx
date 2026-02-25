@@ -20,9 +20,8 @@ export default function EmaeApertura({
 }) {
   const [showVariations, setShowVariations] = useState(false);
 
-  // Estado para mobile y vista
   const [isMobile, setIsMobile] = useState(false);
-  const [viewMode, setViewMode] = useState("cards"); // "cards" o "chart"
+  const [viewMode, setViewMode] = useState("cards");
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -43,10 +42,7 @@ export default function EmaeApertura({
     );
   }
 
-  // Usar el array completo de 24 meses si está disponible
   const fullMonthsArray = emaeData.fullMonthsArray || months;
-
-  // Encontrar el índice del mes seleccionado
   const selectedIndex = months.findIndex(
     (month) => month.mes === selectedMonth
   );
@@ -54,20 +50,17 @@ export default function EmaeApertura({
     (m) => m.mes === selectedMonth
   );
 
-  // Preparar datos para el gráfico de barras
   const chartData = Object.keys(seriesConfig)
     .filter((id) => id !== "143.3_NO_PR_2004_A_21") // Excluir el índice general
     .map((seriesId) => {
       const seriesData = emaeData[seriesId];
       if (!seriesData || seriesData.length === 0) return null;
 
-      // Obtener el valor actual - usar directamente el índice en la serie original
       const currentIndexInSeries =
         seriesData.length - months.length + selectedIndex;
       const currentValue = seriesData[currentIndexInSeries];
       const valor = currentValue ? Number(currentValue[1].toFixed(2)) : 0;
 
-      // Calcular variación mensual
       let variacionMensual = 0;
       if (selectedIndex > 0) {
         const previousValue = seriesData[currentIndexInSeries - 1];
@@ -77,26 +70,13 @@ export default function EmaeApertura({
         }
       }
 
-      // Calcular variación anual usando el índice correcto en la serie
       let variacionAnual = 0;
       if (currentIndexInSeries >= 12) {
         const annualValue = seriesData[currentIndexInSeries - 12];
         const valorAnualAnterior = annualValue ? Number(annualValue[1]) : 0;
-        if (seriesId === "143.3_NO_PR_2004_A_21") {
-          // Solo loggear para el índice general
-          console.log(`=== DEBUG APERTURA ${seriesConfig[seriesId].name} ===`);
-          console.log("Current index in series:", currentIndexInSeries);
-          console.log("Annual value index:", currentIndexInSeries - 12);
-          console.log("Series length:", seriesData.length);
-          console.log("Valor actual:", valor);
-          console.log("Valor anual anterior:", valorAnualAnterior);
-        }
         if (valorAnualAnterior !== 0) {
           variacionAnual =
             ((valor - valorAnualAnterior) / valorAnualAnterior) * 100;
-          if (seriesId === "143.3_NO_PR_2004_A_21") {
-            console.log("Variación anual calculada:", variacionAnual);
-          }
         }
       }
 
@@ -114,24 +94,15 @@ export default function EmaeApertura({
       };
     })
     .filter(Boolean)
-    .sort((a, b) => b.valor - a.valor); // Ordenar por valor descendente
+    .sort((a, b) => b.valor - a.valor);
 
-  // Definir dataKey antes de usarlo - usar variación interanual para EMAE
   const dataKey = showVariations ? "variacionAnual" : "valor";
 
-  // Calcular el rango dinámico para el eje Y
+
   const values = chartData.map((d) => d[dataKey]);
   const minValue = Math.min(...values);
   const maxValue = Math.max(...values);
   const yAxisDomain = [minValue - 10, maxValue + 10];
-
-  console.log("=== DEBUG CHART DATA APERTURA ===");
-  console.log("Chart data length:", chartData.length);
-  console.log("Chart data sample:", chartData.slice(0, 3));
-  console.log("Selected month:", selectedMonth);
-  console.log("Show variations:", showVariations);
-  console.log("Data key:", dataKey);
-  console.log("Y axis domain:", yAxisDomain);
 
   const customTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {

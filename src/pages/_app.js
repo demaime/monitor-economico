@@ -6,12 +6,7 @@ export default function App({ Component, pageProps }) {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/sw.js", { scope: "/" })
-        .then((registration) => {
-          console.log("SW registrado con scope:", registration.scope);
-        })
-        .catch((error) => {
-          console.error("Error al registrar SW:", error);
-        });
+        .catch(() => {});
     }
   }, []);
 

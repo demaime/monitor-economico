@@ -42,7 +42,6 @@ export default function DolarComparativo({
 }) {
   const [activeCard, setActiveCard] = useState(0);
 
-  // Función para convertir YYYY-MM a nombre de mes
   const formatMonthName = (dateStr) => {
     const monthNames = {
       "01": "ENERO",
@@ -62,7 +61,6 @@ export default function DolarComparativo({
     return monthNames[month];
   };
 
-  // Función para calcular la diferencia y porcentaje para un mes específico
   const calculateDifference = (dolarType, month) => {
     if (
       !historicalData ||
@@ -90,7 +88,6 @@ export default function DolarComparativo({
     };
   };
 
-  // Preparar datos para el gráfico (solo el mes seleccionado)
   const prepareChartData = () => {
     if (!historicalData || !historicalData.oficial) return [];
 
@@ -102,7 +99,6 @@ export default function DolarComparativo({
 
     const oficialValue = oficialData.average;
 
-    // Crear un array con un objeto que contiene todos los valores
     return [
       {
         name: "Cotizaciones",
@@ -121,7 +117,6 @@ export default function DolarComparativo({
     ];
   };
 
-  // Add handleScroll function for carousel
   const handleScroll = (e) => {
     const scrollPosition = e.target.scrollLeft;
     const cardWidth = window.innerWidth * 0.85; // 85vw

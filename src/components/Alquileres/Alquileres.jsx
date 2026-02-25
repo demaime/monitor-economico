@@ -149,7 +149,6 @@ export default function Alquileres({ data, months }) {
 
   // Componente Heatmap
   const HeatmapView = () => {
-    // Función para obtener color basado en variación
     const getHeatmapColor = (variation) => {
       const absVar = Math.abs(variation);
       if (variation > 0) {

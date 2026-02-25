@@ -33,32 +33,29 @@ export default async function handler(req, res) {
       },
     ];
 
+    const results = await Promise.allSettled(
+      endpoints.map(async (endpoint) => {
+        const response = await axios.get(endpoint.url, { timeout: 8000 });
+        return { name: endpoint.name, data: response.data };
+      })
+    );
+
     const formattedData = {};
 
-    for (const endpoint of endpoints) {
-      try {
-        const response = await axios.get(endpoint.url, { timeout: 10000 });
-
-        if (response.data && Array.isArray(response.data)) {
-          // Agrupar por mes y calcular promedios
-          const monthlyAverages = response.data.reduce((acc, item) => {
-            const yearMonth = item.fecha.substring(0, 7); // "YYYY-MM"
-
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        const { name, data } = result.value;
+        if (data && Array.isArray(data)) {
+          const monthlyAverages = data.reduce((acc, item) => {
+            const yearMonth = item.fecha.substring(0, 7);
             if (!acc[yearMonth]) {
-              acc[yearMonth] = {
-                sum: 0,
-                count: 0,
-                month: yearMonth,
-              };
+              acc[yearMonth] = { sum: 0, count: 0, month: yearMonth };
             }
-
             acc[yearMonth].sum += item.venta;
             acc[yearMonth].count += 1;
-
             return acc;
           }, {});
 
-          // Convertir promedios a array y ordenar
           const averagesArray = Object.values(monthlyAverages)
             .map(({ sum, count, month }) => ({
               month,
@@ -66,17 +63,14 @@ export default async function handler(req, res) {
             }))
             .sort((a, b) => b.month.localeCompare(a.month));
 
-          // Tomar los últimos 24 meses completos
-          formattedData[endpoint.name] = averagesArray.slice(1, 25);
+          formattedData[name] = averagesArray.slice(1, 25);
         }
-      } catch (endpointError) {
-        console.error(
-          `Error fetching ${endpoint.name}:`,
-          endpointError.message
-        );
-        formattedData[endpoint.name] = {
+      } else {
+        const endpointName = endpoints[results.indexOf(result)]?.name || "unknown";
+        console.error(`Error fetching ${endpointName}:`, result.reason?.message);
+        formattedData[endpointName] = {
           error: true,
-          message: `Failed to fetch ${endpoint.name} historical data`,
+          message: `Failed to fetch ${endpointName} historical data`,
         };
       }
     }

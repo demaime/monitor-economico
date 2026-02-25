@@ -56,17 +56,7 @@ export default function Home() {
       setError(null);
       setCountdown(null);
     } catch (error) {
-      console.group("=== Error Detallado ===");
-      console.error("Mensaje:", error.message);
-      console.error("Tipo de Error:", error.name);
-      console.error("Stack Trace:", error.stack);
-      console.error("Detalles adicionales:", {
-        esErrorDeRed: error instanceof TypeError,
-        timestamp: new Date().toISOString(),
-        url: "/api/sheets",
-      });
-      console.groupEnd();
-
+      console.error("Error fetching sheets:", error.message);
       setError("Error de respuesta");
       setCountdown(3);
     } finally {

@@ -12,7 +12,6 @@ export default function EMAE() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Configuración de series del EMAE
   const seriesConfig = {
     "143.3_NO_PR_2004_A_21": { name: "ÍNDICE GENERAL", color: "#fef08a" },
     "11.3_IF_2004_M_25": { name: "Subsidios netos", color: "#ff7f0e" },
@@ -110,13 +109,11 @@ export default function EMAE() {
       try {
         setLoading(true);
 
-        // Fetch data for all series
         const dataPromises = Object.keys(seriesConfig).map((id) =>
           fetchDataForSeries(id)
         );
         const allData = await Promise.all(dataPromises);
 
-        // Organize data by series
         const dataObject = Object.keys(seriesConfig).reduce(
           (acc, id, index) => {
             acc[id] = allData[index];
@@ -125,15 +122,9 @@ export default function EMAE() {
           {}
         );
 
-        // Process data to get the last 24 values and format them
         const generalData = dataObject["143.3_NO_PR_2004_A_21"];
         const last24 = generalData.slice(-24);
 
-        console.log("=== DEBUG EMAE PRINCIPAL ===");
-        console.log("Total data points received:", generalData.length);
-        console.log("Last 24 raw data:", last24);
-
-        // Create months array from the last 24 values
         const monthsArray = last24.map(([dateString, value], index) => {
           const formatted = formatDate(dateString);
           return {
@@ -147,19 +138,8 @@ export default function EMAE() {
           };
         });
 
-        console.log("Months array procesado:", monthsArray);
-
-        // Only show the last 12 months for navigation, but keep all 24 for calculations
         const last12ForNavigation = monthsArray.slice(-12);
-
-        console.log(
-          "Last 12 for navigation:",
-          last12ForNavigation.map((m) => `${m.mes}-${m.año}`)
-        );
-
-        // Set the selected month to the ABSOLUTE last one from the full array
         const absoluteLastMonth = monthsArray[monthsArray.length - 1];
-        console.log("Absolute last month:", absoluteLastMonth);
 
         setSelectedMonth(absoluteLastMonth.mes);
         setMonths(last12ForNavigation);

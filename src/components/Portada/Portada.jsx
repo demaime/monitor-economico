@@ -20,21 +20,17 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Portada({ data }) {
-  const [variationType, setVariationType] = useState("mensual"); // "mensual" o "anual"
+  const [variationType, setVariationType] = useState("mensual");
   const [dolarData, setDolarData] = useState(null);
   const [dolarHistorico, setDolarHistorico] = useState(null);
   const [dolarLoading, setDolarLoading] = useState(true);
   const [emaeData, setEmaeData] = useState(null);
   const [emaeLoading, setEmaeLoading] = useState(true);
 
-  // Hook para detectar mobile - debe estar al inicio
   const [isMobile, setIsMobile] = useState(false);
-
-  // Estado para rotación de cards en mobile
   const [currentMobileSet, setCurrentMobileSet] = useState(0);
   const [showAllCategories, setShowAllCategories] = useState(false);
 
-  // Alternar entre variación mensual e interanual cada 5 segundos
   useEffect(() => {
     const interval = setInterval(() => {
       setVariationType((prev) => (prev === "mensual" ? "anual" : "mensual"));
@@ -43,10 +39,8 @@ export default function Portada({ data }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Rotación automática de cards en mobile cada 4 segundos
   useEffect(() => {
     if (isMobile && !showAllCategories) {
-      // Solo rotar si el modal NO está abierto
       const mobileSets = getMobileSets();
       const interval = setInterval(() => {
         setCurrentMobileSet((prev) => (prev + 1) % mobileSets.length);
@@ -54,15 +48,13 @@ export default function Portada({ data }) {
 
       return () => clearInterval(interval);
     }
-  }, [isMobile, showAllCategories]); // Agregar showAllCategories como dependencia
+  }, [isMobile, showAllCategories]);
 
-  // Obtener datos del dólar actual y histórico
   useEffect(() => {
     const fetchDolarData = async () => {
       try {
         setDolarLoading(true);
 
-        // Obtener datos actuales y históricos en paralelo
         const [currentResponse, historicResponse] = await Promise.all([
           fetch("/api/getDolar"),
           fetch("/api/getDolarHistorico"),
@@ -87,7 +79,6 @@ export default function Portada({ data }) {
     fetchDolarData();
   }, []);
 
-  // Obtener datos del EMAE
   useEffect(() => {
     const fetchEmaeData = async () => {
       try {
@@ -112,7 +103,7 @@ export default function Portada({ data }) {
 
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
+      setIsMobile(window.innerWidth < 768);
     };
 
     checkIsMobile();
@@ -121,7 +112,6 @@ export default function Portada({ data }) {
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
 
-  // Configuración de categorías con sus datos correspondientes
   const categories = [
     {
       id: "inflacion",
@@ -199,7 +189,6 @@ export default function Portada({ data }) {
     },
   ];
 
-  // Dividir categorías en grupos de 4 para mobile
   const getMobileSets = () => {
     const sets = [];
     for (let i = 0; i < categories.length; i += 4) {
@@ -208,10 +197,8 @@ export default function Portada({ data }) {
     return sets;
   };
 
-  // Función para obtener el último valor disponible
   const getLatestValue = (dataArray) => {
     if (!dataArray || dataArray.length === 0) return null;
-    // Encontrar el último valor no nulo/no vacío
     for (let i = dataArray.length - 1; i >= 0; i--) {
       if (
         dataArray[i] !== null &&
@@ -224,7 +211,6 @@ export default function Portada({ data }) {
     return null;
   };
 
-  // Función para obtener el índice del último valor
   const getLatestValueIndex = (dataArray) => {
     if (!dataArray || dataArray.length === 0) return -1;
     for (let i = dataArray.length - 1; i >= 0; i--) {
@@ -239,7 +225,6 @@ export default function Portada({ data }) {
     return -1;
   };
 
-  // Función para obtener el mes del último dato
   const getLatestMonth = (category) => {
     if (category.isExternal && category.id === "dolar") {
       const fecha = dolarData?.blue?.fecha;
@@ -278,7 +263,6 @@ export default function Portada({ data }) {
     return "SIN FECHA";
   };
 
-  // Función para calcular variación del dólar
   const getDolarVariation = (type) => {
     if (!dolarData?.blue?.venta || !dolarHistorico?.blue) return null;
 
@@ -290,10 +274,8 @@ export default function Portada({ data }) {
 
     let compareIndex;
     if (type === "mensual") {
-      // Comparar con el mes anterior (índice 1, ya que 0 es el mes actual parcial)
       compareIndex = 1;
     } else {
-      // Comparar con 12 meses atrás
       compareIndex = 12;
     }
 
@@ -304,7 +286,6 @@ export default function Portada({ data }) {
     return Number(variation.toFixed(1));
   };
 
-  // Función para calcular variación del EMAE
   const getEmaeVariation = (type) => {
     if (!emaeData || emaeData.length < 2) return null;
 
@@ -312,10 +293,8 @@ export default function Portada({ data }) {
     let compareIndex;
 
     if (type === "mensual") {
-      // Comparar con el mes anterior
       compareIndex = emaeData.length - 2;
     } else {
-      // Comparar con 12 meses atrás
       compareIndex = emaeData.length - 13;
     }
 
@@ -326,7 +305,6 @@ export default function Portada({ data }) {
     return Number(variation.toFixed(1));
   };
 
-  // Función para calcular variación
   const getVariation = (dataArray, type) => {
     if (!dataArray || dataArray.length < 2) return null;
 
@@ -335,26 +313,21 @@ export default function Portada({ data }) {
 
     let compareIndex;
     if (type === "mensual") {
-      // Variación intermensual: comparar con el mes anterior
       compareIndex = dataArray.length - 2;
     } else {
-      // Variación interanual: comparar con 12 meses atrás
       compareIndex = dataArray.length - 13;
     }
 
     if (compareIndex < 0 || !dataArray[compareIndex]) return null;
 
-    // Calcular variación manualmente
     const previousValue = dataArray[compareIndex];
     const variation = ((latestValue - previousValue) / previousValue) * 100;
     return Number(variation.toFixed(1));
   };
 
-  // Función para formatear valores
   const formatValue = (value, category) => {
     if (!value) return "Sin datos";
 
-    // Formateo específico por categoría
     switch (category.id) {
       case "inflacion":
         return `${value.toFixed(1)}%`;
@@ -375,7 +348,6 @@ export default function Portada({ data }) {
     }
   };
 
-  // Componente modal para mostrar todas las categorías - Memoizado para evitar re-renders
   const AllCategoriesModal = useMemo(() => {
     if (!showAllCategories) return null;
 
@@ -433,9 +405,8 @@ export default function Portada({ data }) {
         </motion.div>
       </AnimatePresence>
     );
-  }, [showAllCategories]); // Solo re-renderizar cuando cambie showAllCategories
+  }, [showAllCategories]);
 
-  // Componente de loader para cards
   const CardLoader = ({ category }) => {
     const IconComponent = category.icon;
 
@@ -482,14 +453,12 @@ export default function Portada({ data }) {
     const IconComponent = category.icon;
 
     if (category.isExternal && category.id === "dolar") {
-      // Manejo especial para datos del dólar
       if (dolarLoading) {
         return <CardLoader category={category} />;
       }
       latestValue = dolarData?.blue?.venta || null;
       variation = getDolarVariation(variationType);
     } else if (category.isExternal && category.id === "emae") {
-      // Manejo especial para datos del EMAE
       if (emaeLoading) {
         return <CardLoader category={category} />;
       }
@@ -499,7 +468,6 @@ export default function Portada({ data }) {
           : null;
       variation = getEmaeVariation(variationType);
     } else {
-      // Datos normales del Google Sheets
       categoryData = data?.[category.dataKey];
       latestValue = getLatestValue(categoryData);
       variation = getVariation(categoryData, variationType);
@@ -719,7 +687,6 @@ export default function Portada({ data }) {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               {isMobile ? (
-                // Vista mobile con rotación
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentMobileSet}
@@ -748,7 +715,6 @@ export default function Portada({ data }) {
                   </motion.div>
                 </AnimatePresence>
               ) : (
-                // Vista desktop sin rotación
                 categories.map((category, index) => (
                   <motion.div
                     key={category.id}

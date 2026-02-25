@@ -23,7 +23,6 @@ export default function Dolar({ months }) {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        // Fetch both live and historical data simultaneously
         const [liveResponse, historicalResponse] = await Promise.all([
           axios.get("/api/getDolar"),
           axios.get("/api/getDolarHistorico"),
@@ -38,7 +37,6 @@ export default function Dolar({ months }) {
 
     fetchAllData();
 
-    // Update live data every 5 minutes
     const interval = setInterval(() => {
       if (activeView === "live") {
         axios
@@ -48,7 +46,7 @@ export default function Dolar({ months }) {
     }, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, []); // Remove activeView dependency
+  }, []);
 
   return (
     <section className="bg-gray-900 overflow-hidden">

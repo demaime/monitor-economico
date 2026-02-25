@@ -18,7 +18,6 @@ export default function ConsumosCotidianos({ data, months }) {
   );
   const [variationType, setVariationType] = useState("mensual"); // 'mensual' o 'interanual'
 
-  // Configuración de productos con colores únicos
   const productos = [
     { key: "kiloPan", name: "Kilo de Pan", color: "#ff5733", unit: "kg" },
     { key: "litroLeche", name: "Litro de Leche", color: "#33ff57", unit: "L" },

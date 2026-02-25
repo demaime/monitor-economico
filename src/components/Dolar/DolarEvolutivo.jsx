@@ -12,7 +12,6 @@ import {
   Brush,
 } from "recharts";
 
-// Unificamos con DolarEnVivo
 const DOLAR_TYPES = {
   oficial: {
     name: "Dólar Oficial",
@@ -49,7 +48,6 @@ export default function DolarEvolutivo({
   const [loading, setLoading] = useState(false);
   const [activeCard, setActiveCard] = useState(0);
 
-  // Función para convertir YYYY-MM a nombre de mes
   const formatMonthName = (dateStr) => {
     const monthNames = {
       "01": "ENERO",
@@ -69,7 +67,6 @@ export default function DolarEvolutivo({
     return monthNames[month];
   };
 
-  // Función para obtener el año anterior del mismo mes
   const getPreviousYearData = (currentMonth, dolarType) => {
     if (!historicalData || !historicalData[dolarType]) return null;
 
@@ -79,7 +76,6 @@ export default function DolarEvolutivo({
     return historicalData[dolarType].find((m) => m.month === previousYear);
   };
 
-  // Calcular variación interanual
   const calculateYearlyVariation = (current, previous) => {
     if (!previous || !current) return null;
     return (
@@ -88,13 +84,11 @@ export default function DolarEvolutivo({
     ).toFixed(2);
   };
 
-  // Función para calcular la variación porcentual
   const calculateVariation = (current, previous) => {
     if (!current || !previous) return null;
     return (((current - previous) / previous) * 100).toFixed(1);
   };
 
-  // Función para obtener los datos del mes seleccionado
   const getSelectedMonthData = (dolarType) => {
     if (!historicalData || !historicalData[dolarType]) return null;
 
@@ -102,7 +96,6 @@ export default function DolarEvolutivo({
       (m) => formatMonthName(m.month) === selectedMonth
     );
 
-    // Encontrar el mes anterior
     const currentIndex = historicalData[dolarType].findIndex(
       (m) => formatMonthName(m.month) === selectedMonth
     );
@@ -132,7 +125,6 @@ export default function DolarEvolutivo({
     );
   }
 
-  // Modificar la búsqueda del mes seleccionado
   const selectedMonthData =
     selectedMonth &&
     historicalData &&
@@ -140,11 +132,9 @@ export default function DolarEvolutivo({
       (m) => formatMonthName(m.month) === selectedMonth
     )?.average;
 
-  // Función para preparar datos para el gráfico
   const prepareChartData = () => {
     if (!historicalData) return [];
 
-    // Obtener los últimos 12 meses de datos
     const firstType = Object.values(historicalData)[0];
     if (!firstType) return [];
 
@@ -155,7 +145,6 @@ export default function DolarEvolutivo({
         month: formatMonthName(month),
       };
 
-      // Agregar valores para cada tipo de dólar
       Object.entries(historicalData).forEach(([dolarType, data]) => {
         const monthData = data.find((m) => m.month === month);
         dataPoint[dolarType] = monthData ? monthData.average : null;
@@ -165,7 +154,6 @@ export default function DolarEvolutivo({
     });
   };
 
-  // Añadir handleScroll para las tarjetas
   const handleScroll = (e) => {
     const scrollPosition = e.target.scrollLeft;
     const cardWidth = window.innerWidth * 0.85; // 85vw

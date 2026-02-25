@@ -18,7 +18,6 @@ export default function Servicios({ data, months }) {
   );
   const [variationType, setVariationType] = useState("mensual"); // 'mensual' o 'interanual'
 
-  // Configuración de servicios con colores únicos y distintivos
   const servicios = [
     { key: "gimnasio", name: "Gimnasio", color: "#ef4444", unit: "mes" }, // Rojo
     { key: "cine", name: "Cine", color: "#3b82f6", unit: "entrada" }, // Azul
