@@ -441,6 +441,10 @@ export default function Portada({ data }) {
           : null;
       variation = getEmaeVariation(variationType);
     } else {
+      // Mientras no llegó /api/indicadores, cada card muestra su loader
+      if (!data?.meses) {
+        return <CardLoader category={category} />;
+      }
       categoryData = data?.[category.dataKey];
       latestValue = getLatestValue(categoryData);
       variation = getVariation(categoryData, variationType);
@@ -568,34 +572,6 @@ export default function Portada({ data }) {
       </Link>
     );
   };
-
-  if (!data) {
-    return (
-      <section className="min-h-screen bg-gray-900 relative overflow-hidden">
-        {/* Background decorativo */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 -left-4 w-72 h-72 bg-orange-custom rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
-          <div className="absolute top-0 -right-4 w-72 h-72 bg-gray-600 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-orange-custom rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
-        </div>
-
-        <Fade className="w-full">
-          <div className="w-full text-orange-custom font-bold text-center text-lg sm:text-xl lg:text-2xl py-4 sm:py-6">
-            Monitor Indicadores Económicos
-          </div>
-        </Fade>
-        <div className="flex flex-col items-center justify-center text-white p-6 sm:p-8 min-h-96">
-          <motion.div
-            className="text-base sm:text-lg"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            Cargando indicadores...
-          </motion.div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="h-screen bg-gray-900 relative overflow-hidden">

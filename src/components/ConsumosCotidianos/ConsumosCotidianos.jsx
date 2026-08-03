@@ -119,8 +119,7 @@ export default function ConsumosCotidianos({ data, months }) {
         <div className="space-y-2">
           <h1 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
             <ShoppingCart className="w-7 h-7" />
-            Consumos Cotidianos{" "}
-            <b className="text-red-500">(temporalmente erróneo)</b>
+            Consumos Cotidianos
           </h1>
           <p className="text-sm text-gray-400">
             Variaciones{" "}

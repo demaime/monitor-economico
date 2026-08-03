@@ -9,6 +9,10 @@ import consumosAuto from "@/data/auto/consumos.json";
 //  - src/data/auto/*.json (generados por scripts/actualizar-datos.mjs vía GitHub Action)
 //  - src/data/manual.json (indicadores sin fuente automática, congelados en su último valor real)
 
+// Margen para los días en que datos.gob.ar está más lento que de costumbre
+// (el default de Vercel son 10 s y la request completa puede superarlos).
+export const config = { maxDuration: 60 };
+
 const BASE_URL = "https://apis.datos.gob.ar/series/api/series/";
 // Los datos manuales/semilla arrancan en 2023-12; pedimos desde ahí para poder
 // anclar las derivaciones (topes AUH) y cubrir siempre la ventana de 24 meses.
@@ -75,7 +79,21 @@ const MESES_ES = [
   "DICIEMBRE",
 ];
 
+// datos.gob.ar tarda proporcional a la cantidad de series pedidas: las 32
+// juntas demoran ~14 s (más que el límite de Vercel), pero en tandas de 8 en
+// paralelo la más lenta ronda los 4-7 s.
+const TANDA = 8;
+
 async function fetchMatriz(ids) {
+  const grupos = [];
+  for (let i = 0; i < ids.length; i += TANDA) {
+    grupos.push(ids.slice(i, i + TANDA));
+  }
+  const resultados = await Promise.all(grupos.map(fetchGrupo));
+  return Object.assign({}, ...resultados);
+}
+
+async function fetchGrupo(ids) {
   const url = `${BASE_URL}?ids=${ids.join(
     ","
   )}&format=json&start_date=${START_DATE}&limit=1000`;

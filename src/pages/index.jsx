@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import CanastaSalario from "@/components/CanastaSalario/CanastaSalario";
 import Inflacion from "@/components/Inflacion/Inflacion";
 import Loader from "@/components/Loader/Loader";
-import { Fade, Zoom } from "react-awesome-reveal";
 import Portada from "@/components/Portada/Portada";
 import Dolar from "@/components/Dolar/Dolar";
 import EMAE from "@/components/EMAE/EMAE";
@@ -11,16 +10,22 @@ import ConsumosCotidianos from "@/components/ConsumosCotidianos/ConsumosCotidian
 import AsistenciaSocial from "@/components/AsistenciaSocial/AsistenciaSocial";
 import BackToTopButton from "@/components/BackToTopButton/BackToTopButton";
 
+// Placeholder que ocupa la sección completa mientras llegan los indicadores;
+// permite mostrar el sitio entero de entrada en vez de bloquear todo detrás
+// de una pantalla de carga.
+const SectionLoader = ({ titulo }) => (
+  <div className="w-full h-full bg-gray-900 center-flex-col gap-6">
+    <h2 className="text-lg font-semibold text-gray-500">{titulo}</h2>
+    <Loader />
+  </div>
+);
+
 export default function Home() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [countdown, setCountdown] = useState(null);
 
   const fetchData = async () => {
-    const startTime = Date.now();
-    setLoading(true);
-
     try {
       const response = await fetch("/api/indicadores");
       if (!response.ok) {
@@ -38,26 +43,13 @@ export default function Home() {
         );
       }
       const result = await response.json();
-
-      // Calcular tiempo transcurrido y esperar si es necesario
-      const elapsedTime = Date.now() - startTime;
-      const minimumWait = 2000; // 2 segundos en milisegundos
-
-      if (elapsedTime < minimumWait) {
-        await new Promise((resolve) =>
-          setTimeout(resolve, minimumWait - elapsedTime)
-        );
-      }
-
       setData(result.data);
       setError(null);
       setCountdown(null);
     } catch (error) {
-      console.error("Error fetching sheets:", error.message);
+      console.error("Error fetching indicadores:", error.message);
       setError("Error de respuesta");
       setCountdown(3);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -77,171 +69,141 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [countdown]);
 
-  if (loading)
-    return (
-      <section className="center-flex-col bg-gradient">
-        <Fade>
-          <h1 className="text-5xl text-[#FF5733] w-full mb-12 font-semibold">
-            <span className="text-white font-black">M</span>ONITOR <br />
-            <span className="text-white font-black">I</span>NDICADORES <br />
-            <span className="text-white font-black">E</span>CONOMICOS
-          </h1>
-        </Fade>
-
-        <Zoom>
-          <Fade>
-            <h1 className="text-lg font-semibold mb-8 text-gray-500">
-              CARGANDO...
-            </h1>
-          </Fade>
-        </Zoom>
-        <Zoom>
-          <Fade>
-            <Loader />
-          </Fade>
-        </Zoom>
-      </section>
-    );
-
-  if (error)
-    return (
-      <section className="center-flex-col bg-gradient">
-        <Fade>
-          <h1 className="text-5xl text-[#FF5733] w-full mb-12 font-semibold">
-            <span className="text-white font-black">M</span>ONITOR <br />
-            <span className="text-white font-black">I</span>NDICADORES <br />
-            <span className="text-white font-black">E</span>CONOMICOS
-          </h1>
-        </Fade>
-
-        <Zoom>
-          <Fade>
-            <h1 className="text-lg font-semibold mb-8 text-[#FF5733] text-center px-8">
-              No se pudo conectar.{" "}
-              {countdown > 0
-                ? `Reintentando en ${countdown} ${
-                    countdown === 1 ? "segundo" : "segundos"
-                  }...`
-                : "Reintentando..."}
-            </h1>
-          </Fade>
-        </Zoom>
-
-        <Zoom>
-          <Fade>
-            <Loader />
-          </Fade>
-        </Zoom>
-      </section>
-    );
-
   return (
     <div className="full-container">
-      {data.meses && (
-        <>
-          <section id="inicio">
-            <Portada data={data} />
-          </section>
-          <section id="inflacion">
-            <Inflacion
-              data={{
-                nacional: {
-                  general: data.inflacionNacional,
-                  apertura: {
-                    alimentos: data.alimentosNacional,
-                    bebidas: data.bebidasNacional,
-                    indumentaria: data.indumentariaNacional,
-                    vivienda: data.viviendaNacional,
-                    equipamiento: data.equipamientoNacional,
-                    salud: data.saludNacional,
-                    transporte: data.transporteNacional,
-                    comunicacion: data.comunicacionNacional,
-                    recreacion: data.recreacionNacional,
-                    educacion: data.educacionNacional,
-                    restaurantes: data.restaurantesNacional,
-                    bienesServicios: data.bienesServiciosNacional,
-                  },
-                },
-                caba: {
-                  general: data.inflacionCaba,
-                  apertura: {
-                    alimentos: data.alimentosCaba,
-                    bebidas: data.bebidasCaba,
-                    indumentaria: data.indumentariaCaba,
-                    vivienda: data.viviendaCaba,
-                    equipamiento: data.equipamientoCaba,
-                    salud: data.saludCaba,
-                    transporte: data.transporteCaba,
-                    comunicacion: data.comunicacionCaba,
-                    recreacion: data.recreacionCaba,
-                    educacion: data.educacionCaba,
-                    restaurantes: data.restaurantesCaba,
-                    seguros: data.segurosCaba,
-                    cuidadoPersonal: data.cuidadoPersonalCaba,
-                  },
-                },
-              }}
-              months={data.meses}
-            />
-          </section>
-          <section id="canasta">
-            <CanastaSalario
-              data={{
-                nacional: {
-                  individual: {
-                    basica: data.cbaIndividualNacional,
-                    total: data.cbtIndividualNacional,
-                  },
-                  familiar: {
-                    basica: data.cbaFamiliarNacional,
-                    total: data.cbtFamiliarNacional,
-                  },
-                },
-                smv: data.smv,
-                jubilaciones: {
-                  conBono: data.jubConBono,
-                  sinBono: data.jubSinBono,
-                },
-              }}
-              months={data.meses}
-            />
-          </section>
-          <section id="dolar">
-            <Dolar months={data.meses} />
-          </section>
-          <section id="emae">
-            <EMAE />
-          </section>
-          <section id="consumos">
-            <ConsumosCotidianos
-              data={{
-                consumos: {
-                  kiloPan: data.kiloPan,
-                  litroLeche: data.litroLeche,
-                  kiloYerba: data.kiloYerba,
-                  litroCerveza: data.litroCerveza,
-                  kiloCarne: data.kiloCarne,
-                  cocaCola: data.cocaCola,
-                  fideos: data.fideos,
-                },
-              }}
-              months={data.meses}
-            />
-          </section>
-          <section id="asistencia">
-            <AsistenciaSocial
-              data={{
-                auh: data.auh,
-                auhTopeIndividual: data.auhTopeIndividual,
-                auhTopeGrupoFamiliar: data.auhTopeGrupoFamiliar,
-                seguroDesempleoMin: data.seguroDesempleoMin,
-                seguroDesempleoMax: data.seguroDesempleoMax,
-              }}
-              months={data.meses}
-            />
-          </section>
-        </>
+      {/* Aviso no bloqueante si falla la carga de indicadores */}
+      {error && (
+        <div className="fixed top-0 inset-x-0 z-50 bg-[#FF5733] text-white text-center text-sm font-semibold py-2 px-4">
+          No se pudieron cargar los indicadores.{" "}
+          {countdown > 0
+            ? `Reintentando en ${countdown} ${
+                countdown === 1 ? "segundo" : "segundos"
+              }...`
+            : "Reintentando..."}
+        </div>
       )}
+
+      <section id="inicio">
+        <Portada data={data} />
+      </section>
+      <section id="inflacion">
+        {data ? (
+          <Inflacion
+            data={{
+              nacional: {
+                general: data.inflacionNacional,
+                apertura: {
+                  alimentos: data.alimentosNacional,
+                  bebidas: data.bebidasNacional,
+                  indumentaria: data.indumentariaNacional,
+                  vivienda: data.viviendaNacional,
+                  equipamiento: data.equipamientoNacional,
+                  salud: data.saludNacional,
+                  transporte: data.transporteNacional,
+                  comunicacion: data.comunicacionNacional,
+                  recreacion: data.recreacionNacional,
+                  educacion: data.educacionNacional,
+                  restaurantes: data.restaurantesNacional,
+                  bienesServicios: data.bienesServiciosNacional,
+                },
+              },
+              caba: {
+                general: data.inflacionCaba,
+                apertura: {
+                  alimentos: data.alimentosCaba,
+                  bebidas: data.bebidasCaba,
+                  indumentaria: data.indumentariaCaba,
+                  vivienda: data.viviendaCaba,
+                  equipamiento: data.equipamientoCaba,
+                  salud: data.saludCaba,
+                  transporte: data.transporteCaba,
+                  comunicacion: data.comunicacionCaba,
+                  recreacion: data.recreacionCaba,
+                  educacion: data.educacionCaba,
+                  restaurantes: data.restaurantesCaba,
+                  seguros: data.segurosCaba,
+                  cuidadoPersonal: data.cuidadoPersonalCaba,
+                },
+              },
+            }}
+            months={data.meses}
+          />
+        ) : (
+          <SectionLoader titulo="INFLACIÓN" />
+        )}
+      </section>
+      <section id="canasta">
+        {data ? (
+          <CanastaSalario
+            data={{
+              nacional: {
+                individual: {
+                  basica: data.cbaIndividualNacional,
+                  total: data.cbtIndividualNacional,
+                },
+                familiar: {
+                  basica: data.cbaFamiliarNacional,
+                  total: data.cbtFamiliarNacional,
+                },
+              },
+              smv: data.smv,
+              jubilaciones: {
+                conBono: data.jubConBono,
+                sinBono: data.jubSinBono,
+              },
+            }}
+            months={data.meses}
+          />
+        ) : (
+          <SectionLoader titulo="CANASTA Y SALARIO" />
+        )}
+      </section>
+      <section id="dolar">
+        {data ? (
+          <Dolar months={data.meses} />
+        ) : (
+          <SectionLoader titulo="DÓLAR" />
+        )}
+      </section>
+      <section id="emae">
+        <EMAE />
+      </section>
+      <section id="consumos">
+        {data ? (
+          <ConsumosCotidianos
+            data={{
+              consumos: {
+                kiloPan: data.kiloPan,
+                litroLeche: data.litroLeche,
+                kiloYerba: data.kiloYerba,
+                litroCerveza: data.litroCerveza,
+                kiloCarne: data.kiloCarne,
+                cocaCola: data.cocaCola,
+                fideos: data.fideos,
+              },
+            }}
+            months={data.meses}
+          />
+        ) : (
+          <SectionLoader titulo="CONSUMOS COTIDIANOS" />
+        )}
+      </section>
+      <section id="asistencia">
+        {data ? (
+          <AsistenciaSocial
+            data={{
+              auh: data.auh,
+              auhTopeIndividual: data.auhTopeIndividual,
+              auhTopeGrupoFamiliar: data.auhTopeGrupoFamiliar,
+              seguroDesempleoMin: data.seguroDesempleoMin,
+              seguroDesempleoMax: data.seguroDesempleoMax,
+            }}
+            months={data.meses}
+          />
+        ) : (
+          <SectionLoader titulo="ASISTENCIA SOCIAL" />
+        )}
+      </section>
 
       {/* Botón flotante para volver al inicio */}
       <BackToTopButton />
