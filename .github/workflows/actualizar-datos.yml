@@ -2,10 +2,10 @@ name: Actualizar datos INDEC
 
 on:
   schedule:
-    # Día 18 de cada mes a las 15:00 UTC (después de la publicación del IPC,
-    # que sale a mitad de mes). Si el INDEC todavía no publicó, el commit no
-    # cambia nada y no pasa nada.
-    - cron: "0 15 18 * *"
+    # Cada 5 días (1, 6, 11, 16, 21, 26, 31) a las 15:00 UTC. El INDEC publica
+    # el IPC a mitad de mes pero la fecha exacta varía; correr seguido no tiene
+    # costo porque solo se comitea si los datos cambiaron.
+    - cron: "0 15 */5 * *"
   workflow_dispatch:
 
 jobs:
