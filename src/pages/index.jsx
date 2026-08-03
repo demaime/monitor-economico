@@ -7,10 +7,7 @@ import { Fade, Zoom } from "react-awesome-reveal";
 import Portada from "@/components/Portada/Portada";
 import Dolar from "@/components/Dolar/Dolar";
 import EMAE from "@/components/EMAE/EMAE";
-import Transporte from "@/components/Transporte/Transporte";
-import Alquileres from "@/components/Alquileres/Alquileres";
 import ConsumosCotidianos from "@/components/ConsumosCotidianos/ConsumosCotidianos";
-import Servicios from "@/components/Servicios/Servicios";
 import AsistenciaSocial from "@/components/AsistenciaSocial/AsistenciaSocial";
 import BackToTopButton from "@/components/BackToTopButton/BackToTopButton";
 
@@ -25,7 +22,7 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/sheets");
+      const response = await fetch("/api/indicadores");
       if (!response.ok) {
         // Si es error de quota, esperar más tiempo
         if (response.status === 429) {
@@ -200,16 +197,6 @@ export default function Home() {
                     total: data.cbtFamiliarNacional,
                   },
                 },
-                caba: {
-                  individual: {
-                    basica: data.cbaIndividualCaba,
-                    total: data.cbtIndividualCaba,
-                  },
-                  familiar: {
-                    basica: data.cbaFamiliarCaba,
-                    total: data.cbtFamiliarCaba,
-                  },
-                },
                 smv: data.smv,
                 jubilaciones: {
                   conBono: data.jubConBono,
@@ -225,41 +212,6 @@ export default function Home() {
           <section id="emae">
             <EMAE />
           </section>
-          <section id="transporte">
-            <Transporte
-              data={{
-                publico: {
-                  subte: data.subte,
-                  tren: data.tren,
-                  colectivo: data.colectivo,
-                },
-                particular: {
-                  nafta: data.nafta,
-                  peajes: {
-                    norte: data.peajeNorte,
-                    oeste: data.peajeOeste,
-                  },
-                  patentamiento: {
-                    autos: data.patentamientoAutos,
-                    motos: data.patentamientoMotos,
-                  },
-                },
-              }}
-              months={data.meses}
-            />
-          </section>
-          <section id="alquileres">
-            <Alquileres
-              data={{
-                alquileres: {
-                  caba: data.alquilerCaba,
-                  norte: data.alquilerNorte,
-                  oesteSur: data.alquilerOesteSur,
-                },
-              }}
-              months={data.meses}
-            />
-          </section>
           <section id="consumos">
             <ConsumosCotidianos
               data={{
@@ -268,23 +220,10 @@ export default function Home() {
                   litroLeche: data.litroLeche,
                   kiloYerba: data.kiloYerba,
                   litroCerveza: data.litroCerveza,
-                  facturas: data.facturas,
                   kiloCarne: data.kiloCarne,
                   cocaCola: data.cocaCola,
                   fideos: data.fideos,
                 },
-              }}
-              months={data.meses}
-            />
-          </section>
-          <section id="servicios">
-            <Servicios
-              data={{
-                gimnasio: data.gimnasio,
-                cine: data.cine,
-                libro: data.libro,
-                cortePeloHombre: data.cortePeloHombre,
-                cortePeloMujer: data.cortePeloMujer,
               }}
               months={data.meses}
             />
@@ -295,8 +234,6 @@ export default function Home() {
                 auh: data.auh,
                 auhTopeIndividual: data.auhTopeIndividual,
                 auhTopeGrupoFamiliar: data.auhTopeGrupoFamiliar,
-                becaProgresar: data.becaProgresar,
-                acompaniamientoSocial: data.acompaniamientoSocial,
                 seguroDesempleoMin: data.seguroDesempleoMin,
                 seguroDesempleoMax: data.seguroDesempleoMax,
               }}

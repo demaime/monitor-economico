@@ -1,0 +1,13 @@
+{
+  "descripcion": "Configuración de indicadores derivados. Los indicadores sin fuente automática (alquileres, tarifas, servicios, etc.) fueron eliminados de la app en jul-2026; si se reincorporan, sus series van acá como { \"clave\": { \"YYYY-MM\": valor } }.",
+  "config": {
+    "bonoJubilacion": 70000,
+    "factorFamiliarINDEC": 3.09,
+    "auhTopeSeed": {
+      "mes": "2025-11",
+      "topeIndividual": 2453609,
+      "auh": 119691
+    }
+  },
+  "series": {}
+}

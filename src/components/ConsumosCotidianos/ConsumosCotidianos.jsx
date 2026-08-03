@@ -28,7 +28,6 @@ export default function ConsumosCotidianos({ data, months }) {
       color: "#ff33f5",
       unit: "L",
     },
-    { key: "facturas", name: "Facturas", color: "#f5ff33", unit: "unidad" },
     { key: "kiloCarne", name: "Kilo de Carne", color: "#ff8c33", unit: "kg" },
     { key: "cocaCola", name: "Coca Cola", color: "#33f5ff", unit: "unidad" },
     { key: "fideos", name: "Fideos", color: "#8c33ff", unit: "paquete" },

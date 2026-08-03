@@ -287,9 +287,7 @@ export default function CanastaSalario({ data, months }) {
             Jubilación
           </h1>
 
-          <p className="text-sm text-gray-400">
-            Nacional: INDEC | CABA: INDECBA
-          </p>
+          <p className="text-sm text-gray-400">Fuente: INDEC</p>
         </div>
 
         {/* Mobile toggle button */}
@@ -339,16 +337,6 @@ export default function CanastaSalario({ data, months }) {
                 }`}
               >
                 Nacional
-              </button>
-              <button
-                onClick={() => setSelectedRegion("caba")}
-                className={`px-4 py-2 rounded-lg ${
-                  selectedRegion === "caba"
-                    ? "bg-yellow-custom text-gray-800"
-                    : "bg-gray-800 text-gray-300"
-                }`}
-              >
-                CABA
               </button>
             </div>
             <div className="flex gap-2 relative">
@@ -405,16 +393,6 @@ export default function CanastaSalario({ data, months }) {
                 }`}
               >
                 Nacional
-              </button>
-              <button
-                onClick={() => setSelectedRegion("caba")}
-                className={`px-4 py-2 rounded-lg text-sm ${
-                  selectedRegion === "caba"
-                    ? "bg-yellow-custom text-gray-800"
-                    : "bg-gray-800 text-gray-300"
-                }`}
-              >
-                CABA
               </button>
             </div>
 
@@ -477,16 +455,6 @@ export default function CanastaSalario({ data, months }) {
                       }`}
                     >
                       Nacional
-                    </button>
-                    <button
-                      onClick={() => setSelectedRegion("caba")}
-                      className={`px-2 py-1 rounded text-xs ${
-                        selectedRegion === "caba"
-                          ? "bg-yellow-custom text-gray-800"
-                          : "bg-gray-700 text-gray-300"
-                      }`}
-                    >
-                      CABA
                     </button>
                   </div>
                 </div>

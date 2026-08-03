@@ -17,33 +17,35 @@ export default async function handler(req, res) {
 
     const formattedData = {};
 
-    for (const endpoint of endpoints) {
-      try {
-        const response = await axios.get(endpoint.url, { timeout: 5000 });
+    const results = await Promise.allSettled(
+      endpoints.map((endpoint) => axios.get(endpoint.url, { timeout: 5000 }))
+    );
 
-        if (response.data && response.status === 200) {
-          formattedData[endpoint.name] = {
-            compra: response.data.compra,
-            venta: response.data.venta,
-            fecha: response.data.fechaActualizacion,
-          };
-        }
-      } catch (endpointError) {
-        console.error(
-          `Error fetching ${endpoint.name}:`,
-          endpointError.message
-        );
-        formattedData[endpoint.name] = {
+    results.forEach((result, index) => {
+      const { name } = endpoints[index];
+      if (result.status === "fulfilled" && result.value.data) {
+        formattedData[name] = {
+          compra: result.value.data.compra,
+          venta: result.value.data.venta,
+          fecha: result.value.data.fechaActualizacion,
+        };
+      } else {
+        console.error(`Error fetching ${name}:`, result.reason?.message);
+        formattedData[name] = {
           error: true,
-          message: `Failed to fetch ${endpoint.name} data`,
+          message: `Failed to fetch ${name} data`,
         };
       }
-    }
+    });
 
     if (Object.keys(formattedData).length === 0) {
       throw new Error("No se pudo obtener ningún dato de las APIs");
     }
 
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=300, stale-while-revalidate=600"
+    );
     res.status(200).json(formattedData);
   } catch (error) {
     console.error("Error general:", error);

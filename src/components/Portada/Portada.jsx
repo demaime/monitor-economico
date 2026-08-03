@@ -6,10 +6,7 @@ import {
   FaChartLine,
   FaDollarSign,
   FaShoppingCart,
-  FaBus,
-  FaHome,
   FaShoppingBag,
-  FaBolt,
   FaHandsHelping,
   FaEllipsisH,
   FaTimes,
@@ -83,9 +80,7 @@ export default function Portada({ data }) {
     const fetchEmaeData = async () => {
       try {
         setEmaeLoading(true);
-        const response = await fetch(
-          "https://apis.datos.gob.ar/series/api/series/?ids=143.3_NO_PR_2004_A_21&limit=24&format=json"
-        );
+        const response = await fetch("/api/emae?general=1");
 
         if (response.ok) {
           const result = await response.json();
@@ -148,36 +143,12 @@ export default function Portada({ data }) {
       link: "#canasta",
     },
     {
-      id: "transporte",
-      name: "Transporte",
-      shortName: "Transporte",
-      icon: FaBus,
-      dataKey: "subte",
-      link: "#transporte",
-    },
-    {
-      id: "alquileres",
-      name: "Alquileres",
-      shortName: "Alquileres",
-      icon: FaHome,
-      dataKey: "alquilerCaba",
-      link: "#alquileres",
-    },
-    {
       id: "consumos",
       name: "Consumos",
       shortName: "Consumos",
       icon: FaShoppingBag,
       dataKey: "kiloPan",
       link: "#consumos",
-    },
-    {
-      id: "servicios",
-      name: "Servicios",
-      shortName: "Servicios",
-      icon: FaBolt,
-      dataKey: "gimnasio",
-      link: "#servicios",
     },
     {
       id: "asistencia",
@@ -242,7 +213,9 @@ export default function Portada({ data }) {
     if (category.isExternal && category.id === "emae") {
       if (emaeData && emaeData.length > 0) {
         const latestData = emaeData[emaeData.length - 1];
-        const fecha = new Date(latestData[0]);
+        // La fecha viene como "YYYY-MM-DD"; parsearla con new Date() la corre
+        // un mes hacia atrás en husos negativos (se interpreta como UTC)
+        const fecha = new Date(`${latestData[0]}T00:00:00`);
         const mes = fecha
           .toLocaleDateString("es-AR", { month: "short" })
           .toUpperCase();

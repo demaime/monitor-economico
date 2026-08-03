@@ -42,7 +42,7 @@ export default async function handler(req, res) {
 
     const formattedData = {};
 
-    for (const result of results) {
+    results.forEach((result, resultIndex) => {
       if (result.status === "fulfilled") {
         const { name, data } = result.value;
         if (data && Array.isArray(data)) {
@@ -66,15 +66,19 @@ export default async function handler(req, res) {
           formattedData[name] = averagesArray.slice(1, 25);
         }
       } else {
-        const endpointName = endpoints[results.indexOf(result)]?.name || "unknown";
+        const endpointName = endpoints[resultIndex]?.name || "unknown";
         console.error(`Error fetching ${endpointName}:`, result.reason?.message);
         formattedData[endpointName] = {
           error: true,
           message: `Failed to fetch ${endpointName} historical data`,
         };
       }
-    }
+    });
 
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=3600, stale-while-revalidate=7200"
+    );
     res.status(200).json(formattedData);
   } catch (error) {
     console.error("Error general:", error);

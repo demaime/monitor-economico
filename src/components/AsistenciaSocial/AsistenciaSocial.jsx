@@ -3,9 +3,6 @@ import {
   Heart,
   Calendar,
   TrendingUp,
-  Users,
-  GraduationCap,
-  HandHeart,
   BarChart3,
   Maximize2,
 } from "lucide-react";
@@ -26,7 +23,6 @@ export default function AsistenciaSocial({ data, months }) {
     months[months.length - 1].mes
   );
   const [variationType, setVariationType] = useState("mensual"); // 'mensual' o 'interanual'
-  const [activeView, setActiveView] = useState("auh"); // 'auh', 'beca', 'acompaniamiento'
 
   // Estado para mobile y vista
   const [isMobile, setIsMobile] = useState(false);
@@ -54,9 +50,6 @@ export default function AsistenciaSocial({ data, months }) {
     const auh = Number(data.auh[index]) || 0;
     const auhTopeIndividual = Number(data.auhTopeIndividual[index]) || 0;
     const auhTopeGrupoFamiliar = Number(data.auhTopeGrupoFamiliar[index]) || 0;
-    const becaProgresar = Number(data.becaProgresar[index]) || 0;
-    const acompaniamientoSocial =
-      Number(data.acompaniamientoSocial[index]) || 0;
     const seguroDesempleoMin = Number(data.seguroDesempleoMin[index]) || 0;
     const seguroDesempleoMax = Number(data.seguroDesempleoMax[index]) || 0;
 
@@ -66,10 +59,6 @@ export default function AsistenciaSocial({ data, months }) {
       index > 0 ? Number(data.auhTopeIndividual[index - 1]) || 0 : 0;
     const auhTopeGrupoFamiliarAnterior =
       index > 0 ? Number(data.auhTopeGrupoFamiliar[index - 1]) || 0 : 0;
-    const becaProgresarAnterior =
-      index > 0 ? Number(data.becaProgresar[index - 1]) || 0 : 0;
-    const acompaniamientoSocialAnterior =
-      index > 0 ? Number(data.acompaniamientoSocial[index - 1]) || 0 : 0;
     const seguroDesempleoMinAnterior =
       index > 0 ? Number(data.seguroDesempleoMin[index - 1]) || 0 : 0;
     const seguroDesempleoMaxAnterior =
@@ -81,10 +70,6 @@ export default function AsistenciaSocial({ data, months }) {
       index >= 12 ? Number(data.auhTopeIndividual[index - 12]) || 0 : 0;
     const auhTopeGrupoFamiliarAnual =
       index >= 12 ? Number(data.auhTopeGrupoFamiliar[index - 12]) || 0 : 0;
-    const becaProgresarAnual =
-      index >= 12 ? Number(data.becaProgresar[index - 12]) || 0 : 0;
-    const acompaniamientoSocialAnual =
-      index >= 12 ? Number(data.acompaniamientoSocial[index - 12]) || 0 : 0;
     const seguroDesempleoMinAnual =
       index >= 12 ? Number(data.seguroDesempleoMin[index - 12]) || 0 : 0;
     const seguroDesempleoMaxAnual =
@@ -97,8 +82,6 @@ export default function AsistenciaSocial({ data, months }) {
     dataPoint.auh_valor = auh;
     dataPoint.auhTopeIndividual_valor = auhTopeIndividual;
     dataPoint.auhTopeGrupoFamiliar_valor = auhTopeGrupoFamiliar;
-    dataPoint.becaProgresar_valor = becaProgresar;
-    dataPoint.acompaniamientoSocial_valor = acompaniamientoSocial;
     dataPoint.seguroDesempleoMin_valor = seguroDesempleoMin;
     dataPoint.seguroDesempleoMax_valor = seguroDesempleoMax;
 
@@ -113,15 +96,6 @@ export default function AsistenciaSocial({ data, months }) {
       calcularVariacion(
         auhTopeGrupoFamiliar,
         auhTopeGrupoFamiliarAnterior
-      ).toFixed(2)
-    );
-    dataPoint.becaProgresar_mensual = parseFloat(
-      calcularVariacion(becaProgresar, becaProgresarAnterior).toFixed(2)
-    );
-    dataPoint.acompaniamientoSocial_mensual = parseFloat(
-      calcularVariacion(
-        acompaniamientoSocial,
-        acompaniamientoSocialAnterior
       ).toFixed(2)
     );
     dataPoint.seguroDesempleoMin_mensual = parseFloat(
@@ -148,15 +122,6 @@ export default function AsistenciaSocial({ data, months }) {
         auhTopeGrupoFamiliarAnual
       ).toFixed(2)
     );
-    dataPoint.becaProgresar_interanual = parseFloat(
-      calcularVariacion(becaProgresar, becaProgresarAnual).toFixed(2)
-    );
-    dataPoint.acompaniamientoSocial_interanual = parseFloat(
-      calcularVariacion(
-        acompaniamientoSocial,
-        acompaniamientoSocialAnual
-      ).toFixed(2)
-    );
     dataPoint.seguroDesempleoMin_interanual = parseFloat(
       calcularVariacion(seguroDesempleoMin, seguroDesempleoMinAnual).toFixed(2)
     );
@@ -168,8 +133,6 @@ export default function AsistenciaSocial({ data, months }) {
     dataPoint.auh = auh;
     dataPoint.auhTopeIndividual = auhTopeIndividual;
     dataPoint.auhTopeGrupoFamiliar = auhTopeGrupoFamiliar;
-    dataPoint.becaProgresar = becaProgresar;
-    dataPoint.acompaniamientoSocial = acompaniamientoSocial;
     dataPoint.seguroDesempleoMin = seguroDesempleoMin;
     dataPoint.seguroDesempleoMax = seguroDesempleoMax;
 
@@ -208,114 +171,39 @@ export default function AsistenciaSocial({ data, months }) {
     return null;
   };
 
-  const getViewConfig = () => {
-    switch (activeView) {
-      case "auh":
-        return {
-          title: "AUH - Asignación Universal por Hijo",
-          lines: [
-            { key: "auh", name: "AUH", color: "#3b82f6", strokeWidth: 2 },
-            {
-              key: "seguroDesempleoMin",
-              name: "Seguro Desempleo Mín",
-              color: "#6b7280",
-              strokeWidth: 1.5,
-              strokeDasharray: "5 5",
-            },
-            {
-              key: "seguroDesempleoMax",
-              name: "Seguro Desempleo Máx",
-              color: "#6b7280",
-              strokeWidth: 1.5,
-              strokeDasharray: "5 5",
-            },
-          ],
-          cards: [
-            { key: "auh", name: "AUH", color: "#3b82f6" },
-            {
-              key: "auhTopeIndividual",
-              name: "Tope Individual",
-              color: "#60a5fa",
-            },
-            {
-              key: "auhTopeGrupoFamiliar",
-              name: "Tope Grupo Familiar",
-              color: "#93c5fd",
-            },
-          ],
-        };
-      case "beca":
-        return {
-          title: "Beca Progresar",
-          lines: [
-            {
-              key: "becaProgresar",
-              name: "Beca Progresar",
-              color: "#10b981",
-              strokeWidth: 2,
-            },
-            {
-              key: "seguroDesempleoMin",
-              name: "Seguro Desempleo Mín",
-              color: "#6b7280",
-              strokeWidth: 1.5,
-              strokeDasharray: "5 5",
-            },
-            {
-              key: "seguroDesempleoMax",
-              name: "Seguro Desempleo Máx",
-              color: "#6b7280",
-              strokeWidth: 1.5,
-              strokeDasharray: "5 5",
-            },
-          ],
-          cards: [
-            {
-              key: "becaProgresar",
-              name: "Beca Progresar",
-              color: "#10b981",
-            },
-          ],
-        };
-      case "acompaniamiento":
-        return {
-          title: "Acompañamiento Social",
-          lines: [
-            {
-              key: "acompaniamientoSocial",
-              name: "Acompañamiento Social",
-              color: "#f59e0b",
-              strokeWidth: 2,
-            },
-            {
-              key: "seguroDesempleoMin",
-              name: "Seguro Desempleo Mín",
-              color: "#6b7280",
-              strokeWidth: 1.5,
-              strokeDasharray: "5 5",
-            },
-            {
-              key: "seguroDesempleoMax",
-              name: "Seguro Desempleo Máx",
-              color: "#6b7280",
-              strokeWidth: 1.5,
-              strokeDasharray: "5 5",
-            },
-          ],
-          cards: [
-            {
-              key: "acompaniamientoSocial",
-              name: "Acompañamiento Social",
-              color: "#f59e0b",
-            },
-          ],
-        };
-      default:
-        return getViewConfig();
-    }
+  const viewConfig = {
+    title: "AUH - Asignación Universal por Hijo",
+    lines: [
+      { key: "auh", name: "AUH", color: "#3b82f6", strokeWidth: 2 },
+      {
+        key: "seguroDesempleoMin",
+        name: "Seguro Desempleo Mín",
+        color: "#6b7280",
+        strokeWidth: 1.5,
+        strokeDasharray: "5 5",
+      },
+      {
+        key: "seguroDesempleoMax",
+        name: "Seguro Desempleo Máx",
+        color: "#6b7280",
+        strokeWidth: 1.5,
+        strokeDasharray: "5 5",
+      },
+    ],
+    cards: [
+      { key: "auh", name: "AUH", color: "#3b82f6" },
+      {
+        key: "auhTopeIndividual",
+        name: "Tope Individual",
+        color: "#60a5fa",
+      },
+      {
+        key: "auhTopeGrupoFamiliar",
+        name: "Tope Grupo Familiar",
+        color: "#93c5fd",
+      },
+    ],
   };
-
-  const viewConfig = getViewConfig();
 
   return (
     <section className="bg-gray-900 overflow-hidden">
@@ -334,53 +222,12 @@ export default function AsistenciaSocial({ data, months }) {
           </p>
         </div>
 
-        {/* BOTONES DE VISTA */}
+        {/* TOGGLE DE TIPO DE VARIACIÓN */}
         <div
           className={`flex ${
-            isMobile ? "flex-col space-y-2" : "justify-between"
+            isMobile ? "flex-col space-y-2" : "justify-end"
           }`}
         >
-          <div
-            className={`flex gap-1 sm:gap-2 ${
-              isMobile ? "justify-center" : ""
-            }`}
-          >
-            <button
-              onClick={() => setActiveView("auh")}
-              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
-                activeView === "auh"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-800 text-gray-300 hover:text-gray-200"
-              }`}
-            >
-              <Users className="w-3 h-3 sm:w-4 sm:h-4" />
-              {isMobile ? "AUH" : "AUH"}
-            </button>
-            <button
-              onClick={() => setActiveView("beca")}
-              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
-                activeView === "beca"
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-800 text-gray-300 hover:text-gray-200"
-              }`}
-            >
-              <GraduationCap className="w-3 h-3 sm:w-4 sm:h-4" />
-              {isMobile ? "Beca" : "Beca Progresar"}
-            </button>
-            <button
-              onClick={() => setActiveView("acompaniamiento")}
-              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-colors ${
-                activeView === "acompaniamiento"
-                  ? "bg-orange-500 text-white"
-                  : "bg-gray-800 text-gray-300 hover:text-gray-200"
-              }`}
-            >
-              <HandHeart className="w-3 h-3 sm:w-4 sm:h-4" />
-              {isMobile ? "Acomp." : "Acompañamiento"}
-            </button>
-          </div>
-
-          {/* TOGGLE DE TIPO DE VARIACIÓN */}
           <div
             className={`flex gap-1 sm:gap-2 relative ${
               isMobile ? "justify-center" : ""

@@ -65,17 +65,6 @@ export default function EMAE() {
     },
   };
 
-  const fetchDataForSeries = async (id) => {
-    const response = await fetch(
-      `https://apis.datos.gob.ar/series/api/series/?ids=${id}&limit=5000&format=json`
-    );
-    if (!response.ok) {
-      throw new Error(`Error fetching data for series ${id}`);
-    }
-    const data = await response.json();
-    return data.data;
-  };
-
   const formatDate = (dateString) => {
     const dateParts = dateString.split("-");
     const year = parseInt(dateParts[0]);
@@ -109,18 +98,12 @@ export default function EMAE() {
       try {
         setLoading(true);
 
-        const dataPromises = Object.keys(seriesConfig).map((id) =>
-          fetchDataForSeries(id)
-        );
-        const allData = await Promise.all(dataPromises);
-
-        const dataObject = Object.keys(seriesConfig).reduce(
-          (acc, id, index) => {
-            acc[id] = allData[index];
-            return acc;
-          },
-          {}
-        );
+        const response = await fetch("/api/emae");
+        if (!response.ok) {
+          throw new Error("Error fetching EMAE data");
+        }
+        const { series } = await response.json();
+        const dataObject = series;
 
         const generalData = dataObject["143.3_NO_PR_2004_A_21"];
         const last24 = generalData.slice(-24);
