@@ -18,7 +18,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Node 24 trae npm 11, la misma major que generó package-lock.json.
+          # Con npm 10 (Node 20) `npm ci` falla porque resuelve las peerDependencies
+          # opcionales (yaml, de postcss-load-config) que el lock no incluye.
+          node-version: 24
 
       - run: npm ci
 
