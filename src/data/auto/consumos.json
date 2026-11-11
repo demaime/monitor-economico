@@ -1,7 +1,7 @@
 {
   "descripcion": "Precios promedio GBA de productos seleccionados de la canasta del IPC (INDEC). Generado por scripts/actualizar-datos.mjs — no editar a mano.",
   "fuente": "https://www.indec.gob.ar/ftp/cuadros/economia/sh_ipc_precios_promedio.xls",
-  "actualizado": "2026-11-06T20:44:40.370Z",
+  "actualizado": "2026-11-11T21:47:38.841Z",
   "ultimoMes": "2026-09",
   "series": {
     "kiloPan": {
